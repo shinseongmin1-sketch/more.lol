@@ -5,10 +5,11 @@ import './HomePage.css'
 const recentSearches = ['Hide on bush', 'Faker', 'T1 Gumayusi', 'Keria', 'Oner']
 
 const quickLinks = [
-  { path: '/aram',      label: 'ARAM 티어리스트',  desc: '무작위 총력전 챔피언 분석', icon: '⚔️' },
-  { path: '/ranked',   label: '솔로랭크 통계',     desc: '랭크 게임 챔피언 티어',    icon: '🏆' },
-  { path: '/champion', label: '챔피언 분석',        desc: '챔피언별 심층 데이터',     icon: '📊' },
-  { path: '/community',label: '커뮤니티',           desc: '공략, 팁, 자유게시판',     icon: '💬' },
+  { path: '/aram',      label: 'ARAM 티어리스트',  desc: '무작위 총력전 챔피언 분석', icon: '⚡', color: '#00d2ff' },
+  { path: '/ranked',   label: '솔로랭크 통계',     desc: '랭크 게임 챔피언 티어',    icon: '🏆', color: '#f59e0b' },
+  { path: '/normal',   label: '일반게임 통계',     desc: '일반게임 챔피언 승률 분석', icon: '🛡️', color: '#10b981' },
+  { path: '/champion', label: '챔피언 분석',        desc: '챔피언별 심층 데이터',     icon: '📊', color: '#6366f1' },
+  { path: '/community',label: '커뮤니티',           desc: '공략, 팁, 자유게시판',     icon: '💬', color: '#f97316' },
 ]
 
 const hotChamps = [
@@ -132,7 +133,7 @@ export default function HomePage() {
           {/* 빠른 이동 */}
           <div className="quick-links">
             {quickLinks.map(item => (
-              <div key={item.path} className="quick-card" onClick={() => navigate(item.path)}>
+              <div key={item.path} className="quick-card" onClick={() => navigate(item.path)} style={{ '--card-color': item.color } as React.CSSProperties}>
                 <div className="quick-icon">{item.icon}</div>
                 <div className="quick-info">
                   <div className="quick-label">{item.label}</div>
@@ -161,7 +162,7 @@ export default function HomePage() {
             </div>
             <div className="hot-champs">
               {hotChamps.map((champ, i) => (
-                <div key={champ.en} className="hot-champ-card" onClick={() => navigate('/aram')}>
+                <div key={champ.en} className="hot-champ-card" onClick={() => navigate('/champion')}>
                   <span className={`hot-rank ${rankStyles[i]}`}>#{i + 1}</span>
                   <div className="hot-icon" style={{ background: champ.color + '18', border: `1.5px solid ${champ.color}40` }}>
                     <span style={{ color: champ.color, fontSize: 13, fontWeight: 900 }}>{champ.name.slice(0, 2)}</span>

@@ -139,3 +139,100 @@
 
 .sidebar-post-cat { font-size: 12px; font-weight: 600; flex-shrink: 0; }
 .sidebar-post-title { font-size: 12px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ═══════════════════════════════════════
+   커뮤니티 페이지 — 앰버 오렌지 / 소셜 테마
+   Primary: Orange #f97316  Secondary: #ea580c
+═══════════════════════════════════════ */
+
+.community-page .subpage-header {
+  background: linear-gradient(135deg, #130700 0%, #271200 50%, #130700 100%);
+  border-bottom: 1px solid rgba(249, 115, 22, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+
+.community-page .subpage-header::before {
+  content: '';
+  position: absolute;
+  width: 460px; height: 460px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.14) 0%, transparent 65%);
+  top: -170px; right: -70px;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.community-page .subpage-header::after {
+  content: '';
+  position: absolute;
+  width: 280px; height: 280px;
+  background: radial-gradient(circle, rgba(251, 146, 60, 0.08) 0%, transparent 65%);
+  bottom: -110px; left: 20%;
+  pointer-events: none;
+  border-radius: 50%;
+}
+
+.community-page .subpage-title {
+  font-size: 26px;
+  background: linear-gradient(90deg, #fdba74, #f97316, #ea580c);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.community-page .subpage-title::before {
+  content: '💬';
+  font-size: 22px;
+  -webkit-text-fill-color: initial;
+}
+
+.community-page .subpage-desc {
+  color: rgba(249, 115, 22, 0.65);
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.community-page .patch-badge {
+  color: #fdba74;
+  background: rgba(249, 115, 22, 0.12);
+  border-color: rgba(249, 115, 22, 0.35);
+  /* 커뮤니티는 패치 뱃지 숨김 (관련 없음) */
+  display: none;
+}
+
+/* 글쓰기 버튼 오렌지 */
+.community-page .write-btn {
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+}
+
+.community-page .write-btn:hover {
+  background: linear-gradient(135deg, #fb923c, #f97316);
+  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.45);
+}
+
+/* 탭 활성 오렌지 */
+.community-page .community-tab.active {
+  color: #f97316;
+  border-bottom-color: #f97316;
+}
+
+.community-page .community-tab:hover {
+  color: #fdba74;
+}
+
+/* HOT 뱃지 오렌지 */
+.community-page .hot-badge {
+  color: #f97316;
+  background: rgba(249, 115, 22, 0.15);
+}
+
+/* 사이드바 제목 */
+.community-page .sidebar-title {
+  color: #f97316;
+  border-bottom-color: rgba(249, 115, 22, 0.2);
+}

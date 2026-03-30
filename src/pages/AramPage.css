@@ -1,0 +1,24 @@
+/* ARAM — 전기 폭풍 / 시안 테마 */
+.aram-page .subpage-header {
+  background: linear-gradient(135deg, #020d1a 0%, #003566 55%, #001d3d 100%);
+  border-bottom: 1px solid rgba(0, 183, 235, 0.35);
+  position: relative; overflow: hidden;
+}
+.aram-page .subpage-header::before {
+  content: ''; position: absolute; width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(0,183,235,0.18) 0%, transparent 70%);
+  top: -160px; right: -60px; pointer-events: none; border-radius: 50%;
+}
+.aram-page .subpage-title {
+  font-size: 26px;
+  background: linear-gradient(90deg, #00d2ff, #7c5af6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  display: flex; align-items: center; gap: 10px;
+}
+.aram-page .subpage-desc { color: rgba(0,183,235,0.7); margin-top: 5px; font-size: 13px; }
+.aram-page .patch-badge { color: #00d2ff; background: rgba(0,210,255,0.1); border-color: rgba(0,210,255,0.35); }
+.aram-page .update-dot { background: #00d2ff; }
+.aram-page .filter-chip.active { background: rgba(0,183,235,0.15); border-color: #00b7eb; color: #00d2ff; }
+.aram-bolt { position: absolute; font-size: 80px; opacity: 0.05; pointer-events: none; user-select: none; line-height: 1; }
+.aram-bolt-1 { top: -10px; right: 180px; transform: rotate(-15deg); }
+.aram-bolt-2 { top: 5px; right: 80px; transform: rotate(10deg); font-size: 50px; opacity: 0.04; }

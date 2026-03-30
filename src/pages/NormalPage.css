@@ -1,0 +1,24 @@
+/* 일반게임 — 에메랄드 캐주얼 테마 */
+.normal-page .subpage-header {
+  background: linear-gradient(135deg, #020f09 0%, #05271a 50%, #020f09 100%);
+  border-bottom: 1px solid rgba(16,185,129,0.3);
+  position: relative; overflow: hidden;
+}
+.normal-page .subpage-header::before {
+  content: ''; position: absolute; width: 450px; height: 450px;
+  background: radial-gradient(circle, rgba(16,185,129,0.14) 0%, transparent 65%);
+  top: -180px; right: -80px; pointer-events: none; border-radius: 50%;
+}
+.normal-page .subpage-title {
+  font-size: 26px;
+  background: linear-gradient(90deg, #34d399, #10b981, #059669);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  display: flex; align-items: center; gap: 10px;
+}
+.normal-page .subpage-desc { color: rgba(16,185,129,0.65); margin-top: 5px; font-size: 13px; }
+.normal-page .patch-badge { color: #34d399; background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.3); }
+.normal-page .update-dot { background: #10b981; }
+.normal-page .filter-chip.active { background: rgba(16,185,129,0.15); border-color: #10b981; color: #34d399; }
+.normal-leaf { position: absolute; font-size: 90px; opacity: 0.04; pointer-events: none; user-select: none; line-height: 1; }
+.normal-leaf-1 { top: -15px; right: 140px; transform: rotate(-20deg); }
+.normal-leaf-2 { top: 8px; right: 40px; font-size: 55px; opacity: 0.03; transform: rotate(15deg); }

@@ -1,15 +1,21 @@
 import { useState } from 'react'
 import ChampionTierList from '../components/ChampionTierList'
 import './SubPage.css'
+import './RankedPage.css'
 
-const positions = ['전체', '탑', '정글', '미드', '원딜', '서포터']
+const positions = [
+  { label: '전체', icon: '⚔️' }, { label: '탑', icon: '🗡️' },
+  { label: '정글', icon: '🌿' }, { label: '미드', icon: '🔮' },
+  { label: '원딜', icon: '🏹' }, { label: '서포터', icon: '🛡️' },
+]
 
 export default function RankedPage() {
   const [activePos, setActivePos] = useState('전체')
-
   return (
-    <div className="subpage">
+    <div className="subpage ranked-page">
       <div className="subpage-header">
+        <span className="ranked-crown ranked-crown-1">👑</span>
+        <span className="ranked-crown ranked-crown-2">🏆</span>
         <div className="subpage-header-inner">
           <div>
             <h1 className="subpage-title">솔로랭크 티어리스트</h1>
@@ -17,33 +23,23 @@ export default function RankedPage() {
           </div>
           <div className="subpage-meta">
             <span className="patch-badge">14.24 패치</span>
-            <span className="update-info">
-              <span className="update-dot" />
-              실시간 업데이트
-            </span>
+            <span className="update-info"><span className="update-dot" />실시간 업데이트</span>
           </div>
         </div>
       </div>
-
       <div className="subpage-body">
         <div className="subpage-filter-bar">
           <div className="filter-group">
             <span className="filter-label">포지션</span>
-            <div className="filter-chips">
+            <div className="position-chips">
               {positions.map(p => (
-                <button
-                  key={p}
-                  className={`filter-chip ${activePos === p ? 'active' : ''}`}
-                  onClick={() => setActivePos(p)}
-                >{p}</button>
+                <button key={p.label} className={"pos-chip " + (activePos === p.label ? 'active' : '')} onClick={() => setActivePos(p.label)}>
+                  <span className="pos-chip-icon">{p.icon}</span>{p.label}
+                </button>
               ))}
             </div>
           </div>
-          <select className="sort-select">
-            <option>티어순</option>
-            <option>승률순</option>
-            <option>픽률순</option>
-          </select>
+          <select className="sort-select"><option>티어순</option><option>승률순</option><option>픽률순</option></select>
         </div>
         <ChampionTierList mode="ranked" />
       </div>

@@ -1,0 +1,75 @@
+/* 문의하기 — 틸 / 소통 테마 */
+.contact-page .subpage-header {
+  background: linear-gradient(135deg, #020f0f 0%, #0f3333 55%, #020f0f 100%);
+  border-bottom: 1px solid rgba(20, 184, 166, 0.35);
+  position: relative; overflow: hidden;
+}
+.contact-page .subpage-header::before {
+  content: '';
+  position: absolute; width: 440px; height: 440px;
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.15) 0%, transparent 65%);
+  top: -170px; right: -70px; pointer-events: none; border-radius: 50%;
+}
+.contact-page .subpage-title {
+  font-size: 26px;
+  background: linear-gradient(90deg, #5eead4, #14b8a6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  display: flex; align-items: center; gap: 10px;
+}
+.contact-page .subpage-title::before { content: "📧"; font-size: 22px; -webkit-text-fill-color: initial; }
+.contact-page .subpage-desc { color: rgba(20, 184, 166, 0.7); margin-top: 5px; font-size: 13px; }
+.contact-page .patch-badge { display: none; }
+
+.contact-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+
+.contact-form-card {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: 16px; padding: 28px;
+}
+.contact-form-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; }
+
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.form-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.form-required { color: #f87171; margin-left: 3px; }
+
+.form-input, .form-select, .form-textarea {
+  background: var(--bg-input); border: 1px solid var(--border-color);
+  border-radius: 10px; color: var(--text-primary); font-size: 14px;
+  padding: 11px 14px; outline: none; font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+.form-select option { background: var(--bg-card); }
+.form-textarea { resize: vertical; min-height: 140px; line-height: 1.6; }
+
+.form-submit {
+  width: 100%; padding: 13px;
+  background: linear-gradient(135deg, #14b8a6, #0d9488);
+  border: none; border-radius: 10px;
+  color: #fff; font-size: 15px; font-weight: 700;
+  font-family: inherit; cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  box-shadow: 0 4px 14px rgba(20, 184, 166, 0.3);
+  margin-top: 4px;
+}
+.form-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+.contact-sidebar { display: flex; flex-direction: column; gap: 14px; }
+.contact-info-card {
+  background: var(--bg-card); border: 1px solid var(--border-color);
+  border-radius: 14px; padding: 20px;
+}
+.contact-info-title { font-size: 13px; font-weight: 700; color: var(--text-secondary); margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+.contact-info-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+.contact-info-item:last-child { margin-bottom: 0; }
+.contact-info-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.contact-info-text strong { display: block; font-size: 13px; color: var(--text-primary); margin-bottom: 2px; }
+.contact-info-text span { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+.contact-hours { background: rgba(20,184,166,0.06); border: 1px solid rgba(20,184,166,0.2); border-radius: 10px; padding: 14px 16px; }
+.contact-hours-title { font-size: 12px; font-weight: 700; color: #5eead4; margin-bottom: 8px; }
+.contact-hours-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-secondary); margin-bottom: 4px; }
+.contact-hours-row:last-child { margin-bottom: 0; }

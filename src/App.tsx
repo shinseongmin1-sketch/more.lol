@@ -7,6 +7,11 @@ import NormalPage from './pages/NormalPage'
 import ChampionPage from './pages/ChampionPage'
 import CommunityPage from './pages/CommunityPage'
 import SummonerPage from './pages/SummonerPage'
+import NoticePage from './pages/NoticePage'
+import FaqPage from './pages/FaqPage'
+import ContactPage from './pages/ContactPage'
+import TermsPage from './pages/TermsPage'
+import PrivacyPage from './pages/PrivacyPage'
 import './App.css'
 
 function App() {
@@ -20,6 +25,11 @@ function App() {
         <Route path="/champion" element={<ChampionPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/summoner/:name" element={<SummonerPage />} />
+        <Route path="/notice" element={<NoticePage />} />
+        <Route path="/faq" element={<FaqPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
       </Routes>
     </Layout>
   )

@@ -1,11 +1,13 @@
+import { Link, useNavigate } from 'react-router-dom'
 import './Footer.css'
 
 export default function Footer() {
+  const navigate = useNavigate()
   return (
     <footer className="footer">
       <div className="footer-inner">
         <div className="footer-left">
-          <div className="footer-logo">
+          <div className="footer-logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
             <span>more</span><span className="footer-logo-dot">.lol</span>
           </div>
           <p className="footer-desc">
@@ -16,27 +18,28 @@ export default function Footer() {
         <div className="footer-links">
           <div className="footer-col">
             <div className="footer-col-title">서비스</div>
-            <a href="#">전적 검색</a>
-            <a href="#">챔피언 분석</a>
-            <a href="#">티어리스트</a>
-            <a href="#">ARAM 통계</a>
+            <Link to="/">전적 검색</Link>
+            <Link to="/champion">챔피언 분석</Link>
+            <Link to="/ranked">솔로랭크 티어</Link>
+            <Link to="/aram">ARAM 통계</Link>
+            <Link to="/normal">일반게임 통계</Link>
           </div>
           <div className="footer-col">
             <div className="footer-col-title">정보</div>
-            <a href="#">공지사항</a>
-            <a href="#">자주 묻는 질문</a>
-            <a href="#">문의하기</a>
+            <Link to="/notice">공지사항</Link>
+            <Link to="/faq">자주 묻는 질문</Link>
+            <Link to="/contact">문의하기</Link>
           </div>
           <div className="footer-col">
             <div className="footer-col-title">약관</div>
-            <a href="#">이용약관</a>
-            <a href="#">개인정보처리방침</a>
+            <Link to="/terms">이용약관</Link>
+            <Link to="/privacy">개인정보처리방침</Link>
           </div>
         </div>
       </div>
       <div className="footer-bottom">
         <span>© 2026 more.lol. All rights reserved.</span>
-        <span>more.lol isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games.</span>
+        <span>more.lol isn't endorsed by Riot Games.</span>
       </div>
     </footer>
   )
