@@ -1,14 +1,24 @@
 import { useState } from 'react'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import './Header.css'
 
 interface HeaderProps {
-  onLogoClick: () => void
   onSearch: (name: string) => void
-  showSearchInHeader: boolean
 }
 
-export default function Header({ onLogoClick, onSearch, showSearchInHeader }: HeaderProps) {
+const navItems = [
+  { path: '/aram', label: 'ARAM' },
+  { path: '/ranked', label: '랭크' },
+  { path: '/normal', label: '일반' },
+  { path: '/champion', label: '챔피언 분석' },
+  { path: '/community', label: '커뮤니티' },
+]
+
+export default function Header({ onSearch }: HeaderProps) {
   const [inputValue, setInputValue] = useState('')
+  const navigate = useNavigate()
+  const location = useLocation()
+  const isHome = location.pathname === '/'
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -22,20 +32,25 @@ export default function Header({ onLogoClick, onSearch, showSearchInHeader }: He
     <header className="header">
       <div className="header-inner">
         <div className="header-left">
-          <div className="logo" onClick={onLogoClick}>
+          <Link to="/" className="logo">
             <span className="logo-text">more</span>
             <span className="logo-dot">.lol</span>
-          </div>
+          </Link>
           <nav className="header-nav">
-            <a href="#" className="nav-link active">ARAM</a>
-            <a href="#" className="nav-link">랭크</a>
-            <a href="#" className="nav-link">일반</a>
-            <a href="#" className="nav-link">챔피언 분석</a>
+            {navItems.map(item => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+              >
+                {item.label}
+              </Link>
+            ))}
           </nav>
         </div>
 
         <div className="header-right">
-          {showSearchInHeader && (
+          {!isHome && (
             <form className="header-search-form" onSubmit={handleSubmit}>
               <div className="header-search-wrap">
                 <svg className="search-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -58,7 +73,7 @@ export default function Header({ onLogoClick, onSearch, showSearchInHeader }: He
             </form>
           )}
           <div className="header-actions">
-            <button className="btn-ghost">한국어</button>
+            <button className="btn-ghost" onClick={() => navigate('/community')}>커뮤니티</button>
             <button className="btn-primary-sm">로그인</button>
           </div>
         </div>
