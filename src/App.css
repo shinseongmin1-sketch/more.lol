@@ -5,28 +5,53 @@
 }
 
 :root {
-  --bg-primary: #0a0e1a;
-  --bg-secondary: #0f1525;
-  --bg-card: #141927;
-  --bg-card-hover: #1a2035;
-  --bg-input: #1c2438;
-  --border-color: #1e2d45;
-  --border-hover: #2a4070;
-  --accent-gold: #c89b3c;
-  --accent-gold-light: #f0c060;
-  --accent-blue: #4a90e2;
-  --accent-blue-light: #6bb3ff;
-  --accent-purple: #9b59b6;
-  --text-primary: #e8ecf0;
-  --text-secondary: #7a8fa8;
-  --text-muted: #4a5a6e;
-  --tier-s: #ff6b6b;
-  --tier-a: #ffa94d;
-  --tier-b: #ffd43b;
-  --tier-c: #69db7c;
-  --tier-d: #74c0fc;
-  --win-color: #4a90e2;
-  --lose-color: #e74c3c;
+  /* 배경 */
+  --bg-primary: #111118;
+  --bg-secondary: #17171f;
+  --bg-card: #1c1c28;
+  --bg-card-hover: #222232;
+  --bg-input: #20202e;
+  --border-color: #2a2a40;
+  --border-hover: #4a3fa0;
+
+  /* 메인 액센트: 바이올렛 */
+  --accent-primary: #7c5af6;
+  --accent-primary-light: #9d7dff;
+  --accent-primary-glow: rgba(124, 90, 246, 0.25);
+
+  /* 서브 액센트: 앰버 */
+  --accent-amber: #f59e0b;
+  --accent-amber-light: #fbbf24;
+  --accent-amber-glow: rgba(245, 158, 11, 0.2);
+
+  /* 서브 액센트: 사이안 */
+  --accent-cyan: #06b6d4;
+  --accent-cyan-light: #22d3ee;
+
+  /* 텍스트 */
+  --text-primary: #e8e8f0;
+  --text-secondary: #8888a8;
+  --text-muted: #4a4a6a;
+
+  /* 티어 */
+  --tier-s-plus: #ff6b6b;
+  --tier-s: #ff9f43;
+  --tier-a: #ffd43b;
+  --tier-b: #69db7c;
+  --tier-c: #74c0fc;
+  --tier-d: #a8a8b3;
+
+  /* 승/패 */
+  --win-color: #5c8af5;
+  --lose-color: #f56565;
+
+  /* 레거시 (컴포넌트 호환) */
+  --accent-gold: #f59e0b;
+  --accent-gold-light: #fbbf24;
+  --accent-blue: #7c5af6;
+  --accent-blue-light: #9d7dff;
+  --accent-purple: #a78bfa;
+  --tier-s: #ff9f43;
 }
 
 body {
@@ -43,28 +68,10 @@ body {
   min-height: 100vh;
 }
 
-button {
-  cursor: pointer;
-  font-family: inherit;
-}
+button { cursor: pointer; font-family: inherit; }
+a { text-decoration: none; color: inherit; }
 
-a {
-  text-decoration: none;
-  color: inherit;
-}
-
-/* Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 3px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--border-hover);
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
