@@ -7,6 +7,7 @@
   background: var(--bg-secondary);
   border-bottom: 1px solid var(--border-color);
   padding: 28px 24px;
+  box-shadow: 0 1px 4px rgba(100, 90, 180, 0.06);
 }
 
 .subpage-header-inner {

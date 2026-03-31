@@ -1,5 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import {
+  incrementSummonerSearch,
+  getTodaySummonerCount,
+  getAnalyzedChampionCount,
+  onStatsChange,
+} from '../utils/searchStats'
 import './HomePage.css'
 
 const recentSearches = ['Hide on bush', 'Faker', 'T1 Gumayusi', 'Keria', 'Oner']
@@ -25,10 +31,22 @@ const rankStyles = ['gold', 'silver', 'bronze', '', '']
 export default function HomePage() {
   const [inputValue, setInputValue] = useState('')
   const [focused, setFocused]       = useState(false)
+  const [todayCount, setTodayCount] = useState(getTodaySummonerCount)
+  const [champCount, setChampCount] = useState(getAnalyzedChampionCount)
   const navigate = useNavigate()
 
+  useEffect(() => {
+    return onStatsChange(() => {
+      setTodayCount(getTodaySummonerCount())
+      setChampCount(getAnalyzedChampionCount())
+    })
+  }, [])
+
   const handleSearch = (name: string) => {
-    if (name.trim()) navigate(`/summoner/${encodeURIComponent(name.trim())}`)
+    if (name.trim()) {
+      incrementSummonerSearch()
+      navigate(`/summoner/${encodeURIComponent(name.trim())}`)
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -108,11 +126,11 @@ export default function HomePage() {
 
           <div className="hero-stats-row">
             <div className="hero-stat-item">
-              <span className="hero-stat-val">12,847</span>
+              <span className="hero-stat-val">{todayCount.toLocaleString()}</span>
               <span className="hero-stat-label">오늘 검색된 소환사</span>
             </div>
             <div className="hero-stat-item">
-              <span className="hero-stat-val">163</span>
+              <span className="hero-stat-val">{champCount.toLocaleString()}</span>
               <span className="hero-stat-label">분석 중인 챔피언</span>
             </div>
             <div className="hero-stat-item">

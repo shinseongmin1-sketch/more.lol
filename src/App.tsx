@@ -12,6 +12,11 @@ import FaqPage from './pages/FaqPage'
 import ContactPage from './pages/ContactPage'
 import TermsPage from './pages/TermsPage'
 import PrivacyPage from './pages/PrivacyPage'
+import MyProfilePage from './pages/MyProfilePage'
+import WritePostPage from './pages/WritePostPage'
+import PostDetailPage from './pages/PostDetailPage'
+import EditPostPage from './pages/EditPostPage'
+import ProfileSettingsPage from './pages/ProfileSettingsPage'
 import './App.css'
 
 function App() {
@@ -30,6 +35,11 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/profile" element={<MyProfilePage />} />
+        <Route path="/write" element={<WritePostPage />} />
+        <Route path="/post/:id" element={<PostDetailPage />} />
+        <Route path="/edit/:id" element={<EditPostPage />} />
+        <Route path="/settings" element={<ProfileSettingsPage />} />
       </Routes>
     </Layout>
   )

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { mockChampions, tierColors } from '../data/mockChampions'
+import { incrementChampionAnalysis } from '../utils/searchStats'
 import './ChampionPage.css'
 import './SubPage.css'
 
@@ -25,7 +26,7 @@ export default function ChampionPage() {
         </div>
         <div className={"champ-analysis-grid"}>
           {filtered.map(champ => (
-            <div key={champ.id} className={"champ-analysis-card"}>
+            <div key={champ.id} className={"champ-analysis-card"} onClick={() => incrementChampionAnalysis(champ.name)}>
               <div className={"ca-header"}>
                 <div className={"ca-icon"} style={{ background: champ.iconColor + '22', border: '2px solid ' + champ.iconColor + '44' }}>
                   <span style={{ color: champ.iconColor, fontWeight: 900, fontSize: 16 }}>{champ.name.slice(0,2).toUpperCase()}</span>

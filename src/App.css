@@ -6,52 +6,51 @@
 
 :root {
   /* 배경 */
-  --bg-primary: #111118;
-  --bg-secondary: #17171f;
-  --bg-card: #1c1c28;
-  --bg-card-hover: #222232;
-  --bg-input: #20202e;
-  --border-color: #2a2a40;
-  --border-hover: #4a3fa0;
+  --bg-primary: #f2f4fb;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f5f7ff;
+  --bg-input: #eef0f8;
+  --border-color: #dde0f0;
+  --border-hover: #7c5af6;
 
   /* 메인 액센트: 바이올렛 */
   --accent-primary: #7c5af6;
-  --accent-primary-light: #9d7dff;
-  --accent-primary-glow: rgba(124, 90, 246, 0.25);
+  --accent-primary-light: #6040e0;
+  --accent-primary-glow: rgba(124, 90, 246, 0.18);
 
   /* 서브 액센트: 앰버 */
-  --accent-amber: #f59e0b;
-  --accent-amber-light: #fbbf24;
-  --accent-amber-glow: rgba(245, 158, 11, 0.2);
+  --accent-amber: #d97706;
+  --accent-amber-light: #b45309;
+  --accent-amber-glow: rgba(217, 119, 6, 0.15);
 
   /* 서브 액센트: 사이안 */
-  --accent-cyan: #06b6d4;
-  --accent-cyan-light: #22d3ee;
+  --accent-cyan: #0891b2;
+  --accent-cyan-light: #0e7490;
 
   /* 텍스트 */
-  --text-primary: #e8e8f0;
-  --text-secondary: #8888a8;
-  --text-muted: #4a4a6a;
+  --text-primary: #18182e;
+  --text-secondary: #4a4e6a;
+  --text-muted: #9096b8;
 
   /* 티어 */
-  --tier-s-plus: #ff6b6b;
-  --tier-s: #ff9f43;
-  --tier-a: #ffd43b;
-  --tier-b: #69db7c;
-  --tier-c: #74c0fc;
-  --tier-d: #a8a8b3;
+  --tier-s-plus: #dc2626;
+  --tier-s: #d97706;
+  --tier-a: #ca8a04;
+  --tier-b: #16a34a;
+  --tier-c: #2563eb;
+  --tier-d: #6b7280;
 
   /* 승/패 */
-  --win-color: #5c8af5;
-  --lose-color: #f56565;
+  --win-color: #2563eb;
+  --lose-color: #dc2626;
 
   /* 레거시 (컴포넌트 호환) */
-  --accent-gold: #f59e0b;
-  --accent-gold-light: #fbbf24;
+  --accent-gold: #d97706;
+  --accent-gold-light: #b45309;
   --accent-blue: #7c5af6;
-  --accent-blue-light: #9d7dff;
-  --accent-purple: #a78bfa;
-  --tier-s: #ff9f43;
+  --accent-blue-light: #6040e0;
+  --accent-purple: #7c5af6;
 }
 
 body {
@@ -61,6 +60,8 @@ body {
   min-height: 100vh;
   line-height: 1.5;
 }
+
+select option { background: #fff; color: #18182e; }
 
 .app {
   display: flex;
@@ -72,6 +73,6 @@ button { cursor: pointer; font-family: inherit; }
 a { text-decoration: none; color: inherit; }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+::-webkit-scrollbar-track { background: #e8eaf4; }
+::-webkit-scrollbar-thumb { background: #c4c8df; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
