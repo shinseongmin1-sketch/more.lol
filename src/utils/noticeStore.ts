@@ -62,8 +62,6 @@ export function addNotice(fields: {
     pinned: fields.pinned,
     isNew: true,
   }
-  // 고정 공지는 맨 앞, 나머지는 그 다음
-  const pinned    = [newNotice, ...notices.filter(n => n.pinned && !fields.pinned ? true : false)]
   localStorage.setItem(KEY, JSON.stringify([newNotice, ...notices]))
   return newNotice
 }
