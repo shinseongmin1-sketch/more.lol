@@ -50,8 +50,7 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
       <div className="header-inner">
         <div className="header-left">
           <Link to="/" className="logo">
-            <span className="logo-text">more</span>
-            <span className="logo-dot">.lol</span>
+            <span className="logo-text">morelol</span>
           </Link>
           <nav className="header-nav">
             {navItems.map(item => (

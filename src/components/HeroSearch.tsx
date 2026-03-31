@@ -39,8 +39,7 @@ export default function HeroSearch({ onSearch }: HeroSearchProps) {
       <div className="hero-content">
         <div className="hero-badge">Beta</div>
         <h1 className="hero-title">
-          <span className="hero-title-more">more</span>
-          <span className="hero-title-dot">.lol</span>
+          <span className="hero-title-more">morelol</span>
         </h1>
         <p className="hero-subtitle">더 깊은 전적 분석 · 더 정확한 티어 정보</p>
 
