@@ -28,21 +28,20 @@
 .logo {
   display: flex;
   align-items: center;
+  gap: 8px;
   user-select: none;
+  text-decoration: none;
 }
 
 .logo-text {
-  font-size: 21px;
+  font-size: 20px;
   font-weight: 900;
   color: var(--text-primary);
   letter-spacing: -0.5px;
 }
 
-.logo-dot {
-  font-size: 21px;
-  font-weight: 900;
-  letter-spacing: -0.5px;
-  background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+.logo-lol {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

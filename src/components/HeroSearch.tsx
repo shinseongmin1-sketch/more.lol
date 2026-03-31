@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Logo from './Logo'
 import './HeroSearch.css'
 
 interface HeroSearchProps {
@@ -38,8 +39,11 @@ export default function HeroSearch({ onSearch }: HeroSearchProps) {
       </div>
       <div className="hero-content">
         <div className="hero-badge">Beta</div>
+        <div className="hero-logo-wrap">
+          <Logo size={64} id="hero-logo" />
+        </div>
         <h1 className="hero-title">
-          <span className="hero-title-more">morelol</span>
+          <span className="hero-title-more">more</span><span className="hero-title-lol">lol</span>
         </h1>
         <p className="hero-subtitle">더 깊은 전적 분석 · 더 정확한 티어 정보</p>
 

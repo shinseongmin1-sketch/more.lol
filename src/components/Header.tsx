@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import type { User } from '../utils/auth'
+import Logo from './Logo'
 import './Header.css'
 
 interface HeaderProps {
@@ -50,7 +51,8 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
       <div className="header-inner">
         <div className="header-left">
           <Link to="/" className="logo">
-            <span className="logo-text">morelol</span>
+            <Logo size={30} id="header-logo" />
+            <span className="logo-text">more<span className="logo-lol">lol</span></span>
           </Link>
           <nav className="header-nav">
             {navItems.map(item => (
