@@ -445,6 +445,18 @@
   border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.hot-icon-img {
+  width: 40px; height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  display: block;
 }
 
 .hot-info { flex: 1; }
