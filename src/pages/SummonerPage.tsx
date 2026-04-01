@@ -359,10 +359,44 @@ export default function SummonerPage() {
                         <div className="most-name">{c.name}</div>
                         <div className="most-rate">
                           <span className="win-text">{wr}%</span>
-                          <span className="most-games"> ({c.total}게임)</span>
+                          <span className="most-games"> {c.total}게임</span>
+                        </div>
+                        <div className="most-wr-bar">
+                          <div className="most-wr-fill" style={{ width: `${wr}%` }} />
                         </div>
                       </div>
-                      <div className="most-kda-val">{kda}</div>
+                      <div className="most-kda-val">
+                        <span>{kda}</span>
+                        <span className="most-kda-label">KDA</span>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+
+            {topTeammates.length > 0 && (
+              <div className="most-champs-card">
+                <div className="card-title">같이한 유저</div>
+                {topTeammates.map(t => {
+                  const wr = Math.round((t.wins / t.total) * 100)
+                  return (
+                    <div key={t.puuid} className="most-champ-row teammate-row"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => window.location.href = `/summoner/${encodeURIComponent(`${t.gameName}#${t.tagLine}`)}`}
+                    >
+                      <div className="teammate-avatar">{t.gameName.slice(0, 1).toUpperCase()}</div>
+                      <div className="most-info">
+                        <div className="most-name">{t.gameName}<span className="teammate-tag">#{t.tagLine}</span></div>
+                        <div className="most-rate">
+                          <span className="win-text">{t.wins}승</span>
+                          <span className="lose-text" style={{ marginLeft: 4 }}>{t.total - t.wins}패</span>
+                          <span className="most-games"> · {t.total}게임</span>
+                        </div>
+                      </div>
+                      <div className="most-kda-val">
+                        <span style={{ color: wr >= 50 ? 'var(--win-color)' : 'var(--lose-color)' }}>{wr}%</span>
+                      </div>
                     </div>
                   )
                 })}
