@@ -182,14 +182,22 @@ export default function HomePage() {
             </div>
             <div className="hot-champs">
               {hotChamps.map((champ, i) => (
-                <div key={champ.en} className="hot-champ-card" onClick={() => navigate('/champion')}>
+                <div key={champ.id} className="hot-champ-card" onClick={() => navigate('/champion')}>
                   <span className={`hot-rank ${rankStyles[i]}`}>#{i + 1}</span>
-                  <div className="hot-icon" style={{ background: champ.color + '18', border: `1.5px solid ${champ.color}40` }}>
-                    <span style={{ color: champ.color, fontSize: 13, fontWeight: 900 }}>{champ.name.slice(0, 2)}</span>
-                  </div>
+                  {ddVersion ? (
+                    <img
+                      src={champIconUrl(ddVersion, champ.id)}
+                      alt={champ.name}
+                      className="hot-icon hot-icon-img"
+                    />
+                  ) : (
+                    <div className="hot-icon">
+                      <span style={{ fontSize: 13, fontWeight: 900, color: 'var(--text-muted)' }}>{champ.name.slice(0, 2)}</span>
+                    </div>
+                  )}
                   <div className="hot-info">
                     <div className="hot-name">{champ.name}</div>
-                    <div className="hot-en">{champ.en}</div>
+                    <div className="hot-en">{champ.id}</div>
                   </div>
                   <div className="hot-right">
                     <div className="hot-tier" style={{ color: champ.tier === 'S+' ? '#ff6b6b' : '#ff9f43' }}>{champ.tier}</div>
