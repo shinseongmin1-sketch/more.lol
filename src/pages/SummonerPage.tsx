@@ -190,7 +190,21 @@ export default function SummonerPage() {
     champStats[m.championId].deaths  += m.deaths
     champStats[m.championId].assists += m.assists
   })
-  const mostChamps = Object.values(champStats).sort((a, b) => b.total - a.total).slice(0, 3)
+  const mostChamps = Object.values(champStats).sort((a, b) => b.total - a.total).slice(0, 5)
+
+  // 같이한 유저 집계
+  const teammateStats: Record<string, { gameName: string; tagLine: string; puuid: string; total: number; wins: number }> = {}
+  matches.forEach(m => {
+    m.teammates.forEach(t => {
+      if (!t.gameName) return
+      if (!teammateStats[t.puuid]) {
+        teammateStats[t.puuid] = { gameName: t.gameName, tagLine: t.tagLine, puuid: t.puuid, total: 0, wins: 0 }
+      }
+      teammateStats[t.puuid].total++
+      if (t.win) teammateStats[t.puuid].wins++
+    })
+  })
+  const topTeammates = Object.values(teammateStats).sort((a, b) => b.total - a.total).slice(0, 5)
 
   const soloRank = rankInfo.find(r => r.queueType === 'RANKED_SOLO_5x5')
   const flexRank = rankInfo.find(r => r.queueType === 'RANKED_FLEX_SR')
