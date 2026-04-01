@@ -31,6 +31,9 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setDropdownOpen(false)
       }
+      if (champMenuRef.current && !champMenuRef.current.contains(e.target as Node)) {
+        setChampMenuOpen(false)
+      }
     }
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
