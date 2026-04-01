@@ -323,6 +323,13 @@
 }
 
 /* ─── 빠른 이동 ─── */
+.quick-links-section {
+  padding: 20px 32px 0;
+  max-width: 1440px;
+  margin: 0 auto;
+  width: 100%;
+}
+
 .quick-links {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
