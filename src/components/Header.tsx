@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import type { User } from '../utils/auth'
-import Logo from './Logo'
+import logoImg from '../assets/logo.png'
 import './Header.css'
 
 interface HeaderProps {
