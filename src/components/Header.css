@@ -76,6 +76,62 @@
   background: rgba(124, 90, 246, 0.12);
 }
 
+/* 챔피언 분석 하위메뉴 */
+.nav-item-wrap {
+  position: relative;
+}
+
+.nav-chevron {
+  width: 13px;
+  height: 13px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
+  margin-bottom: 1px;
+  color: var(--text-muted);
+  transition: transform 0.15s;
+}
+
+.nav-item-wrap:hover .nav-chevron {
+  transform: rotate(180deg);
+}
+
+.nav-submenu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 6px;
+  min-width: 140px;
+  box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+  z-index: 300;
+  animation: dropdown-in 0.12s ease;
+}
+
+.nav-submenu-item {
+  display: block;
+  padding: 9px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+
+.nav-submenu-item:hover {
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+}
+
+.nav-submenu-item.active {
+  color: var(--accent-primary);
+  background: var(--accent-primary-glow);
+}
+
 .header-right {
   display: flex;
   align-items: center;
