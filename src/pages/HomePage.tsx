@@ -83,7 +83,10 @@ export default function HomePage() {
             Beta · 14.24 패치 반영
           </div>
 
-          <img src={logoImg} alt="morelol" className="home-logo-img" />
+          <h1 className="home-title">
+            <span className="home-title-main">more</span>
+            <span className="home-title-dot">lol</span>
+          </h1>
           <p className="home-subtitle">더 깊은 전적 분석 · 더 정확한 티어 정보</p>
 
           <form className="home-search-form" onSubmit={handleSubmit}>
