@@ -156,6 +156,7 @@
   width: 100%;
   position: relative;
   margin-top: 4px;
+  z-index: 9999;
 }
 
 .home-search-box {
