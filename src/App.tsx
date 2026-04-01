@@ -41,6 +41,7 @@ function App() {
         <Route path="/post/:id" element={<PostDetailPage />} />
         <Route path="/edit/:id" element={<EditPostPage />} />
         <Route path="/settings" element={<ProfileSettingsPage />} />
+        <Route path="/ranking" element={<RankingPage />} />
       </Routes>
     </Layout>
   )
