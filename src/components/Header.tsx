@@ -99,6 +99,14 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
               )}
             </div>
 
+            {/* 랭킹 */}
+            <Link
+              to="/ranking"
+              className={`nav-link ${location.pathname === '/ranking' ? 'active' : ''}`}
+            >
+              랭킹
+            </Link>
+
             {/* 커뮤니티 */}
             <Link
               to="/community"
