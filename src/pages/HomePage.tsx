@@ -34,10 +34,12 @@ export default function HomePage() {
   const [todayCount, setTodayCount] = useState(getTodaySummonerCount)
   const [champCount, setChampCount] = useState(getAnalyzedChampionCount)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const [ddVersion, setDdVersion] = useState('')
   const navigate = useNavigate()
 
   useEffect(() => {
     setRecentSearches(getRecentSearches())
+    getDDVersion().then(setDdVersion).catch(() => {})
     return onStatsChange(() => {
       setTodayCount(getTodaySummonerCount())
       setChampCount(getAnalyzedChampionCount())
