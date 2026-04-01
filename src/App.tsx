@@ -17,6 +17,7 @@ import WritePostPage from './pages/WritePostPage'
 import PostDetailPage from './pages/PostDetailPage'
 import EditPostPage from './pages/EditPostPage'
 import ProfileSettingsPage from './pages/ProfileSettingsPage'
+import RankingPage from './pages/RankingPage'
 import './App.css'
 
 function App() {
