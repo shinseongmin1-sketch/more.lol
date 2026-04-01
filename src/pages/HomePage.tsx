@@ -7,6 +7,7 @@ import {
   onStatsChange,
 } from '../utils/searchStats'
 import { getRecentSearches, addRecentSearch, removeRecentSearch } from '../utils/recentSearchStore'
+import { getDDVersion, champIconUrl } from '../utils/riotApi'
 import './HomePage.css'
 
 const quickLinks = [
