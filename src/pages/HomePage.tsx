@@ -11,11 +11,12 @@ import { getDDVersion, champIconUrl } from '../utils/riotApi'
 import './HomePage.css'
 
 const quickLinks = [
-  { path: '/aram',      label: 'ARAM 티어리스트',  desc: '무작위 총력전 챔피언 분석', icon: '⚡', color: '#00d2ff' },
-  { path: '/ranked',   label: '솔로랭크 통계',     desc: '랭크 게임 챔피언 티어',    icon: '🏆', color: '#f59e0b' },
-  { path: '/normal',   label: '일반게임 통계',     desc: '일반게임 챔피언 승률 분석', icon: '🛡️', color: '#10b981' },
-  { path: '/champion', label: '챔피언 분석',        desc: '챔피언별 심층 데이터',     icon: '📊', color: '#6366f1' },
-  { path: '/community',label: '커뮤니티',           desc: '공략, 팁, 자유게시판',     icon: '💬', color: '#f97316' },
+  { path: '/ranked',   label: '솔로랭크 통계',   desc: '랭크 게임 챔피언 티어',      icon: '🏆', color: '#f59e0b' },
+  { path: '/normal',   label: '일반게임 통계',   desc: '일반게임 챔피언 승률 분석',  icon: '🛡️', color: '#10b981' },
+  { path: '/aram',     label: '칼바람나락 통계', desc: '칼바람나락 챔피언 분석',     icon: '⚡', color: '#00d2ff' },
+  { path: '/champion', label: '챔피언 분석',     desc: '챔피언별 심층 데이터',       icon: '📊', color: '#6366f1' },
+  { path: '/ranking',  label: '랭킹',           desc: '소환사 랭킹 순위',           icon: '🥇', color: '#e879f9' },
+  { path: '/community',label: '커뮤니티',        desc: '공략, 팁, 자유게시판',       icon: '💬', color: '#f97316' },
 ]
 
 const hotChamps = [
