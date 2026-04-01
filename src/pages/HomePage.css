@@ -235,9 +235,10 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 14px;
-  overflow: hidden;
-  z-index: 50;
-  box-shadow: 0 8px 24px rgba(100, 90, 180, 0.12);
+  overflow-y: auto;
+  max-height: 400px;
+  z-index: 9999;
+  box-shadow: 0 8px 32px rgba(100, 90, 180, 0.18);
 }
 
 .dropdown-section-title {
