@@ -116,9 +116,22 @@ export default function SummonerPage() {
 
         const processed: MatchData[] = (matchDetails as any[])
           .map((match) => {
-            const me = match.info.participants.find((p: any) => p.puuid === acc.puuid)
+            const participants: any[] = match.info.participants
+            const me = participants.find((p: any) => p.puuid === acc.puuid)
             if (!me) return null
             const champ = champMap[String(me.championId)]
+            const teammates: Teammate[] = participants
+              .filter(p => p.puuid !== acc.puuid && p.teamId === me.teamId)
+              .map(p => {
+                const tc = champMap[String(p.championId)]
+                return {
+                  puuid: p.puuid,
+                  gameName: p.riotIdGameName ?? '',
+                  tagLine: p.riotIdTagline ?? '',
+                  championId: tc?.id ?? p.championName,
+                  win: p.win,
+                }
+              })
             return {
               matchId: match.metadata.matchId,
               win: me.win,
@@ -133,6 +146,7 @@ export default function SummonerPage() {
               duration: match.info.gameDuration,
               gameStartTimestamp: match.info.gameStartTimestamp,
               items: [me.item0, me.item1, me.item2, me.item3, me.item4, me.item5],
+              teammates,
             }
           })
           .filter(Boolean) as MatchData[]
