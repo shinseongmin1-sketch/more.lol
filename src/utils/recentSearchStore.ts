@@ -1,6 +1,6 @@
 import { getSession } from './auth'
 
-const MAX = 5
+const MAX = 15
 
 function getKey(): string {
   const session = getSession()
