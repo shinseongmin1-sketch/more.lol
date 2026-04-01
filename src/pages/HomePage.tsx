@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import logoImg from '../assets/logo.png'
 import {
   incrementSummonerSearch,
   getTodaySummonerCount,
