@@ -19,11 +19,11 @@ const quickLinks = [
 ]
 
 const hotChamps = [
-  { name: '요네',   en: 'Yone',      tier: 'S+', wr: '56.8%', color: '#7c5af6' },
-  { name: '진',     en: 'Jinx',      tier: 'S+', wr: '55.4%', color: '#f472b6' },
-  { name: '럭스',   en: 'Lux',       tier: 'S',  wr: '54.1%', color: '#f59e0b' },
-  { name: '직스',   en: 'Ziggs',     tier: 'S',  wr: '53.7%', color: '#06b6d4' },
-  { name: '세라핀', en: 'Seraphine', tier: 'S',  wr: '53.2%', color: '#a78bfa' },
+  { name: '요네',   id: 'Yone',      tier: 'S+', wr: '56.8%' },
+  { name: '진',     id: 'Jinx',      tier: 'S+', wr: '55.4%' },
+  { name: '럭스',   id: 'Lux',       tier: 'S',  wr: '54.1%' },
+  { name: '직스',   id: 'Ziggs',     tier: 'S',  wr: '53.7%' },
+  { name: '세라핀', id: 'Seraphine', tier: 'S',  wr: '53.2%' },
 ]
 
 const rankStyles = ['gold', 'silver', 'bronze', '', '']
