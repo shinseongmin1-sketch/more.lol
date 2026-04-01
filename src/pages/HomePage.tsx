@@ -78,11 +78,6 @@ export default function HomePage() {
         <div className="hero-orb hero-orb-3" />
 
         <div className="home-hero-content">
-          <div className="hero-eyebrow">
-            <span className="hero-eyebrow-dot" />
-            Beta · 14.24 패치 반영
-          </div>
-
           <h1 className="home-title">
             <span className="home-title-main">more</span>
             <span className="home-title-dot">lol</span>
