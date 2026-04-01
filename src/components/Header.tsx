@@ -60,8 +60,13 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
             <div
               className="nav-item-wrap"
               ref={champMenuRef}
-              onMouseEnter={() => setChampMenuOpen(true)}
-              onMouseLeave={() => setChampMenuOpen(false)}
+              onMouseEnter={() => {
+                if (champCloseTimer.current) clearTimeout(champCloseTimer.current)
+                setChampMenuOpen(true)
+              }}
+              onMouseLeave={() => {
+                champCloseTimer.current = setTimeout(() => setChampMenuOpen(false), 150)
+              }}
             >
               <Link
                 to="/champion"
