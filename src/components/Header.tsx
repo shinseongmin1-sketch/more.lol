@@ -76,7 +76,15 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
                 <span className={`nav-sub-badge ${champMenuOpen ? 'open' : ''}`}>▾</span>
               </Link>
               {champMenuOpen && (
-                <div className="nav-submenu">
+                <div
+                  className="nav-submenu"
+                  onMouseEnter={() => {
+                    if (champCloseTimer.current) clearTimeout(champCloseTimer.current)
+                  }}
+                  onMouseLeave={() => {
+                    champCloseTimer.current = setTimeout(() => setChampMenuOpen(false), 150)
+                  }}
+                >
                   {champSubItems.map(sub => (
                     <Link
                       key={sub.path}
