@@ -55,15 +55,45 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
             <span className="logo-word">More</span><span className="logo-word logo-accent">lol</span>
           </Link>
           <nav className="header-nav">
-            {navItems.map(item => (
+            {/* 챔피언 분석 (하위메뉴) */}
+            <div
+              className="nav-item-wrap"
+              ref={champMenuRef}
+              onMouseEnter={() => setChampMenuOpen(true)}
+              onMouseLeave={() => setChampMenuOpen(false)}
+            >
               <Link
-                key={item.path}
-                to={item.path}
-                className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+                to="/champion"
+                className={`nav-link ${location.pathname.startsWith('/champion') || ['/ranked','/normal','/aram'].includes(location.pathname) ? 'active' : ''}`}
               >
-                {item.label}
+                챔피언 분석
+                <svg className="nav-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
               </Link>
-            ))}
+              {champMenuOpen && (
+                <div className="nav-submenu">
+                  {champSubItems.map(sub => (
+                    <Link
+                      key={sub.path}
+                      to={sub.path}
+                      className={`nav-submenu-item ${location.pathname === sub.path ? 'active' : ''}`}
+                      onClick={() => setChampMenuOpen(false)}
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 커뮤니티 */}
+            <Link
+              to="/community"
+              className={`nav-link ${location.pathname === '/community' ? 'active' : ''}`}
+            >
+              커뮤니티
+            </Link>
           </nav>
         </div>
 
