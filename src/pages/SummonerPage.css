@@ -331,6 +331,10 @@
   font-size: 13px;
   font-weight: 700;
   color: var(--accent-gold);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 /* Win rate bar */
