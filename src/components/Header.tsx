@@ -90,8 +90,6 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
           )}
 
           <div className="header-actions">
-            <button className="btn-ghost" onClick={() => navigate('/community')}>커뮤니티</button>
-
             {user ? (
               <div className="user-menu" ref={dropdownRef}>
                 <button
