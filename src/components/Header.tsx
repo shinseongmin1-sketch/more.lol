@@ -51,8 +51,7 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
       <div className="header-inner">
         <div className="header-left">
           <Link to="/" className="logo">
-            <Logo size={30} id="header-logo" />
-            <span className="logo-text">more<span className="logo-lol">lol</span></span>
+            <img src={logoImg} alt="morelol" className="header-logo-img" />
           </Link>
           <nav className="header-nav">
             {navItems.map(item => (
