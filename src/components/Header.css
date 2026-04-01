@@ -28,26 +28,21 @@
 .logo {
   display: flex;
   align-items: center;
-  gap: 8px;
   user-select: none;
   text-decoration: none;
+  gap: 0;
 }
 
-.header-logo-img {
-  height: 68px;
-  width: auto;
-  object-fit: contain;
-}
-
-.logo-text {
-  font-size: 20px;
+.logo-word {
+  font-size: 24px;
   font-weight: 900;
+  letter-spacing: -1px;
+  line-height: 1;
   color: var(--text-primary);
-  letter-spacing: -0.5px;
 }
 
-.logo-lol {
-  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+.logo-accent {
+  background: linear-gradient(135deg, var(--accent-primary) 0%, #a78bfa 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
