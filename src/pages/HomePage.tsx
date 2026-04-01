@@ -117,16 +117,25 @@ export default function HomePage() {
               </button>
             </div>
 
-            {focused && (
+            {focused && recentSearches.length > 0 && (
               <div className="home-dropdown">
                 <div className="dropdown-section-title">최근 검색</div>
                 {recentSearches.map(name => (
                   <div key={name} className="dropdown-item" onMouseDown={() => handleSearch(name)}>
                     <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                      <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
                     </svg>
-                    {name}
+                    <span style={{ flex: 1 }}>{name}</span>
                     <span className="dropdown-server">KR</span>
+                    <button
+                      className="dropdown-remove-btn"
+                      onMouseDown={e => handleRemoveRecent(e, name)}
+                      aria-label="삭제"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+                        <path d="M18 6L6 18M6 6l12 12" />
+                      </svg>
+                    </button>
                   </div>
                 ))}
               </div>
