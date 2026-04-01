@@ -111,17 +111,17 @@
 
 .nav-submenu {
   position: absolute;
-  top: calc(100% + 6px);
+  top: calc(100% + 14px);
   left: 50%;
   transform: translateX(-50%);
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 6px;
-  min-width: 140px;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.10);
+  border-radius: 14px;
+  padding: 8px;
+  min-width: 160px;
+  box-shadow: 0 12px 36px rgba(124,90,246,0.13);
   z-index: 300;
-  animation: dropdown-in 0.12s ease;
+  animation: dropdown-in 0.15s ease;
 }
 
 .nav-submenu-item {
