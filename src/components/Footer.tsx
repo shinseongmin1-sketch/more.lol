@@ -8,11 +8,11 @@ export default function Footer() {
       <div className="footer-inner">
         <div className="footer-left">
           <div className="footer-logo" style={{ cursor: 'pointer' }} onClick={() => navigate('/')}>
-            <span>more</span><span className="footer-logo-dot">.lol</span>
+            <span>more</span><span className="footer-logo-dot">lol</span>
           </div>
           <p className="footer-desc">
             더 깊은 리그 오브 레전드 전적 분석 서비스.<br />
-            more.lol은 Riot Games와 공식적으로 제휴하지 않습니다.
+            morelol은 Riot Games와 공식적으로 제휴하지 않습니다.
           </p>
         </div>
         <div className="footer-links">
@@ -38,8 +38,8 @@ export default function Footer() {
         </div>
       </div>
       <div className="footer-bottom">
-        <span>© 2026 more.lol. All rights reserved.</span>
-        <span>more.lol isn't endorsed by Riot Games.</span>
+        <span>© 2026 morelol. All rights reserved.</span>
+        <span>morelol isn't endorsed by Riot Games.</span>
       </div>
     </footer>
   )

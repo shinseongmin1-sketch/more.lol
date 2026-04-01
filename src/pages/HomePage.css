@@ -162,7 +162,8 @@
   display: flex;
   align-items: center;
   background: var(--bg-input);
-  border: 1.5px solid var(--border-color);
+  border: 2px solid rgba(124, 90, 246, 0.45);
+  box-shadow: 0 0 0 4px rgba(124, 90, 246, 0.08);
   border-radius: 16px;
   padding: 6px 6px 6px 0;
   transition: border-color 0.2s, box-shadow 0.2s;

@@ -14,8 +14,20 @@ interface StoredUser {
 const USERS_KEY = 'morelol_users'
 const SESSION_KEY = 'morelol_session'
 
+const ADMIN_SEED: StoredUser = {
+  id: 'ssm1909',
+  password: '@tlstjdals12',
+  nickname: '관리자',
+  createdAt: '2026-03-31T00:00:00.000Z',
+}
+
 function getUsers(): StoredUser[] {
-  return JSON.parse(localStorage.getItem(USERS_KEY) || '[]')
+  const users: StoredUser[] = JSON.parse(localStorage.getItem(USERS_KEY) || '[]')
+  if (!users.find(u => u.id === ADMIN_SEED.id)) {
+    users.unshift(ADMIN_SEED)
+    localStorage.setItem(USERS_KEY, JSON.stringify(users))
+  }
+  return users
 }
 
 function saveUsers(users: StoredUser[]) {

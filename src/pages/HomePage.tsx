@@ -76,7 +76,7 @@ export default function HomePage() {
 
           <h1 className="home-title">
             <span className="home-title-main">more</span>
-            <span className="home-title-dot">.lol</span>
+            <span className="home-title-dot">lol</span>
           </h1>
           <p className="home-subtitle">더 깊은 전적 분석 · 더 정확한 티어 정보</p>
 
