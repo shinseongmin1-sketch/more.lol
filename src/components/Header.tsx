@@ -11,9 +11,9 @@ interface HeaderProps {
 }
 
 const navItems = [
-  { path: '/aram', label: 'ARAM' },
   { path: '/ranked', label: '랭크' },
   { path: '/normal', label: '일반' },
+  { path: '/aram', label: '칼바람나락' },
   { path: '/champion', label: '챔피언 분석' },
   { path: '/community', label: '커뮤니티' },
   { path: '/notice', label: '공지사항' },
