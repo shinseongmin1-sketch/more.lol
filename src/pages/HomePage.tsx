@@ -137,20 +137,6 @@ export default function HomePage() {
             )}
           </form>
 
-          <div className="hero-stats-row">
-            <div className="hero-stat-item">
-              <span className="hero-stat-val">{todayCount.toLocaleString()}</span>
-              <span className="hero-stat-label">오늘 검색된 소환사</span>
-            </div>
-            <div className="hero-stat-item">
-              <span className="hero-stat-val">{champCount.toLocaleString()}</span>
-              <span className="hero-stat-label">분석 중인 챔피언</span>
-            </div>
-            <div className="hero-stat-item">
-              <span className="hero-stat-val">실시간</span>
-              <span className="hero-stat-label">데이터 업데이트</span>
-            </div>
-          </div>
         </div>
       </div>
 
