@@ -20,6 +20,7 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
   const [inputValue, setInputValue] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [champMenuOpen, setChampMenuOpen] = useState(false)
+  const champCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
   const isHome = location.pathname === '/'
