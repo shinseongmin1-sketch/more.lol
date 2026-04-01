@@ -81,14 +81,7 @@
   position: relative;
 }
 
-.nav-link-has-sub {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.nav-link-has-sub::after {
-  content: '▾';
+.nav-sub-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -99,12 +92,19 @@
   color: #fff;
   font-size: 14px;
   line-height: 1;
+  margin-left: 8px;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 2px 8px rgba(124,90,246,0.35);
   flex-shrink: 0;
+  pointer-events: none;
 }
 
-.nav-item-wrap:hover .nav-link-has-sub::after {
+.nav-sub-badge.open {
+  transform: rotate(180deg);
+  box-shadow: 0 4px 14px rgba(124,90,246,0.55);
+}
+
+.nav-item-wrap:hover .nav-sub-badge {
   transform: rotate(180deg);
   box-shadow: 0 4px 14px rgba(124,90,246,0.55);
 }
