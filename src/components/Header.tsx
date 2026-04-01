@@ -10,18 +10,21 @@ interface HeaderProps {
   onLogout: () => void
 }
 
-const navItems = [
-  { path: '/champion', label: '챔피언 분석' },
-  { path: '/community', label: '커뮤니티' },
+const champSubItems = [
+  { path: '/ranked',   label: '솔로랭크' },
+  { path: '/normal',   label: '일반게임' },
+  { path: '/aram',     label: '칼바람나락' },
 ]
 
 export default function Header({ onSearch, user, onLoginClick, onLogout }: HeaderProps) {
   const [inputValue, setInputValue] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [champMenuOpen, setChampMenuOpen] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const isHome = location.pathname === '/'
   const dropdownRef = useRef<HTMLDivElement>(null)
+  const champMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
