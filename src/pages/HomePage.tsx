@@ -6,9 +6,8 @@ import {
   getAnalyzedChampionCount,
   onStatsChange,
 } from '../utils/searchStats'
+import { getRecentSearches, addRecentSearch, removeRecentSearch } from '../utils/recentSearchStore'
 import './HomePage.css'
-
-const recentSearches = ['Hide on bush', 'Faker', 'T1 Gumayusi', 'Keria', 'Oner']
 
 const quickLinks = [
   { path: '/aram',      label: 'ARAM 티어리스트',  desc: '무작위 총력전 챔피언 분석', icon: '⚡', color: '#00d2ff' },
