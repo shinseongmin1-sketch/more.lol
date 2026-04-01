@@ -34,9 +34,9 @@
 }
 
 .logo-word {
-  font-size: 24px;
+  font-size: 36px;
   font-weight: 900;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
   line-height: 1;
   color: var(--text-primary);
 }
