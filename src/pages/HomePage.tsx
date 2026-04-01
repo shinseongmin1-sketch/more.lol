@@ -32,9 +32,11 @@ export default function HomePage() {
   const [focused, setFocused]       = useState(false)
   const [todayCount, setTodayCount] = useState(getTodaySummonerCount)
   const [champCount, setChampCount] = useState(getAnalyzedChampionCount)
+  const [recentSearches, setRecentSearches] = useState<string[]>([])
   const navigate = useNavigate()
 
   useEffect(() => {
+    setRecentSearches(getRecentSearches())
     return onStatsChange(() => {
       setTodayCount(getTodaySummonerCount())
       setChampCount(getAnalyzedChampionCount())
@@ -44,8 +46,16 @@ export default function HomePage() {
   const handleSearch = (name: string) => {
     if (name.trim()) {
       incrementSummonerSearch()
+      addRecentSearch(name.trim())
+      setRecentSearches(getRecentSearches())
       navigate(`/summoner/${encodeURIComponent(name.trim())}`)
     }
+  }
+
+  const handleRemoveRecent = (e: React.MouseEvent, name: string) => {
+    e.stopPropagation()
+    removeRecentSearch(name)
+    setRecentSearches(getRecentSearches())
   }
 
   const handleSubmit = (e: React.FormEvent) => {
