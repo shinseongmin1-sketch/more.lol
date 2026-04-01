@@ -333,6 +333,69 @@
   color: var(--accent-gold);
 }
 
+/* Win rate bar */
+.most-wr-bar {
+  width: 100%;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+
+.most-wr-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-blue), var(--accent-primary));
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.most-kda-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-top: 1px;
+  text-align: center;
+}
+
+/* Teammate section */
+.teammate-row {
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 0.1s;
+  padding: 8px 6px;
+  margin: 0 -6px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.teammate-row:last-child {
+  border-bottom: none;
+}
+
+.teammate-row:hover {
+  background: var(--bg-card-hover);
+}
+
+.teammate-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent-primary), #5e3dd8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.teammate-tag {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
 /* Match list */
 .match-list {
   display: flex;
