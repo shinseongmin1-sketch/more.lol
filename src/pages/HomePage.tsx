@@ -32,8 +32,8 @@ const rankStyles = ['gold', 'silver', 'bronze', '', '']
 export default function HomePage() {
   const [inputValue, setInputValue] = useState('')
   const [focused, setFocused]       = useState(false)
-  const [todayCount, setTodayCount] = useState(getTodaySummonerCount)
-  const [champCount, setChampCount] = useState(getAnalyzedChampionCount)
+  const [, setTodayCount] = useState(getTodaySummonerCount)
+  const [, setChampCount] = useState(getAnalyzedChampionCount)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [ddVersion, setDdVersion] = useState('')
   const navigate = useNavigate()
