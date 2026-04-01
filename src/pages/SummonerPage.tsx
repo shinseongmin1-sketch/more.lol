@@ -369,7 +369,7 @@ export default function SummonerPage() {
               <div className="sp-card">
                 <div className="sp-card-title">모스트 챔피언</div>
                 <div className="sp-most-list">
-                  {mostChamps.map((c, i) => {
+                  {mostChamps.map((c) => {
                     const wr = Math.round((c.wins / c.total) * 100)
                     const kda = c.deaths === 0
                       ? (c.kills + c.assists).toFixed(2)
