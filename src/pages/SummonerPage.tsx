@@ -41,6 +41,14 @@ function handleApiError(e: unknown): string {
   return `오류: ${msg}`
 }
 
+interface Teammate {
+  puuid: string
+  gameName: string
+  tagLine: string
+  championId: string
+  win: boolean
+}
+
 interface MatchData {
   matchId: string
   win: boolean
@@ -55,6 +63,7 @@ interface MatchData {
   duration: number
   gameStartTimestamp: number
   items: number[]
+  teammates: Teammate[]
 }
 
 export default function SummonerPage() {
