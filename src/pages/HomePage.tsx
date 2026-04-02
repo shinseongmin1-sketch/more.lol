@@ -184,32 +184,33 @@ export default function HomePage() {
             <div className="home-section-header">
               <h2 className="home-section-title">
                 <span className="section-title-dot" />
-                오늘의 인기 챔피언
+                포지션별 인기 챔피언
               </h2>
-              <span className="home-section-sub">ARAM 기준 · 14.24 패치</span>
+              <span className="home-section-sub">챌린저 실시간 기준</span>
             </div>
             <div className="hot-champs">
-              {hotChamps.map((champ, i) => (
-                <div key={champ.id} className="hot-champ-card" onClick={() => navigate('/champion')}>
-                  <span className={`hot-rank ${rankStyles[i]}`}>#{i + 1}</span>
+              {hotChamps.length === 0 ? (
+                <div style={{ padding: '20px 18px', color: 'var(--text-muted)', fontSize: 13 }}>
+                  데이터 불러오는 중...
+                </div>
+              ) : hotChamps.map((champ) => (
+                <div key={champ.position} className="hot-champ-card" onClick={() => navigate('/champion')}>
+                  <span className="hot-rank hot-position">{champ.label}</span>
                   {ddVersion ? (
                     <img
-                      src={champIconUrl(ddVersion, champ.id)}
-                      alt={champ.name}
+                      src={champIconUrl(ddVersion, champ.championId)}
+                      alt={champ.championId}
                       className="hot-icon hot-icon-img"
                     />
                   ) : (
-                    <div className="hot-icon">
-                      <span style={{ fontSize: 13, fontWeight: 900, color: 'var(--text-muted)' }}>{champ.name.slice(0, 2)}</span>
-                    </div>
+                    <div className="hot-icon" />
                   )}
                   <div className="hot-info">
-                    <div className="hot-name">{champ.name}</div>
-                    <div className="hot-en">{champ.id}</div>
+                    <div className="hot-name">{champNameMap[champ.championId] ?? champ.championId}</div>
+                    <div className="hot-en">{champ.championId}</div>
                   </div>
                   <div className="hot-right">
-                    <div className="hot-tier" style={{ color: champ.tier === 'S+' ? '#ff6b6b' : '#ff9f43' }}>{champ.tier}</div>
-                    <div className="hot-wr">{champ.wr}</div>
+                    <div className="hot-wr" style={{ color: 'var(--text-muted)' }}>{champ.count}게임</div>
                   </div>
                 </div>
               ))}
