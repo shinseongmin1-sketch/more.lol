@@ -425,13 +425,12 @@
   color: var(--text-muted);
 }
 
-.hot-position {
-  width: 36px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--accent-primary);
-  text-align: center;
+.hot-position-icon {
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
+  object-fit: contain;
+  opacity: 0.85;
 }
 
 .hot-icon {
