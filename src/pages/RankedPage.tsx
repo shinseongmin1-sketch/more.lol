@@ -44,7 +44,7 @@ export default function RankedPage() {
           </div>
           <select className="sort-select"><option>티어순</option><option>승률순</option><option>픽률순</option></select>
         </div>
-        <ChampionTierList mode="ranked" />
+        <ChampionTierList mode="ranked" position={positions.find(p => p.label === activePos)?.riotPos} />
       </div>
     </div>
   )
