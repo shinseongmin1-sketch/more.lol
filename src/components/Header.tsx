@@ -16,6 +16,11 @@ const champSubItems = [
   { path: '/aram',     label: '칼바람나락' },
 ]
 
+const rankSubItems = [
+  { path: '/ranking',      label: '티어랭킹' },
+  { path: '/ranking/pro',  label: '프로랭킹' },
+]
+
 export default function Header({ onSearch, user, onLoginClick, onLogout }: HeaderProps) {
   const [inputValue, setInputValue] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
