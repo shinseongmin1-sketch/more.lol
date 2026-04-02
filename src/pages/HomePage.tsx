@@ -41,7 +41,7 @@ export default function HomePage() {
   const [, setChampCount] = useState(getAnalyzedChampionCount)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [ddVersion, setDdVersion] = useState('')
-  const [hotChamps, setHotChamps] = useState<HotChamp[]>([])
+  const [hotChamps, setHotChamps] = useState<HotChamp[]>(fallbackChamps)
   const [champNameMap, setChampNameMap] = useState<Record<string, string>>({})
   const navigate = useNavigate()
 
