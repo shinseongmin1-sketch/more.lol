@@ -25,12 +25,15 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
   const [inputValue, setInputValue] = useState('')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [champMenuOpen, setChampMenuOpen] = useState(false)
+  const [rankMenuOpen, setRankMenuOpen] = useState(false)
   const champCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const rankCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
   const isHome = location.pathname === '/'
   const dropdownRef = useRef<HTMLDivElement>(null)
   const champMenuRef = useRef<HTMLDivElement>(null)
+  const rankMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -39,6 +42,9 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
       }
       if (champMenuRef.current && !champMenuRef.current.contains(e.target as Node)) {
         setChampMenuOpen(false)
+      }
+      if (rankMenuRef.current && !rankMenuRef.current.contains(e.target as Node)) {
+        setRankMenuOpen(false)
       }
     }
     document.addEventListener('mousedown', handler)
