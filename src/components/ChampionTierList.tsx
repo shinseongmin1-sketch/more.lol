@@ -68,7 +68,7 @@ export default function ChampionTierList({ mode, position }: ChampionTierListPro
 
   useEffect(() => {
     getDDVersion().then(setDdVersion).catch(() => {})
-    fetch('/api/tier-list')
+    fetch(`/api/tier-list?mode=${mode}`)
       .then(r => r.json())
       .then(data => { if (Array.isArray(data)) setAllChampions(data) })
       .catch(() => {})
