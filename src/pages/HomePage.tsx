@@ -28,9 +28,7 @@ const quickLinks = [
   {
     path: '/aram', label: '칼바람나락 통계', desc: '칼바람나락 챔피언 분석', color: '#0ea5e9',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14.5 2.5L6 13h6l-2.5 8.5L18 11h-6z" />
-      </svg>
+      <img src="https://wiki.leagueoflegends.com/en-us/images/Howling_Abyss_icon.png?7a043&20171101151627" alt="칼바람나락" style={{ width: 22, height: 22, objectFit: 'contain' }} />
     ),
   },
   {
