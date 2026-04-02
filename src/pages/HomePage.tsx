@@ -14,9 +14,7 @@ const quickLinks = [
   {
     path: '/ranked', label: '솔로랭크 통계', desc: '랭크 게임 챔피언 티어', color: '#f59e0b',
     icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
-      </svg>
+      <img src="https://wiki.leagueoflegends.com/en-us/images/Summoner%27s_Rift_icon.png?7a043&20171101151627" alt="솔로랭크" style={{ width: 22, height: 22, objectFit: 'contain' }} />
     ),
   },
   {
