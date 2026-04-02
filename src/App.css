@@ -12,12 +12,12 @@
   --bg-card-hover: #f5f7ff;
   --bg-input: #eef0f8;
   --border-color: #dde0f0;
-  --border-hover: #7c5af6;
+  --border-hover: #3b82f6;
 
-  /* 메인 액센트: 바이올렛 */
-  --accent-primary: #7c5af6;
-  --accent-primary-light: #6040e0;
-  --accent-primary-glow: rgba(124, 90, 246, 0.18);
+  /* 메인 액센트: 블루 */
+  --accent-primary: #3b82f6;
+  --accent-primary-light: #2563eb;
+  --accent-primary-glow: rgba(59, 130, 246, 0.18);
 
   /* 서브 액센트: 앰버 */
   --accent-amber: #d97706;
