@@ -146,6 +146,14 @@
   overflow: hidden;
 }
 
+.champ-icon-img {
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  flex-shrink: 0;
+  object-fit: cover;
+  display: block;
+}
+
 .champ-cell {
   display: flex;
   align-items: center;
