@@ -70,7 +70,7 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
             >
               <Link
                 to="/champion"
-                className={`nav-link ${location.pathname.startsWith('/champion') || ['/ranked','/normal','/aram'].includes(location.pathname) ? 'active' : ''}`}
+                className={`nav-link nav-link-glow ${location.pathname.startsWith('/champion') || ['/ranked','/normal','/aram'].includes(location.pathname) ? 'active' : ''} ${champMenuOpen ? 'glow-open' : ''}`}
               >
                 챔피언 분석
               </Link>
