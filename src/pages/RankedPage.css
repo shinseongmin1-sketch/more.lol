@@ -31,4 +31,4 @@
 }
 .pos-chip:hover { border-color: rgba(245,158,11,0.4); color: var(--text-primary); }
 .pos-chip.active { background: rgba(245,158,11,0.15); border-color: #f59e0b; color: #fbbf24; font-weight: 700; }
-.pos-chip-icon { width: 16px; height: 16px; object-fit: contain; }
+.pos-chip-icon { width: 22px; height: 22px; object-fit: contain; }
