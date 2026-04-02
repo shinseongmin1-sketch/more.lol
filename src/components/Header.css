@@ -238,7 +238,7 @@
 .btn-ghost:hover { border-color: var(--border-hover); color: var(--text-primary); }
 
 .btn-primary-sm {
-  background: linear-gradient(135deg, var(--accent-primary), #5e3dd8);
+  background: linear-gradient(135deg, var(--accent-primary), #1d4ed8);
   border: none;
   color: #fff;
   font-size: 12px;
@@ -275,7 +275,7 @@
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent-primary), #5e3dd8);
+  background: linear-gradient(135deg, var(--accent-primary), #1d4ed8);
   display: flex;
   align-items: center;
   justify-content: center;
