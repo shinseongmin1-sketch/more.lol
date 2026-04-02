@@ -211,16 +211,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #ec4899, #db2777);
+  background: #18182e;
   border: none;
   color: #fff;
   padding: 11px 16px;
   border-radius: 12px;
   flex-shrink: 0;
-  transition: opacity 0.15s, transform 0.1s;
+  transition: background 0.15s, transform 0.1s;
   font-family: inherit;
 }
-.home-search-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+.home-search-btn:hover { background: #2d2d4e; transform: translateY(-1px); }
 .home-search-btn:active { transform: translateY(0); }
 .home-search-btn svg { width: 17px; height: 17px; }
 
