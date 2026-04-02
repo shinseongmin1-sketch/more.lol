@@ -350,7 +350,7 @@
 }
 
 .quick-card:hover {
-  border-color: color-mix(in srgb, var(--card-color, #7c5af6) 40%, transparent);
+  border-color: color-mix(in srgb, var(--card-color, #3b82f6) 40%, transparent);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(100, 90, 180, 0.12);
 }
