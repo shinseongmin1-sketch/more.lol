@@ -37,7 +37,7 @@ export default function RankedPage() {
             <div className="position-chips">
               {positions.map(p => (
                 <button key={p.label} className={"pos-chip " + (activePos === p.label ? 'active' : '')} onClick={() => setActivePos(p.label)}>
-                  <span className="pos-chip-icon">{p.icon}</span>{p.label}
+                  {p.icon && <img src={p.icon} alt={p.label} className="pos-chip-icon" />}{p.label}
                 </button>
               ))}
             </div>
