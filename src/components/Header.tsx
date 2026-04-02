@@ -73,7 +73,9 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
                 className={`nav-link ${location.pathname.startsWith('/champion') || ['/ranked','/normal','/aram'].includes(location.pathname) ? 'active' : ''}`}
               >
                 챔피언 분석
-                <span className={`nav-sub-badge ${champMenuOpen ? 'open' : ''}`}>▾</span>
+                <svg className={`nav-chevron ${champMenuOpen ? 'open' : ''}`} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 6l4 4 4-4" />
+                </svg>
               </Link>
               {champMenuOpen && (
                 <div
