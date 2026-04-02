@@ -162,16 +162,16 @@
   display: flex;
   align-items: center;
   background: var(--bg-input);
-  border: 2px solid rgba(124, 90, 246, 0.45);
-  box-shadow: 0 0 0 4px rgba(124, 90, 246, 0.08);
+  border: 2px solid rgba(236, 72, 153, 0.45);
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.08);
   border-radius: 16px;
   padding: 6px 6px 6px 0;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .home-search-box.focused {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 4px var(--accent-primary-glow);
+  border-color: #ec4899;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.12);
 }
 
 .home-server-select {
