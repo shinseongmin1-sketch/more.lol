@@ -207,7 +207,7 @@ export default function HomePage() {
             <div className="hot-champs">
               {hotChamps.map((champ) => (
                 <div key={champ.position} className="hot-champ-card" onClick={() => navigate('/champion')}>
-                  <span className="hot-rank hot-position">{champ.label}</span>
+                  <img src={POSITION_ICONS[champ.position]} alt={champ.label} className="hot-position-icon" title={champ.label} />
                   {ddVersion ? (
                     <img
                       src={champIconUrl(ddVersion, champ.championId)}
