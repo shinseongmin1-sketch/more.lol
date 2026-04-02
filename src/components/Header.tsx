@@ -198,9 +198,6 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
                   className="user-avatar-btn"
                   onClick={() => setDropdownOpen(v => !v)}
                 >
-                  <div className="user-avatar">
-                    {user.nickname.slice(0, 1).toUpperCase()}
-                  </div>
                   <span className="user-nickname">{user.nickname}</span>
                   <svg className="user-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M6 9l6 6 6-6" />
