@@ -48,9 +48,9 @@
   /* 레거시 (컴포넌트 호환) */
   --accent-gold: #d97706;
   --accent-gold-light: #b45309;
-  --accent-blue: #7c5af6;
-  --accent-blue-light: #6040e0;
-  --accent-purple: #7c5af6;
+  --accent-blue: #3b82f6;
+  --accent-blue-light: #2563eb;
+  --accent-purple: #3b82f6;
 }
 
 body {
