@@ -129,6 +129,9 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
                 className={`nav-link nav-link-glow ${location.pathname.startsWith('/ranking') ? 'active' : ''} ${rankMenuOpen ? 'glow-open' : ''}`}
               >
                 랭킹
+                <svg className={`nav-caret ${rankMenuOpen ? 'open' : ''}`} viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 4l4 4 4-4" />
+                </svg>
               </Link>
               {rankMenuOpen && (
                 <div
