@@ -73,7 +73,6 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
                 className={`nav-link ${location.pathname.startsWith('/champion') || ['/ranked','/normal','/aram'].includes(location.pathname) ? 'active' : ''}`}
               >
                 챔피언 분석
-                <span className={`nav-diamond ${champMenuOpen ? 'open' : ''}`} />
               </Link>
               {champMenuOpen && (
                 <div
