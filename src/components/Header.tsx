@@ -84,6 +84,9 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
                 className={`nav-link nav-link-glow ${location.pathname.startsWith('/champion') || ['/ranked','/normal','/aram'].includes(location.pathname) ? 'active' : ''} ${champMenuOpen ? 'glow-open' : ''}`}
               >
                 챔피언 분석
+                <svg className={`nav-caret ${champMenuOpen ? 'open' : ''}`} viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 4l4 4 4-4" />
+                </svg>
               </Link>
               {champMenuOpen && (
                 <div
