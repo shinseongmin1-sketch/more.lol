@@ -109,13 +109,47 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
               )}
             </div>
 
-            {/* 랭킹 */}
-            <Link
-              to="/ranking"
-              className={`nav-link ${location.pathname === '/ranking' ? 'active' : ''}`}
+            {/* 랭킹 (하위메뉴) */}
+            <div
+              className="nav-item-wrap"
+              ref={rankMenuRef}
+              onMouseEnter={() => {
+                if (rankCloseTimer.current) clearTimeout(rankCloseTimer.current)
+                setRankMenuOpen(true)
+              }}
+              onMouseLeave={() => {
+                rankCloseTimer.current = setTimeout(() => setRankMenuOpen(false), 150)
+              }}
             >
-              랭킹
-            </Link>
+              <Link
+                to="/ranking"
+                className={`nav-link nav-link-glow ${location.pathname.startsWith('/ranking') ? 'active' : ''} ${rankMenuOpen ? 'glow-open' : ''}`}
+              >
+                랭킹
+              </Link>
+              {rankMenuOpen && (
+                <div
+                  className="nav-submenu"
+                  onMouseEnter={() => {
+                    if (rankCloseTimer.current) clearTimeout(rankCloseTimer.current)
+                  }}
+                  onMouseLeave={() => {
+                    rankCloseTimer.current = setTimeout(() => setRankMenuOpen(false), 150)
+                  }}
+                >
+                  {rankSubItems.map(sub => (
+                    <Link
+                      key={sub.path}
+                      to={sub.path}
+                      className={`nav-submenu-item ${location.pathname === sub.path ? 'active' : ''}`}
+                      onClick={() => setRankMenuOpen(false)}
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* 커뮤니티 */}
             <Link
