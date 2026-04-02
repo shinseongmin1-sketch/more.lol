@@ -197,11 +197,7 @@ export default function HomePage() {
               <span className="home-section-sub">챌린저 실시간 기준</span>
             </div>
             <div className="hot-champs">
-              {hotChamps.length === 0 ? (
-                <div style={{ padding: '20px 18px', color: 'var(--text-muted)', fontSize: 13 }}>
-                  데이터 불러오는 중...
-                </div>
-              ) : hotChamps.map((champ) => (
+              {hotChamps.map((champ) => (
                 <div key={champ.position} className="hot-champ-card" onClick={() => navigate('/champion')}>
                   <span className="hot-rank hot-position">{champ.label}</span>
                   {ddVersion ? (
