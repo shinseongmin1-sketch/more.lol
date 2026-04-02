@@ -109,14 +109,14 @@
 }
 
 .search-box.focused {
-  border-color: var(--accent-gold);
-  box-shadow: 0 0 0 4px rgba(200, 155, 60, 0.1);
+  border-color: #ec4899;
+  box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.12);
 }
 
 .server-select {
   background: none;
   border: none;
-  color: var(--accent-gold);
+  color: #ec4899;
   font-size: 13px;
   font-weight: 700;
   padding: 10px 16px;
