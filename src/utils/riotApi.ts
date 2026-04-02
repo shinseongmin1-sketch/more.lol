@@ -1,5 +1,3 @@
-const API_KEY = 'RGAPI-d45464a9-6def-494b-98d4-6a0d5967f2ef'
-
 export const QUEUE_LABELS: Record<number, string> = {
   420: '솔로랭크',
   440: '자유랭크',
@@ -13,7 +11,25 @@ export const QUEUE_LABELS: Record<number, string> = {
 }
 
 async function riotFetch(url: string) {
-  const res = await fetch(url, { headers: { 'X-Riot-Token': API_KEY } })
+  let res: Response
+
+  if (import.meta.env.DEV) {
+    // 개발 환경: Vite proxy가 CORS 처리, API 키는 env var에서
+    const devKey = import.meta.env.VITE_RIOT_API_KEY ?? ''
+    res = await fetch(url, { headers: { 'X-Riot-Token': devKey } })
+  } else {
+    // 프로덕션: /api/riot 서버리스 프록시 사용 (API 키 서버에서 처리)
+    let riotUrl: string
+    if (url.startsWith('/riot-kr/')) {
+      riotUrl = 'https://kr.api.riotgames.com' + url.slice('/riot-kr'.length)
+    } else if (url.startsWith('/riot-asia/')) {
+      riotUrl = 'https://asia.api.riotgames.com' + url.slice('/riot-asia'.length)
+    } else {
+      riotUrl = url
+    }
+    res = await fetch(`/api/riot?url=${encodeURIComponent(riotUrl)}`)
+  }
+
   if (!res.ok) throw new Error(String(res.status))
   return res.json()
 }
