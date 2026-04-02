@@ -144,24 +144,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 빠른 이동 (전체 너비) */}
-      <div className="quick-links-section">
-        <div className="quick-links">
-          {quickLinks.map(item => (
-            <div key={item.path} className="quick-card" onClick={() => navigate(item.path)} style={{ '--card-color': item.color } as React.CSSProperties}>
-              <div className="quick-icon">{item.icon}</div>
-              <div className="quick-info">
-                <div className="quick-label">{item.label}</div>
-                <div className="quick-desc">{item.desc}</div>
-              </div>
-              <svg className="quick-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* 본문 */}
       <div className="home-body">
         <div className="home-ad-left ad-side">
@@ -172,6 +154,22 @@ export default function HomePage() {
           {/* 중간 광고 */}
           <div className="ad-banner mid-ad">
             <span className="ad-label">Advertisement</span>
+          </div>
+
+          {/* 빠른 이동 */}
+          <div className="quick-links">
+            {quickLinks.map(item => (
+              <div key={item.path} className="quick-card" onClick={() => navigate(item.path)} style={{ '--card-color': item.color } as React.CSSProperties}>
+                <div className="quick-icon">{item.icon}</div>
+                <div className="quick-info">
+                  <div className="quick-label">{item.label}</div>
+                  <div className="quick-desc">{item.desc}</div>
+                </div>
+                <svg className="quick-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </div>
+            ))}
           </div>
 
           {/* 핫 챔피언 */}
