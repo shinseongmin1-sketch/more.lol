@@ -332,7 +332,6 @@
   gap: 6px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
-  border-top: 3px solid var(--card-color, #3b82f6);
   border-radius: 12px;
   padding: 18px 16px 16px;
   cursor: pointer;
