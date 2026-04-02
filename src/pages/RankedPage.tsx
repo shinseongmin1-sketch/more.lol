@@ -4,12 +4,12 @@ import './SubPage.css'
 import './RankedPage.css'
 
 const positions = [
-  { label: '전체',   icon: null },
-  { label: '탑',     icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png' },
-  { label: '정글',   icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png' },
-  { label: '미드',   icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png' },
-  { label: '원딜',   icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png' },
-  { label: '서포터', icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png' },
+  { label: '전체',   icon: null,    riotPos: undefined },
+  { label: '탑',     icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png',     riotPos: 'TOP' },
+  { label: '정글',   icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png',  riotPos: 'JUNGLE' },
+  { label: '미드',   icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png',  riotPos: 'MIDDLE' },
+  { label: '원딜',   icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png',  riotPos: 'BOTTOM' },
+  { label: '서포터', icon: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png', riotPos: 'UTILITY' },
 ]
 
 export default function RankedPage() {
