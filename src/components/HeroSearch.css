@@ -158,19 +158,19 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--accent-gold);
+  background: linear-gradient(135deg, #ec4899, #db2777);
   border: none;
-  color: #0a0e1a;
+  color: #fff;
   font-size: 14px;
   font-weight: 700;
   padding: 10px 20px;
   border-radius: 10px;
   flex-shrink: 0;
-  transition: background 0.15s;
+  transition: opacity 0.15s;
 }
 
 .search-btn:hover {
-  background: var(--accent-gold-light);
+  opacity: 0.88;
 }
 
 .search-btn svg {
