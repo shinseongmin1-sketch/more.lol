@@ -114,7 +114,7 @@
   width: 80%;
   height: 2px;
   border-radius: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent-primary), #a78bfa, transparent);
+  background: linear-gradient(90deg, transparent, var(--accent-primary), #60a5fa, transparent);
   opacity: 0;
   transition: transform 0.3s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.3s ease;
   filter: blur(0.5px);
