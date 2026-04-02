@@ -75,7 +75,7 @@ export default function ChampionTierList({ mode, position }: ChampionTierListPro
       .finally(() => setLoading(false))
   }, [])
 
-  const champions: TierEntry[] = position
+  const champions: TierEntry[] = (position && mode !== 'aram')
     ? allChampions.filter(c => c.position === position)
     : allChampions
 
