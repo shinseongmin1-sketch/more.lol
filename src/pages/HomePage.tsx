@@ -33,11 +33,28 @@ export default function HomePage() {
   const [, setChampCount] = useState(getAnalyzedChampionCount)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [ddVersion, setDdVersion] = useState('')
+  const [hotChamps, setHotChamps] = useState<HotChamp[]>([])
+  const [champNameMap, setChampNameMap] = useState<Record<string, string>>({})
   const navigate = useNavigate()
 
   useEffect(() => {
     setRecentSearches(getRecentSearches())
+
     getDDVersion().then(setDdVersion).catch(() => {})
+
+    // 챔피언 한글 이름 맵 (영문ID → 한글명)
+    getChampMap().then(map => {
+      const rev: Record<string, string> = {}
+      Object.values(map).forEach(c => { rev[c.id] = c.name })
+      setChampNameMap(rev)
+    }).catch(() => {})
+
+    // 포지션별 인기 챔피언
+    fetch('/api/popular-champs')
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setHotChamps(data) })
+      .catch(() => {})
+
     return onStatsChange(() => {
       setTodayCount(getTodaySummonerCount())
       setChampCount(getAnalyzedChampionCount())
