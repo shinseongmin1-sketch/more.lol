@@ -26,6 +26,14 @@ interface HotChamp {
   count: number
 }
 
+const fallbackChamps: HotChamp[] = [
+  { position: 'TOP',     label: '탑',   championId: 'Darius',   count: 0 },
+  { position: 'JUNGLE',  label: '정글', championId: 'Vi',       count: 0 },
+  { position: 'MIDDLE',  label: '미드', championId: 'Syndra',   count: 0 },
+  { position: 'BOTTOM',  label: '원딜', championId: 'Jinx',     count: 0 },
+  { position: 'UTILITY', label: '서폿', championId: 'Thresh',   count: 0 },
+]
+
 export default function HomePage() {
   const [inputValue, setInputValue] = useState('')
   const [focused, setFocused]       = useState(false)
