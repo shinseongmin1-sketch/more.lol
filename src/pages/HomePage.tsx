@@ -11,12 +11,56 @@ import { getDDVersion, champIconUrl } from '../utils/riotApi'
 import './HomePage.css'
 
 const quickLinks = [
-  { path: '/ranked',   label: '솔로랭크 통계',   desc: '랭크 게임 챔피언 티어',      icon: '🏆', color: '#f59e0b' },
-  { path: '/normal',   label: '일반게임 통계',   desc: '일반게임 챔피언 승률 분석',  icon: '🛡️', color: '#10b981' },
-  { path: '/aram',     label: '칼바람나락 통계', desc: '칼바람나락 챔피언 분석',     icon: '⚡', color: '#00d2ff' },
-  { path: '/champion', label: '챔피언 분석',     desc: '챔피언별 심층 데이터',       icon: '📊', color: '#6366f1' },
-  { path: '/ranking',  label: '랭킹',           desc: '소환사 랭킹 순위',           icon: '🥇', color: '#e879f9' },
-  { path: '/community',label: '커뮤니티',        desc: '공략, 팁, 자유게시판',       icon: '💬', color: '#f97316' },
+  {
+    path: '/ranked', label: '솔로랭크 통계', desc: '랭크 게임 챔피언 티어', color: '#f59e0b',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6z" />
+      </svg>
+    ),
+  },
+  {
+    path: '/normal', label: '일반게임 통계', desc: '일반게임 챔피언 승률 분석', color: '#10b981',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+      </svg>
+    ),
+  },
+  {
+    path: '/aram', label: '칼바람나락 통계', desc: '칼바람나락 챔피언 분석', color: '#0ea5e9',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14.5 2.5L6 13h6l-2.5 8.5L18 11h-6z" />
+      </svg>
+    ),
+  },
+  {
+    path: '/champion', label: '챔피언 분석', desc: '챔피언별 심층 데이터', color: '#6366f1',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="12" width="4" height="9" rx="1" />
+        <rect x="10" y="7" width="4" height="14" rx="1" />
+        <rect x="17" y="3" width="4" height="18" rx="1" />
+      </svg>
+    ),
+  },
+  {
+    path: '/ranking', label: '랭킹', desc: '소환사 랭킹 순위', color: '#e879f9',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+      </svg>
+    ),
+  },
+  {
+    path: '/community', label: '커뮤니티', desc: '공략, 팁, 자유게시판', color: '#f97316',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    ),
+  },
 ]
 
 const hotChamps = [
