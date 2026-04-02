@@ -210,22 +210,19 @@
 .home-search-btn {
   display: flex;
   align-items: center;
-  gap: 7px;
-  background: linear-gradient(135deg, var(--accent-primary), #5e3dd8);
+  justify-content: center;
+  background: linear-gradient(135deg, #ec4899, #db2777);
   border: none;
   color: #fff;
-  font-size: 14px;
-  font-weight: 700;
-  padding: 11px 22px;
+  padding: 11px 16px;
   border-radius: 12px;
   flex-shrink: 0;
   transition: opacity 0.15s, transform 0.1s;
   font-family: inherit;
-  letter-spacing: 0.3px;
 }
 .home-search-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 .home-search-btn:active { transform: translateY(0); }
-.home-search-btn svg { width: 15px; height: 15px; }
+.home-search-btn svg { width: 17px; height: 17px; }
 
 /* 드롭다운 */
 .home-dropdown {
