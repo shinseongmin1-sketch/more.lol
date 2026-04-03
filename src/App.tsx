@@ -5,6 +5,7 @@ import AramPage from './pages/AramPage'
 import RankedPage from './pages/RankedPage'
 import NormalPage from './pages/NormalPage'
 import ChampionPage from './pages/ChampionPage'
+import ChampionDetailPage from './pages/ChampionDetailPage'
 import CommunityPage from './pages/CommunityPage'
 import SummonerPage from './pages/SummonerPage'
 import NoticePage from './pages/NoticePage'
@@ -29,6 +30,7 @@ function App() {
         <Route path="/ranked" element={<RankedPage />} />
         <Route path="/normal" element={<NormalPage />} />
         <Route path="/champion" element={<ChampionPage />} />
+        <Route path="/champion/:champId" element={<ChampionDetailPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/summoner/:name" element={<SummonerPage />} />
         <Route path="/notice" element={<NoticePage />} />

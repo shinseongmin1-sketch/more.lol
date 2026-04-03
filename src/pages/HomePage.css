@@ -239,6 +239,7 @@
 }
 
 .dropdown-section-title {
+  display: flex; align-items: center; gap: 8px;
   font-size: 11px; font-weight: 600;
   color: var(--text-muted);
   letter-spacing: 1px; text-transform: uppercase;
@@ -266,6 +267,37 @@
   font-size: 11px; color: var(--text-muted);
   background: var(--bg-secondary);
   padding: 2px 8px; border-radius: 4px;
+}
+
+.dropdown-tag {
+  color: var(--accent-primary-light);
+  font-size: 12px;
+  margin-left: 2px;
+}
+
+.dropdown-empty {
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.dropdown-loading-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+.dropdown-loading-dots span {
+  width: 4px; height: 4px;
+  background: var(--accent-primary-light);
+  border-radius: 50%;
+  animation: dotBounce 1.2s infinite ease-in-out;
+}
+.dropdown-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.dropdown-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
 }
 
 /* 히어로 하단 stat 배지 */

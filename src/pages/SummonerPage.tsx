@@ -5,6 +5,7 @@ import {
   getMatchIds, getMatch, getDDVersion, getChampMap,
   champIconUrl, itemIconUrl, profileIconUrl, QUEUE_LABELS,
 } from '../utils/riotApi'
+import { saveSummoners } from '../utils/supabase'
 import './SummonerPage.css'
 
 const TIER_COLORS: Record<string, string> = {
@@ -115,20 +116,30 @@ export default function SummonerPage() {
         const acc = await getAccount(gameName, tagLine)
         if (cancelled) return
         setAccount(acc)
+        // 검색된 소환사 DB에 저장 (fire and forget)
+        saveSummoners([{ gameName: acc.gameName, tagLine: acc.tagLine }])
 
         const [summ, matchIds] = await Promise.all([
           getSummonerByPuuid(acc.puuid),
-          getMatchIds(acc.puuid, 20),
+          getMatchIds(acc.puuid, 10),
         ])
         if (cancelled) return
         setSummoner(summ)
 
-        const [ranks, ...matchDetails] = await Promise.all([
-          getRankedInfo(acc.puuid),
-          ...matchIds.map((id: string) => getMatch(id)),
-        ])
+        const ranks = await getRankedInfo(acc.puuid)
         if (cancelled) return
         setRankInfo(ranks)
+
+        // 5개씩 배치로 순차 호출 (rate limit 방지)
+        const BATCH = 5
+        const matchDetails: any[] = []
+        for (let i = 0; i < matchIds.length; i += BATCH) {
+          if (cancelled) return
+          const batch = await Promise.all(
+            (matchIds as string[]).slice(i, i + BATCH).map(id => getMatch(id))
+          )
+          matchDetails.push(...batch)
+        }
 
         const processed: MatchData[] = (matchDetails as any[])
           .map((match) => {
@@ -174,6 +185,12 @@ export default function SummonerPage() {
           .filter(Boolean) as MatchData[]
 
         setMatches(processed)
+        // 같이 게임한 유저 전체 DB에 저장 (빠르게 DB 축적)
+        const participants = processed.flatMap(m => [...m.teammates, ...m.opponents])
+        const unique = Array.from(
+          new Map(participants.filter(p => p.gameName && p.tagLine).map(p => [`${p.gameName}#${p.tagLine}`, p])).values()
+        )
+        if (unique.length > 0) saveSummoners(unique)
       } catch (e) {
         if (!cancelled) setError(handleApiError(e))
       } finally {

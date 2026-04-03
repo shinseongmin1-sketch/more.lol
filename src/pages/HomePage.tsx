@@ -8,6 +8,7 @@ import {
 } from '../utils/searchStats'
 import { getRecentSearches, addRecentSearch, removeRecentSearch } from '../utils/recentSearchStore'
 import { getDDVersion, champIconUrl, getChampMap } from '../utils/riotApi'
+import { searchSummoners } from '../utils/supabase'
 import './HomePage.css'
 
 const quickLinks = [
@@ -48,6 +49,8 @@ export default function HomePage() {
   const [, setTodayCount] = useState(getTodaySummonerCount)
   const [, setChampCount] = useState(getAnalyzedChampionCount)
   const [recentSearches, setRecentSearches] = useState<string[]>([])
+  const [suggestions, setSuggestions] = useState<Array<{gameName: string, tagLine: string}>>([])
+  const [isSuggesting, setIsSuggesting] = useState(false)
   const [ddVersion, setDdVersion] = useState('')
   const [hotChamps, setHotChamps] = useState<HotChamp[]>(fallbackChamps)
   const [champNameMap, setChampNameMap] = useState<Record<string, string>>({})
@@ -76,6 +79,23 @@ export default function HomePage() {
       setChampCount(getAnalyzedChampionCount())
     })
   }, [])
+
+  // 소환사 자동완성 — Supabase DB 검색 (디바운스 300ms)
+  useEffect(() => {
+    const query = inputValue.trim()
+    if (!query) {
+      setSuggestions([])
+      setIsSuggesting(false)
+      return
+    }
+    setIsSuggesting(true)
+    const timer = setTimeout(async () => {
+      const results = await searchSummoners(query)
+      setSuggestions(results)
+      setIsSuggesting(false)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [inputValue])
 
   const handleSearch = (name: string) => {
     if (name.trim()) {
@@ -145,29 +165,70 @@ export default function HomePage() {
               </button>
             </div>
 
-            {focused && recentSearches.length > 0 && (
-              <div className="home-dropdown">
-                <div className="dropdown-section-title">최근 검색</div>
-                {recentSearches.map(name => (
-                  <div key={name} className="dropdown-item" onMouseDown={() => handleSearch(name)}>
-                    <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-                    </svg>
-                    <span style={{ flex: 1 }}>{name}</span>
-                    <span className="dropdown-server">KR</span>
-                    <button
-                      className="dropdown-remove-btn"
-                      onMouseDown={e => handleRemoveRecent(e, name)}
-                      aria-label="삭제"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
-                        <path d="M18 6L6 18M6 6l12 12" />
-                      </svg>
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+            {focused && (() => {
+              const q = inputValue.trim()
+              const filteredRecents = q
+                ? recentSearches.filter(n => n.toLowerCase().includes(q.toLowerCase()))
+                : recentSearches
+              const showDropdown = filteredRecents.length > 0 || q
+              if (!showDropdown) return null
+              return (
+                <div className="home-dropdown">
+                  {filteredRecents.length > 0 && (
+                    <>
+                      <div className="dropdown-section-title">최근 검색</div>
+                      {filteredRecents.map(name => (
+                        <div key={name} className="dropdown-item" onMouseDown={() => handleSearch(name)}>
+                          <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
+                          </svg>
+                          <span style={{ flex: 1 }}>{name}</span>
+                          <span className="dropdown-server">KR</span>
+                          <button
+                            className="dropdown-remove-btn"
+                            onMouseDown={e => handleRemoveRecent(e, name)}
+                            aria-label="삭제"
+                          >
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" width="12" height="12">
+                              <path d="M18 6L6 18M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
+                  {q && (
+                    <>
+                      <div className="dropdown-section-title">
+                        소환사 찾기
+                        {isSuggesting && <span className="dropdown-loading-dots"><span /><span /><span /></span>}
+                      </div>
+                      {!isSuggesting && suggestions.length === 0 && (
+                        <div className="dropdown-empty">검색 결과 없음</div>
+                      )}
+                      {suggestions.map(s => (
+                        <div
+                          key={`${s.gameName}#${s.tagLine}`}
+                          className="dropdown-item"
+                          onMouseDown={() => handleSearch(`${s.gameName}#${s.tagLine}`)}
+                        >
+                          <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                          </svg>
+                          <span style={{ flex: 1 }}>
+                            {s.gameName}
+                            <span className="dropdown-tag">#{s.tagLine}</span>
+                          </span>
+                          <span className="dropdown-server">KR</span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )
+            })()}
           </form>
 
         </div>
