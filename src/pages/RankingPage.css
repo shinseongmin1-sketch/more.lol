@@ -1,0 +1,291 @@
+/* ── 헤더 테마 ─────────────────────────────────────────────────────────────── */
+.ranking-page .subpage-header {
+  background: linear-gradient(135deg, #0a0800 0%, #1a1200 50%, #0a0800 100%);
+  border-bottom: 1px solid rgba(212,175,55,0.35);
+  position: relative; overflow: hidden;
+}
+.ranking-page .subpage-header::before {
+  content: ''; position: absolute; width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(212,175,55,0.1) 0%, transparent 65%);
+  top: -200px; right: -80px; pointer-events: none; border-radius: 50%;
+}
+.ranking-page .subpage-title {
+  font-size: 26px;
+  background: linear-gradient(90deg, #ffd700, #d4af37, #b8860b);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.ranking-page .subpage-desc  { color: rgba(212,175,55,0.6); margin-top: 5px; font-size: 13px; }
+.ranking-page .patch-badge   { color: #d4af37; background: rgba(212,175,55,0.12); border-color: rgba(212,175,55,0.35); }
+.ranking-page .update-dot    { background: #d4af37; }
+.ranking-deco { position: absolute; opacity: 0.04; pointer-events: none; user-select: none; font-size: 100px; }
+.ranking-deco-1 { top: -15px; right: 170px; transform: rotate(-8deg); }
+.ranking-deco-2 { top: 8px; right: 55px; font-size: 60px; opacity: 0.03; }
+
+/* ── 탭 ────────────────────────────────────────────────────────────────────── */
+.ranking-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 4px;
+  width: fit-content;
+}
+
+.ranking-tab {
+  padding: 9px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ranking-tab:hover { color: var(--text-secondary); }
+.ranking-tab.active {
+  background: var(--bg-secondary);
+  color: #d4af37;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+/* ── 테이블 공통 ────────────────────────────────────────────────────────────── */
+.ranking-table-wrap {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.ranking-updated {
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 8px 20px 0;
+  opacity: 0.6;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ranking-table thead tr {
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.ranking-table th {
+  padding: 11px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ranking-row {
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.1s;
+}
+.ranking-row:last-child { border-bottom: none; }
+.ranking-row.hovered    { background: var(--bg-card-hover); }
+.ranking-row.top3       { background: rgba(212,175,55,0.04); }
+.ranking-row.top3.hovered { background: rgba(212,175,55,0.08); }
+
+.ranking-table td { padding: 10px 16px; vertical-align: middle; }
+
+/* ── 컬럼 너비 ────────────────────────────────────────────────────────────── */
+.col-r-rank  { width: 52px; text-align: center; }
+.col-r-name  { min-width: 160px; }
+.col-r-tier  { width: 160px; }
+.col-r-lp    { width: 90px; text-align: right; }
+.col-r-wr    { width: 130px; }
+.col-r-wl    { width: 110px; }
+.col-r-badge { width: 120px; }
+.col-pro-team { width: 80px; }
+.col-pro-pos  { width: 65px; text-align: center; }
+.col-pro-name { width: 110px; }
+
+/* ── 순위 번호 ───────────────────────────────────────────────────────────── */
+.r-rank-num {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.r-rank-num.gold   { color: #d4af37; text-shadow: 0 0 8px rgba(212,175,55,0.4); }
+.r-rank-num.silver { color: #95a5a6; }
+
+/* ── 티어 뱃지 셀 ────────────────────────────────────────────────────────── */
+.tier-badge-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rank-emblem {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.tier-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tier-label-text {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.lp-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ── LP ────────────────────────────────────────────────────────────────────── */
+.lp-value {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ── 승률 ─────────────────────────────────────────────────────────────────── */
+.wr-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.wr-num {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.wr-bar-wrap { width: 100%; }
+.wr-bar-bg {
+  height: 3px;
+  background: var(--bg-secondary);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.wr-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.3s;
+}
+
+/* ── 소환사명 ──────────────────────────────────────────────────────────────── */
+.summoner-name-cell { display: flex; align-items: baseline; gap: 3px; flex-wrap: wrap; }
+.summoner-game-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.summoner-tag       { font-size: 11px; color: var(--text-muted); }
+
+/* ── 승/패 ────────────────────────────────────────────────────────────────── */
+.wl-text { font-size: 12px; }
+.w-num   { color: #27ae60; font-weight: 600; }
+.l-num   { color: #e74c3c; font-weight: 600; }
+.wl-sep  { color: var(--text-muted); }
+
+/* ── 뱃지 칩 ──────────────────────────────────────────────────────────────── */
+.badge-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.badge-chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.badge-chip.hot { background: rgba(231,76,60,0.15); color: #e74c3c; border: 1px solid rgba(231,76,60,0.3); }
+.badge-chip.vet { background: rgba(241,196,15,0.15); color: #f1c40f; border: 1px solid rgba(241,196,15,0.3); }
+
+/* ── 프로게이머 전용 ────────────────────────────────────────────────────────── */
+.pro-team-filter {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+
+.pro-team-chip {
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pro-team-chip:hover { color: var(--text-primary); border-color: rgba(255,255,255,0.2); }
+.pro-team-chip.active {
+  background: color-mix(in srgb, var(--tc, #7c5af6) 18%, transparent);
+  border-color: var(--tc, #7c5af6);
+  color: var(--tc, #d4af37);
+}
+
+.team-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 9px;
+  border-radius: 6px;
+  border: 1px solid;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.pos-badge {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.pro-display-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.not-found {
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0.5;
+}
+
+/* ── 로딩 ─────────────────────────────────────────────────────────────────── */
+.ranking-loading {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.loading-spinner {
+  width: 36px; height: 36px;
+  border: 3px solid var(--border-color);
+  border-top-color: #d4af37;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-hint { font-size: 12px; opacity: 0.6; }

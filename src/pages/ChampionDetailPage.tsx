@@ -142,214 +142,217 @@ export default function ChampionDetailPage() {
       <div className="cd-main">
 
         {/* ══════ 빌드 탭 ══════ */}
-        {activeTab === 'build' && isGaren && (
-          <div className="cd-bigcard">
-            <div className="cd-3col">
+        {activeTab === 'build' && isGaren && (() => {
+          const RUNE_CDN = 'https://ddragon.leagueoflegends.com/cdn/img/'
+          const primTree = runeTreeData.find((t: any) => t.id === PRIMARY_TREE_ID)
+          const secTree  = runeTreeData.find((t: any) => t.id === SECONDARY_TREE_ID)
+          return (
+            <div className="build-cards">
 
-              {/* ══ 1열: 룬 트리 ══ */}
-              <div className="cd-col-rune">
-                {(() => {
-                  const primTree = runeTreeData.find((t: any) => t.id === PRIMARY_TREE_ID)
-                  const secTree  = runeTreeData.find((t: any) => t.id === SECONDARY_TREE_ID)
-                  const RUNE_CDN = 'https://ddragon.leagueoflegends.com/cdn/img/'
-                  if (!primTree || !secTree) return <div className="cd-rune-loading">룬 데이터 로딩 중...</div>
-                  return (
-                    <>
-                      {/* 주 / 보조 특성 좌우 배치 */}
-                      <div className="cd-rune-lr">
+              {/* ── 카드 1: 룬 (인게임 선택 화면) ── */}
+              <div className="build-card rune-card">
+                <div className="build-card-head">
+                  <span className="build-card-icon">💎</span>
+                  <span className="build-card-title">룬</span>
+                  <span className="build-card-sub">추천 룬 세팅</span>
+                </div>
+                {(!primTree || !secTree)
+                  ? <div className="build-card-body"><p className="build-empty">룬 데이터 로딩 중...</p></div>
+                  : (
+                    <div className="rune-screen">
 
-                        {/* 주 특성 */}
-                        <div className="cd-rune-pane">
-                          <div className="cd-col-label">
-                            <img src={RUNE_CDN + primTree.icon} className="cd-col-path-icon" alt="" />
-                            <span>{primTree.name}</span>
-                            <span className="cd-col-sublabel">주 특성</span>
+                      {/* ── 좌: 주 특성 트리 전체 ── */}
+                      <div className="rune-primary">
+                        <div className="rune-tree-header">
+                          <div className="rune-tree-header-glow" style={{ background: `radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%)` }} />
+                          <img src={RUNE_CDN + primTree.icon} className="rune-tree-logo" alt="" />
+                          <div className="rune-tree-header-text">
+                            <span className="rune-tree-name">{primTree.name}</span>
+                            <span className="rune-tree-sub">주 특성</span>
                           </div>
-                          {primTree.slots.map((slot: any, si: number) => (
-                            <div key={si} className={`cd-rt-row${si === 0 ? ' cd-rt-keystones' : ''}`}>
-                              {slot.runes.map((r: any) => (
-                                <div key={r.id} className={`cd-rt-item${selectedRunes.has(r.id) ? ' sel' : ''}`} title={r.name}>
+                        </div>
+                        {primTree.slots.map((slot: any, si: number) => (
+                          <div key={si} className={`rune-tree-row ${si === 0 ? 'rune-keystone-row' : ''}`}>
+                            {slot.runes.map((r: any) => {
+                              const sel = selectedRunes.has(r.id)
+                              return (
+                                <div key={r.id} className={`rune-circle ${si === 0 ? 'keystone' : ''} ${sel ? 'sel' : ''}`}>
+                                  <div className="rune-circle-ring" />
                                   <img src={RUNE_CDN + r.icon} alt={r.name} />
+                                  <div className="rune-tooltip">
+                                    <span className="rune-tooltip-name">{r.name}</span>
+                                    <span className="rune-tooltip-desc">{cleanHtml(r.shortDesc ?? r.longDesc ?? '')}</span>
+                                  </div>
                                 </div>
-                              ))}
+                              )
+                            })}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* ── 우: 보조 특성 + 스탯 파편 ── */}
+                      <div className="rune-secondary-wrap">
+
+                        {/* 보조 특성 */}
+                        <div className="rune-secondary">
+                          <div className="rune-tree-header rune-tree-header-sm">
+                            <img src={RUNE_CDN + secTree.icon} className="rune-tree-logo rune-tree-logo-sm" alt="" />
+                            <div className="rune-tree-header-text">
+                              <span className="rune-tree-name">{secTree.name}</span>
+                              <span className="rune-tree-sub">보조 특성</span>
+                            </div>
+                          </div>
+                          {secTree.slots.slice(1).map((slot: any, si: number) => (
+                            <div key={si} className="rune-tree-row rune-tree-row-sm">
+                              {slot.runes.map((r: any) => {
+                                const sel = selectedRunes.has(r.id)
+                                return (
+                                  <div key={r.id} className={`rune-circle rune-circle-sm ${sel ? 'sel' : ''}`}>
+                                    <div className="rune-circle-ring" />
+                                    <img src={RUNE_CDN + r.icon} alt={r.name} />
+                                    <div className="rune-tooltip rune-tooltip-left">
+                                      <span className="rune-tooltip-name">{r.name}</span>
+                                      <span className="rune-tooltip-desc">{cleanHtml(r.shortDesc ?? r.longDesc ?? '')}</span>
+                                    </div>
+                                  </div>
+                                )
+                              })}
                             </div>
                           ))}
                         </div>
 
-                        <div className="cd-rune-lr-divider" />
-
-                        {/* 보조 특성 */}
-                        <div className="cd-rune-pane">
-                          <div className="cd-col-label">
-                            <img src={RUNE_CDN + secTree.icon} className="cd-col-path-icon" alt="" />
-                            <span>{secTree.name}</span>
-                            <span className="cd-col-sublabel">보조 특성</span>
-                          </div>
-                          {secTree.slots.slice(1).map((slot: any, si: number) => (
-                            <div key={si} className="cd-rt-row">
-                              {slot.runes.map((r: any) => (
-                                <div key={r.id} className={`cd-rt-item${selectedRunes.has(r.id) ? ' sel' : ''}`} title={r.name}>
-                                  <img src={RUNE_CDN + r.icon} alt={r.name} />
-                                </div>
-                              ))}
-                            </div>
-                          ))}
+                        {/* 스탯 파편 */}
+                        <div className="rune-shards">
+                          <span className="rune-shards-title">스탯 파편</span>
+                          {(['offense','flex','defense'] as const).map((row, ri) => {
+                            const labels = ['공격', '유연', '방어']
+                            return (
+                              <div key={row} className="rune-shard-row">
+                                <span className="rune-shard-label">{labels[ri]}</span>
+                                {statShards[row].map(s => (
+                                  <div key={s.id} className={`rune-circle rune-circle-shard ${s.id === statShards.selected[ri] ? 'sel' : ''}`}>
+                                    <div className="rune-circle-ring" />
+                                    <img src={s.icon} alt={s.name} />
+                                    <div className="rune-tooltip rune-tooltip-left">
+                                      <span className="rune-tooltip-name">{s.name}</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )
+                          })}
                         </div>
 
                       </div>
-
-                      <div className="cd-col-sep" />
-
-                      {/* 스탯 파편 */}
-                      <div className="cd-shards-title">스탯 파편</div>
-                      {(['offense','flex','defense'] as const).map((row, ri) => {
-                        const selId = statShards.selected[ri]
-                        const labels = ['공격','유연','방어']
-                        return (
-                          <div key={row} className="cd-shard-row">
-                            <span className="cd-shard-label">{labels[ri]}</span>
-                            {statShards[row].map(s => (
-                              <div key={s.id} className={`cd-shard-item${s.id === selId ? ' sel' : ''}`} title={s.name}>
-                                <img src={s.icon} alt={s.name} />
-                              </div>
-                            ))}
-                          </div>
-                        )
-                      })}
-                    </>
+                    </div>
                   )
-                })()}
+                }
               </div>
 
-              <div className="cd-vcol-divider" />
-
-              {/* ══ 2열: 소환사 주문 + 스킬 빌드 ══ */}
-              <div className="cd-col-mid">
-                {/* 소환사 주문 */}
-                <div className="cd-col-label"><span>소환사 주문</span></div>
-                <div className="cd-summoner-row">
-                  {summonerSpells.map(s => (
-                    <div key={s.id} className="cd-summoner-item" title={s.name}>
-                      <img src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${s.id}.png`} alt={s.name} />
-                      <span>{s.name}</span>
-                    </div>
-                  ))}
+              {/* ── 카드 2: 소환사 주문 ── */}
+              <div className="build-card">
+                <div className="build-card-head">
+                  <span className="build-card-icon">⚡</span>
+                  <span className="build-card-title">소환사 주문</span>
+                  <span className="build-card-sub">추천 소환사 주문 2개</span>
                 </div>
-
-                <div className="cd-col-sep" />
-
-                {/* 스킬 빌드 */}
-                <div className="cd-col-label">
-                  <span>스킬 빌드</span>
-                  <div className="cd-so-maxorder">
-                    {skillMaxOrder.map((k, i) => (
-                      <span key={i} className="cd-so-maxorder-item">
-                        {i > 0 && <span className="cd-so-maxorder-arrow">›</span>}
-                        <img src={spellIcon(champData.spells[SPELL_KEYS.indexOf(k as typeof SPELL_KEYS[number])].image.full)} alt={k} className="cd-so-maxorder-img" />
-                        <span style={{ color: SPELL_COLORS[k], fontSize:'10px', fontWeight:800 }}>{k}</span>
-                      </span>
+                <div className="build-card-body">
+                  <div className="spell-row">
+                    {summonerSpells.map(s => (
+                      <div key={s.id} className="spell-item">
+                        <img src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${s.id}.png`} alt={s.name} />
+                        <span>{s.name}</span>
+                      </div>
                     ))}
                   </div>
                 </div>
-                <div className="cd-so-wrap">
-                  <div className="cd-so-lvrow">
-                    <div className="cd-so-label-col" />
-                    {Array.from({length:18},(_,i) => <div key={i} className="cd-so-lv">{i+1}</div>)}
-                  </div>
-                  {SPELL_KEYS.map((key, ki) => (
-                    <div key={key} className="cd-so-row">
-                      <div className="cd-so-label-col">
-                        <img src={spellIcon(champData.spells[ki].image.full)} alt={key} className="cd-so-spell-img" />
-                        <span className="cd-so-key" style={{ color: SPELL_COLORS[key] }}>{key}</span>
+              </div>
+
+              {/* ── 카드 3: 아이템 빌드 ── */}
+              <div className="build-card">
+                <div className="build-card-head">
+                  <span className="build-card-icon">🛡️</span>
+                  <span className="build-card-title">아이템 빌드</span>
+                  <span className="build-card-sub">추천 빌드 순서</span>
+                </div>
+                <div className="build-card-body">
+                  {[
+                    { label: '시작 아이템', items: startItems },
+                    { label: '신발',        items: [boots] },
+                    { label: '코어 아이템', items: coreItems },
+                    { label: '완성 빌드',   items: fullBuild },
+                    { label: '상황별 아이템', items: situationalItems },
+                  ].map(({ label, items }) => (
+                    <div key={label} className="item-group">
+                      <span className="item-group-label">{label}</span>
+                      <div className="item-flow">
+                        {items.map((item, i) => (
+                          <div key={item.id} className="item-flow-cell">
+                            {i > 0 && <span className="item-arrow">›</span>}
+                            <div className="item-box" title={item.name}>
+                              <img src={itemIcon(item.id)} alt={item.name} />
+                              <span>{item.name}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                      {skillRows[key].map((active, li) => (
-                        <div key={li} className="cd-so-cell">
-                          <div className="cd-so-cell-inner"
-                            style={active ? { background: SPELL_COLORS[key], boxShadow:`0 0 4px ${SPELL_COLORS[key]}88` } : {}} />
-                        </div>
-                      ))}
                     </div>
                   ))}
                 </div>
               </div>
 
-              <div className="cd-vcol-divider" />
-
-              {/* ══ 3열: 아이템 빌드 순서 ══ */}
-              <div className="cd-col-items">
-                <div className="cd-col-label"><span>추천 아이템 빌드 순서</span></div>
-
-                {/* 시작 아이템 */}
-                <div className="cd-item-group-label">시작 아이템</div>
-                <div className="cd-item-flow">
-                  {startItems.map((item, i) => (
-                    <div key={item.id} className="cd-item-flow-item">
-                      {i > 0 && <span className="cd-flow-arrow">›</span>}
-                      <div className="cd-ibox" title={item.name}>
-                        <img src={itemIcon(item.id)} alt={item.name} />
-                        <span>{item.name}</span>
-                      </div>
-                    </div>
-                  ))}
+              {/* ── 카드 4: 스킬 순서 ── */}
+              <div className="build-card">
+                <div className="build-card-head">
+                  <span className="build-card-icon">📋</span>
+                  <span className="build-card-title">스킬 순서</span>
+                  <span className="build-card-sub">레벨별 스킬 찍는 순서</span>
                 </div>
-
-                {/* 신발 */}
-                <div className="cd-item-group-label">신발</div>
-                <div className="cd-item-flow">
-                  <div className="cd-item-flow-item">
-                    <div className="cd-ibox" title={boots.name}>
-                      <img src={itemIcon(boots.id)} alt={boots.name} />
-                      <span>{boots.name}</span>
+                <div className="build-card-body">
+                  {/* 최대 올리는 순서 */}
+                  <div className="skill-maxorder">
+                    <span className="skill-maxorder-label">스킬 우선순위</span>
+                    <div className="skill-maxorder-items">
+                      {skillMaxOrder.map((k, i) => (
+                        <span key={i} className="skill-maxorder-item">
+                          {i > 0 && <span className="skill-maxorder-arrow">›</span>}
+                          <img src={spellIcon(champData.spells[SPELL_KEYS.indexOf(k as typeof SPELL_KEYS[number])].image.full)} alt={k} />
+                          <span style={{ color: SPELL_COLORS[k] }}>{k}</span>
+                        </span>
+                      ))}
                     </div>
                   </div>
-                </div>
-
-                {/* 코어 아이템 */}
-                <div className="cd-item-group-label">코어 아이템</div>
-                <div className="cd-item-flow">
-                  {coreItems.map((item, i) => (
-                    <div key={item.id} className="cd-item-flow-item">
-                      {i > 0 && <span className="cd-flow-arrow">›</span>}
-                      <div className="cd-ibox" title={item.name}>
-                        <img src={itemIcon(item.id)} alt={item.name} />
-                        <span>{item.name}</span>
-                      </div>
+                  {/* 레벨별 스킬 표 */}
+                  <div className="skill-table">
+                    <div className="skill-table-lvrow">
+                      <div className="skill-table-label-col" />
+                      {Array.from({ length: 18 }, (_, i) => (
+                        <div key={i} className="skill-table-lv">{i + 1}</div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-
-                {/* 완성 빌드 */}
-                <div className="cd-item-group-label">완성 빌드</div>
-                <div className="cd-item-flow cd-item-flow-wrap">
-                  {fullBuild.map((item, i) => (
-                    <div key={item.id} className="cd-item-flow-item">
-                      {i > 0 && <span className="cd-flow-arrow">›</span>}
-                      <div className="cd-ibox" title={item.name}>
-                        <img src={itemIcon(item.id)} alt={item.name} />
-                        <span>{item.name}</span>
+                    {SPELL_KEYS.map((key, ki) => (
+                      <div key={key} className="skill-table-row">
+                        <div className="skill-table-label-col">
+                          <img src={spellIcon(champData.spells[ki].image.full)} alt={key} />
+                          <span style={{ color: SPELL_COLORS[key] }}>{key}</span>
+                        </div>
+                        {skillRows[key].map((active, li) => (
+                          <div key={li} className="skill-table-cell">
+                            <div
+                              className={`skill-dot ${active ? 'active' : ''}`}
+                              style={active ? { background: SPELL_COLORS[key], boxShadow: `0 0 6px ${SPELL_COLORS[key]}99` } : {}}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* 상황별 아이템 */}
-                <div className="cd-item-group-label">상황별 아이템</div>
-                <div className="cd-item-flow cd-item-flow-wrap">
-                  {situationalItems.map((item, i) => (
-                    <div key={item.id} className="cd-item-flow-item">
-                      {i > 0 && <span className="cd-flow-arrow">›</span>}
-                      <div className="cd-ibox" title={item.name}>
-                        <img src={itemIcon(item.id)} alt={item.name} />
-                        <span>{item.name}</span>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
 
             </div>
-          </div>
-        )}
+          )
+        })()}
 
         {/* 다른 챔피언 빌드 탭 (데이터 미지원) */}
         {activeTab === 'build' && !isGaren && (

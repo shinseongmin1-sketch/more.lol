@@ -2,6 +2,539 @@
    Champion Detail Page  —  deeplol style
 ═══════════════════════════════════════════ */
 
+/* ══ 빌드 카드 4장 (세로 배치) ════════════════════════════════════════════ */
+.build-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+/* ── 카드 공통 ── */
+.build-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.build-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.build-card-icon { font-size: 18px; }
+.build-card-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.build-card-sub {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-left: 4px;
+}
+
+.build-card-body {
+  padding: 20px;
+}
+
+.build-empty { color: var(--text-muted); font-size: 13px; }
+
+/* ── 카드 1: 룬 — 인게임 룬 선택 화면 레이아웃 ── */
+
+/* 전체 컨테이너: 좌(주특성) + 우(보조+파편) */
+.rune-screen {
+  display: flex;
+  gap: 0;
+  min-height: 320px;
+  padding: 4px 0;
+}
+
+/* ── 좌: 주 특성 트리 ── */
+.rune-primary {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 20px 16px 16px;
+  border-right: 1px solid var(--border-color);
+}
+
+/* ── 우: 보조 특성 + 파편 ── */
+.rune-secondary-wrap {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 16px 20px;
+  gap: 20px;
+}
+
+/* ── 트리 헤더 (주/보조 공통) ── */
+.rune-tree-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  margin-bottom: 16px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(99,102,241,0.06);
+  border: 1px solid rgba(99,102,241,0.15);
+  overflow: hidden;
+}
+
+.rune-tree-header-sm {
+  padding: 6px 8px;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.03);
+  border-color: rgba(255,255,255,0.08);
+}
+
+.rune-tree-header-glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.rune-tree-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(99,102,241,0.5));
+}
+
+.rune-tree-logo-sm {
+  width: 24px;
+  height: 24px;
+  filter: none;
+}
+
+.rune-tree-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rune-tree-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.2px;
+}
+
+.rune-tree-sub {
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+
+/* ── 룬 행 ── */
+.rune-tree-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+  width: 100%;
+}
+
+.rune-keystone-row {
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.rune-tree-row-sm {
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+/* ── 룬 원형 (기본) ── */
+.rune-circle {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  flex-shrink: 0;
+  opacity: 0.28;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+.rune-circle img {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+/* 장식 링 */
+.rune-circle-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.12);
+  pointer-events: none;
+  z-index: 0;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+/* 키스톤 (더 큼) */
+.rune-circle.keystone {
+  width: 58px;
+  height: 58px;
+}
+
+/* 선택된 룬 */
+.rune-circle.sel {
+  opacity: 1;
+}
+
+.rune-circle.sel .rune-circle-ring {
+  border-color: #c89b3c;
+  box-shadow: 0 0 12px rgba(200,155,60,0.55), 0 0 4px rgba(200,155,60,0.35);
+}
+
+.rune-circle.keystone.sel .rune-circle-ring {
+  box-shadow: 0 0 20px rgba(200,155,60,0.75), 0 0 8px rgba(200,155,60,0.5);
+}
+
+/* 보조 특성 (조금 작음) */
+.rune-circle-sm {
+  width: 38px;
+  height: 38px;
+}
+
+/* 스탯 파편 (가장 작음) */
+.rune-circle-shard {
+  width: 30px;
+  height: 30px;
+}
+
+/* ── 툴팁 ── */
+.rune-circle {
+  overflow: visible;  /* 툴팁이 밖으로 나와도 보이게 */
+}
+
+.rune-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #12121f;
+  border: 1px solid rgba(99,102,241,0.35);
+  border-radius: 8px;
+  padding: 8px 10px;
+  width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s, visibility 0.15s;
+  z-index: 200;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+  white-space: normal;
+}
+
+.rune-circle:hover .rune-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.rune-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: rgba(99,102,241,0.35);
+}
+
+/* 우측 패널 룬: 툴팁을 왼쪽으로 */
+.rune-tooltip-left {
+  left: auto;
+  right: 50%;
+  transform: translateX(50%);
+}
+
+.rune-tooltip-left::after {
+  left: auto;
+  right: 50%;
+  transform: translateX(50%);
+}
+
+.rune-tooltip-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #a5b4fc;
+}
+
+.rune-tooltip-desc {
+  font-size: 11px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.5;
+}
+
+/* ── 스탯 파편 섹션 ── */
+.rune-shards {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rune-shards-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.rune-shard-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.rune-shard-label {
+  font-size: 10px;
+  color: var(--text-muted);
+  width: 26px;
+  flex-shrink: 0;
+  font-weight: 600;
+}
+
+/* ── 카드 2: 소환사 주문 ── */
+.spell-row {
+  display: flex;
+  gap: 20px;
+}
+
+.spell-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+
+.spell-item img {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+}
+
+.spell-item span {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* ── 카드 3: 아이템 빌드 ── */
+.item-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.item-group:last-child { border-bottom: none; padding-bottom: 0; }
+.item-group:first-child { padding-top: 0; }
+
+.item-group-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+  padding-top: 4px;
+  width: 70px;
+  flex-shrink: 0;
+}
+
+.item-flow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.item-flow-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.item-arrow {
+  font-size: 18px;
+  color: var(--text-muted);
+  line-height: 1;
+}
+
+.item-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  cursor: default;
+}
+
+.item-box img {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  border: 2px solid var(--border-color);
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.item-box:hover img {
+  border-color: var(--accent-gold);
+  transform: translateY(-2px);
+}
+
+.item-box span {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 56px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ── 카드 4: 스킬 순서 ── */
+.skill-maxorder {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+}
+
+.skill-maxorder-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.skill-maxorder-items {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.skill-maxorder-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.skill-maxorder-item img {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+}
+
+.skill-maxorder-item span {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.skill-maxorder-arrow {
+  font-size: 16px;
+  color: var(--text-muted);
+  margin: 0 2px;
+}
+
+/* 스킬 레벨 표 */
+.skill-table { overflow-x: auto; }
+
+.skill-table-lvrow,
+.skill-table-row {
+  display: flex;
+  align-items: center;
+}
+
+.skill-table-lvrow { margin-bottom: 4px; }
+
+.skill-table-label-col {
+  width: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 8px;
+}
+
+.skill-table-label-col img {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.skill-table-label-col span {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.skill-table-lv {
+  width: 28px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.skill-table-cell {
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.skill-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  transition: all 0.1s;
+}
+
+.skill-dot.active {
+  width: 18px;
+  height: 18px;
+  border: none;
+}
+
 .cd-page { min-height: 100vh; background: var(--bg-primary); }
 
 /* ── 로딩 ── */

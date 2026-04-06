@@ -3,10 +3,12 @@ import ChampionTierList from '../components/ChampionTierList'
 import './SubPage.css'
 import './AramPage.css'
 
-const tierFilters = ['전체', 'S+', 'S', 'A', 'B', 'C', 'D']
+const CHAMP_TIERS = ['전체', 'S+', 'S', 'A', 'B', 'C', 'D'] as const
+type ChampTierFilter = typeof CHAMP_TIERS[number]
 
 export default function AramPage() {
-  const [activeTier, setActiveTier] = useState('전체')
+  const [activeTier, setActiveTier] = useState<ChampTierFilter>('전체')
+
   return (
     <div className="subpage aram-page">
       <div className="subpage-header">
@@ -18,24 +20,34 @@ export default function AramPage() {
             <p className="subpage-desc">무작위 총력전 챔피언 승률 · 픽률 · 티어 분석</p>
           </div>
           <div className="subpage-meta">
-            <span className="patch-badge">14.24 패치</span>
-            <span className="update-info"><span className="update-dot" />실시간 업데이트</span>
+            <span className="patch-badge">칼바람나락</span>
+            <span className="update-info"><span className="update-dot" />30일 자동 업데이트</span>
           </div>
         </div>
       </div>
+
       <div className="subpage-body">
         <div className="subpage-filter-bar">
           <div className="filter-group">
-            <span className="filter-label">티어 필터</span>
-            <div className="filter-chips">
-              {tierFilters.map(t => (
-                <button key={t} className={"filter-chip " + (activeTier === t ? 'active' : '')} onClick={() => setActiveTier(t)}>{t}</button>
+            <span className="filter-label">챔피언 티어</span>
+            <div className="aram-tier-chips">
+              {CHAMP_TIERS.map(t => (
+                <button
+                  key={t}
+                  className={'aram-tier-chip ' + (activeTier === t ? 'active' : '')}
+                  onClick={() => setActiveTier(t)}
+                >
+                  {t}
+                </button>
               ))}
             </div>
           </div>
-          <select className="sort-select"><option>티어순</option><option>승률순</option><option>픽률순</option><option>밴률순</option></select>
         </div>
-        <ChampionTierList mode="aram" />
+
+        <ChampionTierList
+          mode="aram"
+          aramTierFilter={activeTier === '전체' ? undefined : activeTier}
+        />
       </div>
     </div>
   )

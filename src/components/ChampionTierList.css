@@ -324,3 +324,93 @@
   font-size: 11px;
   color: var(--text-muted);
 }
+
+/* 로딩 */
+.tier-list-loading {
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.loading-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent-gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.loading-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* 타이틀 그룹 */
+.tier-list-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.last-updated-badge {
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* 플레이어 티어 뱃지 */
+.player-tier-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 20px;
+  border: 1px solid;
+  letter-spacing: 0.3px;
+}
+
+/* 컨트롤(정렬 + 뷰 토글) */
+.tier-list-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sort-tabs {
+  display: flex;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.sort-tab {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.sort-tab:hover { color: var(--text-secondary); }
+
+.sort-tab.active {
+  background: var(--bg-secondary);
+  color: var(--accent-gold);
+}

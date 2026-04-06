@@ -23,3 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+.env
+.env.*
+
+# API 캐시 데이터 (자동 생성)
+public/data/

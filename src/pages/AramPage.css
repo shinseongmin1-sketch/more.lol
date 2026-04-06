@@ -22,3 +22,35 @@
 .aram-bolt { position: absolute; font-size: 80px; opacity: 0.05; pointer-events: none; user-select: none; line-height: 1; }
 .aram-bolt-1 { top: -10px; right: 180px; transform: rotate(-15deg); }
 .aram-bolt-2 { top: 5px; right: 80px; transform: rotate(10deg); font-size: 50px; opacity: 0.04; }
+
+/* 챔피언 티어 필터 칩 */
+.aram-tier-chips {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.aram-tier-chip {
+  padding: 5px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  letter-spacing: 0.3px;
+}
+
+.aram-tier-chip:hover {
+  border-color: rgba(0,183,235,0.4);
+  color: var(--text-primary);
+}
+
+.aram-tier-chip.active {
+  background: rgba(0,183,235,0.15);
+  border-color: #00b7eb;
+  color: #00d2ff;
+}
