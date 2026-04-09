@@ -779,35 +779,40 @@
 /* 참가자 */
 .mc-participants {
   display: flex;
-  gap: 8px;
-  padding: 12px 12px 12px 6px;
+  gap: 6px;
+  padding: 8px 10px 8px 6px;
   margin-left: auto;
   flex-shrink: 0;
+  width: 210px;
 }
 
 .mc-team-col {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 3px;
+  width: 99px;
+  flex-shrink: 0;
 }
 
 .mc-part {
   display: flex;
   align-items: center;
   gap: 4px;
+  height: 18px;
 }
 
 .mc-part-icon {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
   object-fit: cover;
   opacity: 0.85;
+  flex-shrink: 0;
 }
 
 .mc-part-enemy {
-  opacity: 0.55;
-  filter: saturate(0.6);
+  opacity: 0.5;
+  filter: saturate(0.5);
 }
 
 .mc-part-me {
@@ -823,7 +828,7 @@
 .mc-part-name {
   font-size: 10px;
   color: var(--text-muted);
-  max-width: 70px;
+  width: 75px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
