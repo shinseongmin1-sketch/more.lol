@@ -706,17 +706,17 @@ export default function SummonerPage() {
 
                       <div className="mc-participants">
                         <div className="mc-team-col">
-                          {match.teammates.slice(0, 5).map(p => (
+                          {blueTeam.slice(0, 5).map(p => (
                             <div key={p.puuid} className="mc-part">
-                              <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className="mc-part-icon" />
-                              <span className="mc-part-name">{p.gameName || '?'}</span>
+                              <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className={`mc-part-icon${p.puuid === account?.puuid ? ' mc-part-me' : ''}`} />
+                              <span className={`mc-part-name${p.puuid === account?.puuid ? ' mc-part-name-me' : ''}`}>{p.gameName || '?'}</span>
                             </div>
                           ))}
                         </div>
                         <div className="mc-team-col">
-                          {match.opponents.slice(0, 5).map(p => (
+                          {redTeam.slice(0, 5).map(p => (
                             <div key={p.puuid} className="mc-part">
-                              <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className="mc-part-icon mc-part-enemy" />
+                              <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className={`mc-part-icon${p.teamId !== myTeamId ? ' mc-part-enemy' : ''}`} />
                               <span className="mc-part-name">{p.gameName || '?'}</span>
                             </div>
                           ))}

@@ -810,6 +810,16 @@
   filter: saturate(0.6);
 }
 
+.mc-part-me {
+  outline: 1px solid #a5b4fc;
+  opacity: 1;
+}
+
+.mc-part-name-me {
+  color: #a5b4fc;
+  font-weight: 700;
+}
+
 .mc-part-name {
   font-size: 10px;
   color: var(--text-muted);
