@@ -160,11 +160,18 @@
 
 .sp-btn-refresh:hover { opacity: 0.85; }
 
+.sp-last-refresh {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-left: 8px;
+}
+
 /* 랭크 카드 */
 .sp-ranks {
   display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .sp-rank-card {
