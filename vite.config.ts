@@ -1,4 +1,4 @@
-import { defineConfig, Plugin, loadEnv } from 'vite'
+import { defineConfig, type Plugin, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react'
 import fs from 'fs'
 import path from 'path'
@@ -41,8 +41,8 @@ async function riotFetch(url: string, apiKey: string, retry = 3): Promise<any> {
 
 // ─── DDragon 한국어 챔피언 이름 맵 ─────────────────────────────────────────
 async function getKorNameMap(): Promise<Record<string, string>> {
-  const versions: string[] = await fetch('https://ddragon.leagueoflegends.com/api/versions.json').then(r => r.json())
-  const data = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/ko_KR/champion.json`).then(r => r.json())
+  const versions = await fetch('https://ddragon.leagueoflegends.com/api/versions.json').then(r => r.json()) as string[]
+  const data = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/ko_KR/champion.json`).then(r => r.json()) as any
   const map: Record<string, string> = {}
   for (const champ of Object.values(data.data) as any[]) map[champ.id] = champ.name
   return map
