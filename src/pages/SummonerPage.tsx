@@ -115,6 +115,7 @@ export default function SummonerPage() {
   const [rankHistory, setRankHistory] = useState<Array<{ season: string; tier: string; rank: string; leaguePoints: number; wins: number; losses: number }>>([])
   const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null)
   const [, setNow] = useState(Date.now())
+  const [cooldown, setCooldown] = useState(0)
 
 
   useEffect(() => {
@@ -238,6 +239,13 @@ export default function SummonerPage() {
     return () => clearInterval(id)
   }, [])
 
+  // 쿨타임 카운트다운
+  useEffect(() => {
+    if (cooldown <= 0) return
+    const id = setInterval(() => setCooldown(c => Math.max(0, c - 1)), 1000)
+    return () => clearInterval(id)
+  }, [cooldown])
+
   const filteredMatches = matches.filter(m => {
     if (activeFilter === '전체')   return true
     if (activeFilter === 'ARAM')   return m.queueId === 450
@@ -347,11 +355,15 @@ export default function SummonerPage() {
               <h1 className="sp-name">{account?.gameName ?? gameName}</h1>
               <div className="sp-tag">#{account?.tagLine ?? tagLine}</div>
               <div className="sp-actions">
-                <button className="sp-btn-refresh" onClick={() => setRefresh(r => r + 1)}>
+                <button
+                  className={`sp-btn-refresh ${cooldown > 0 ? 'disabled' : ''}`}
+                  disabled={cooldown > 0}
+                  onClick={() => { setRefresh(r => r + 1); setCooldown(50) }}
+                >
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="13" height="13">
                     <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                   </svg>
-                  전적 갱신
+                  {cooldown > 0 ? `${cooldown}초` : '전적 갱신'}
                 </button>
                 {lastRefreshedAt && (
                   <span className="sp-last-refresh">최근갱신: {formatRefreshedAt(lastRefreshedAt)}</span>
@@ -369,6 +381,39 @@ export default function SummonerPage() {
 
           {/* ── 왼쪽 사이드바 ── */}
           <div className="sp-sidebar">
+
+            {/* 랭크 카드 */}
+            <div className="sp-ranks">
+              {[
+                soloRank ? { ...soloRank, label: '솔로랭크' } : null,
+                flexRank ? { ...flexRank, label: '자유랭크' } : null,
+              ].map((r, idx) => r ? (
+                <div key={r.queueType} className="sp-rank-card" style={{ background: TIER_BG[r.tier] ?? '#7c5af61a', borderColor: (TIER_COLORS[r.tier] ?? '#7c5af6') + '44' }}>
+                  <div className="sp-rank-emblem">
+                    <img src={tierEmblemUrl(r.tier)} alt={r.tier} className="sp-rank-emblem-img" />
+                  </div>
+                  <div className="sp-rank-info">
+                    <div className="sp-rank-queue">{r.label}</div>
+                    <div className="sp-rank-tier" style={{ color: TIER_COLORS[r.tier] ?? '#6b7280' }}>{r.tier} {r.rank}</div>
+                    <div className="sp-rank-lp">{r.leaguePoints} LP</div>
+                    <div className="sp-rank-record">
+                      <span className="sp-win">{r.wins}승</span>
+                      <span className="sp-lose">{r.losses}패</span>
+                      <span className="sp-wr">{Math.round(r.wins / (r.wins + r.losses) * 100)}%</span>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div key={idx} className="sp-rank-card sp-rank-unranked">
+                  <div className="sp-rank-emblem sp-rank-emblem-none">?</div>
+                  <div className="sp-rank-info">
+                    <div className="sp-rank-queue">{idx === 0 ? '솔로랭크' : '자유랭크'}</div>
+                    <div className="sp-rank-tier" style={{ color: '#9096b8' }}>UNRANKED</div>
+                    <div className="sp-rank-lp">-</div>
+                  </div>
+                </div>
+              ))}
+            </div>
 
             {/* 요약 카드 */}
             <div className="sp-card">
@@ -476,39 +521,6 @@ export default function SummonerPage() {
 
           {/* ── 오른쪽 매치 목록 ── */}
           <div className="sp-matches">
-            {/* 랭크 카드 */}
-            <div className="sp-ranks">
-              {[
-                soloRank ? { ...soloRank, label: '솔로랭크' } : null,
-                flexRank ? { ...flexRank, label: '자유랭크' } : null,
-              ].map((r, idx) => r ? (
-                <div key={r.queueType} className="sp-rank-card" style={{ background: TIER_BG[r.tier] ?? '#7c5af61a', borderColor: (TIER_COLORS[r.tier] ?? '#7c5af6') + '44' }}>
-                  <div className="sp-rank-emblem">
-                    <img src={tierEmblemUrl(r.tier)} alt={r.tier} className="sp-rank-emblem-img" />
-                  </div>
-                  <div className="sp-rank-info">
-                    <div className="sp-rank-queue">{r.label}</div>
-                    <div className="sp-rank-tier" style={{ color: TIER_COLORS[r.tier] ?? '#6b7280' }}>{r.tier} {r.rank}</div>
-                    <div className="sp-rank-lp">{r.leaguePoints} LP</div>
-                    <div className="sp-rank-record">
-                      <span className="sp-win">{r.wins}승</span>
-                      <span className="sp-lose">{r.losses}패</span>
-                      <span className="sp-wr">{Math.round(r.wins / (r.wins + r.losses) * 100)}%</span>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div key={idx} className="sp-rank-card sp-rank-unranked">
-                  <div className="sp-rank-emblem sp-rank-emblem-none">?</div>
-                  <div className="sp-rank-info">
-                    <div className="sp-rank-queue">{idx === 0 ? '솔로랭크' : '자유랭크'}</div>
-                    <div className="sp-rank-tier" style={{ color: '#9096b8' }}>UNRANKED</div>
-                    <div className="sp-rank-lp">-</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
             {/* 필터 탭 */}
             <div className="sp-filters">
               {['전체', '솔로랭크', '자유랭크', 'ARAM', '일반'].map(f => (
