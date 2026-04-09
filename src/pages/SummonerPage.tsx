@@ -523,7 +523,7 @@ export default function SummonerPage() {
           <div className="sp-matches">
             {/* 필터 탭 */}
             <div className="sp-filters">
-              {['전체', '솔로랭크', '자유랭크', 'ARAM', '일반'].map(f => (
+              {['전체', '솔로랭크', '자유랭크'].map(f => (
                 <button
                   key={f}
                   className={`sp-filter-btn ${activeFilter === f ? 'active' : ''}`}
