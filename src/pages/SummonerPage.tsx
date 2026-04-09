@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import {
   getAccount, getSummonerByPuuid, getRankedInfo,
   getMatchIds, getAllMatchIds, getMatch, getDDVersion, getChampMap,
-  champIconUrl, itemIconUrl, profileIconUrl, QUEUE_LABELS,
+  getSpellMap, getRuneMap,
+  champIconUrl, itemIconUrl, profileIconUrl, spellIconUrl, runeIconUrl, QUEUE_LABELS,
 } from '../utils/riotApi'
 import { saveSummoners, saveRankHistory, getRankHistory } from '../utils/supabase'
 import './SummonerPage.css'
@@ -74,6 +75,17 @@ interface Participant {
   tagLine: string
   championId: string
   win: boolean
+  teamId: number
+  spell1Id: string
+  spell2Id: string
+  primaryRuneId: number
+  subStyleId: number
+  kills: number
+  deaths: number
+  assists: number
+  totalDamage: number
+  cs: number
+  items: number[]
 }
 
 interface MatchData {
@@ -94,6 +106,7 @@ interface MatchData {
   items: number[]
   teammates: Participant[]
   opponents: Participant[]
+  allParticipants: Participant[]
 }
 
 export default function SummonerPage() {
@@ -121,6 +134,9 @@ export default function SummonerPage() {
   const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null)
   const [, setNow] = useState(Date.now())
   const [cooldown, setCooldown] = useState(0)
+  const [spellMap, setSpellMap] = useState<Record<string, { id: string; name: string }>>({})
+  const [runeMap, setRuneMap] = useState<Record<number, { icon: string; name: string }>>({})
+  const [expandedMatch, setExpandedMatch] = useState<string | null>(null)
 
 
   useEffect(() => {
@@ -132,9 +148,11 @@ export default function SummonerPage() {
       setMatches([])
       setRankInfo([])
       try {
-        const [version, champMap] = await Promise.all([getDDVersion(), getChampMap()])
+        const [version, champMap, sMap, rMap] = await Promise.all([getDDVersion(), getChampMap(), getSpellMap(), getRuneMap()])
         if (cancelled) return
         setDdVersion(version)
+        setSpellMap(sMap)
+        setRuneMap(rMap)
 
         const acc = await getAccount(gameName, tagLine)
         if (cancelled) return
@@ -174,6 +192,28 @@ export default function SummonerPage() {
           matchDetails.push(...batch)
         }
 
+        const mapParticipant = (p: any): Participant => {
+          const tc = champMap[String(p.championId)]
+          return {
+            puuid: p.puuid,
+            gameName: p.riotIdGameName ?? '',
+            tagLine: p.riotIdTagline ?? '',
+            championId: tc?.id ?? p.championName,
+            win: p.win,
+            teamId: p.teamId,
+            spell1Id: String(p.summoner1Id),
+            spell2Id: String(p.summoner2Id),
+            primaryRuneId: p.perks?.styles?.[0]?.selections?.[0]?.perk ?? 0,
+            subStyleId: p.perks?.styles?.[1]?.style ?? 0,
+            kills: p.kills,
+            deaths: p.deaths,
+            assists: p.assists,
+            totalDamage: p.totalDamageDealtToChampions ?? 0,
+            cs: (p.totalMinionsKilled ?? 0) + (p.neutralMinionsKilled ?? 0),
+            items: [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5, p.item6],
+          }
+        }
+
         const processed: MatchData[] = (matchDetails as any[])
           .map((match) => {
             const participants: any[] = match.info.participants
@@ -181,19 +221,9 @@ export default function SummonerPage() {
             if (!me) return null
             const champ = champMap[String(me.championId)]
 
-            const teammates: Participant[] = participants
-              .filter(p => p.puuid !== acc.puuid && p.teamId === me.teamId)
-              .map(p => {
-                const tc = champMap[String(p.championId)]
-                return { puuid: p.puuid, gameName: p.riotIdGameName ?? '', tagLine: p.riotIdTagline ?? '', championId: tc?.id ?? p.championName, win: p.win }
-              })
-
-            const opponents: Participant[] = participants
-              .filter(p => p.teamId !== me.teamId)
-              .map(p => {
-                const tc = champMap[String(p.championId)]
-                return { puuid: p.puuid, gameName: p.riotIdGameName ?? '', tagLine: p.riotIdTagline ?? '', championId: tc?.id ?? p.championName, win: p.win }
-              })
+            const allParticipants = participants.map(mapParticipant)
+            const teammates = allParticipants.filter(p => p.puuid !== acc.puuid && p.teamId === me.teamId)
+            const opponents = allParticipants.filter(p => p.teamId !== me.teamId)
 
             return {
               matchId: match.metadata.matchId,
@@ -213,6 +243,7 @@ export default function SummonerPage() {
               items: [me.item0, me.item1, me.item2, me.item3, me.item4, me.item5, me.item6],
               teammates,
               opponents,
+              allParticipants,
             }
           })
           .filter(Boolean) as MatchData[]
@@ -256,7 +287,7 @@ export default function SummonerPage() {
                   duration: match.info.gameDuration,
                   gameStartTimestamp: match.info.gameStartTimestamp,
                   items: [me.item0, me.item1, me.item2, me.item3, me.item4, me.item5, me.item6],
-                  teammates: [], opponents: [],
+                  teammates: [], opponents: [], allParticipants: [],
                 } as MatchData
               })
               .filter(Boolean) as MatchData[]
@@ -620,75 +651,155 @@ export default function SummonerPage() {
                 const kda = match.deaths === 0
                   ? ((match.kills + match.assists)).toFixed(2)
                   : ((match.kills + match.assists) / match.deaths).toFixed(2)
+                const isExpanded = expandedMatch === match.matchId
+                const blueTeam = match.allParticipants.filter(p => p.teamId === 100)
+                const redTeam  = match.allParticipants.filter(p => p.teamId === 200)
+                const myTeamId = match.allParticipants.find(p => p.puuid === account?.puuid)?.teamId ?? 100
+
                 return (
                   <div key={match.matchId} className={`sp-match-card ${match.win ? 'win' : 'lose'}`}>
-                    {/* 왼쪽: 모드+결과 */}
-                    <div className="mc-left">
-                      <div className="mc-mode">{match.queueLabel}</div>
-                      <div className={`mc-result ${match.win ? 'win' : 'lose'}`}>{match.win ? '승리' : '패배'}</div>
-                      <div className="mc-sep-line" />
-                      <div className="mc-duration">{formatDuration(match.duration)}</div>
-                      <div className="mc-ago">{timeAgo(match.gameStartTimestamp)}</div>
+                    {/* ── 기본 행 ── */}
+                    <div className="mc-main-row">
+                      <div className="mc-left">
+                        <div className="mc-mode">{match.queueLabel}</div>
+                        <div className={`mc-result ${match.win ? 'win' : 'lose'}`}>{match.win ? '승리' : '패배'}</div>
+                        <div className="mc-sep-line" />
+                        <div className="mc-duration">{formatDuration(match.duration)}</div>
+                        <div className="mc-ago">{timeAgo(match.gameStartTimestamp)}</div>
+                      </div>
+
+                      <div className="mc-champ">
+                        <div className="mc-champ-wrap">
+                          <img src={champIconUrl(ddVersion, match.championId)} alt={match.championName} className="mc-champ-img" />
+                          <span className="mc-champ-level">{match.champLevel}</span>
+                        </div>
+                        <div className="mc-champ-name">{match.championName}</div>
+                      </div>
+
+                      <div className="mc-kda">
+                        <div className="mc-kda-numbers">
+                          <span className="mc-k">{match.kills}</span>
+                          <span className="mc-slash"> / </span>
+                          <span className="mc-d">{match.deaths}</span>
+                          <span className="mc-slash"> / </span>
+                          <span className="mc-a">{match.assists}</span>
+                        </div>
+                        <div className="mc-kda-ratio">{kda} KDA</div>
+                        <div className="mc-cs">CS {match.cs} · 시야 {match.visionScore}</div>
+                      </div>
+
+                      <div className="mc-items">
+                        <div className="mc-items-row">
+                          {match.items.slice(0, 6).map((id, idx) =>
+                            id > 0
+                              ? <img key={idx} src={itemIconUrl(ddVersion, id)} alt="아이템" className="mc-item-img" />
+                              : <div key={idx} className="mc-item-empty" />
+                          )}
+                        </div>
+                        <div className="mc-trinket-row">
+                          {match.items[6] > 0
+                            ? <img src={itemIconUrl(ddVersion, match.items[6])} alt="장신구" className="mc-trinket-img" />
+                            : <div className="mc-item-empty mc-trinket-empty" />
+                          }
+                        </div>
+                      </div>
+
+                      <div className="mc-participants">
+                        <div className="mc-team-col">
+                          {match.teammates.slice(0, 5).map(p => (
+                            <div key={p.puuid} className="mc-part">
+                              <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className="mc-part-icon" />
+                              <span className="mc-part-name">{p.gameName || '?'}</span>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mc-team-col">
+                          {match.opponents.slice(0, 5).map(p => (
+                            <div key={p.puuid} className="mc-part">
+                              <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className="mc-part-icon mc-part-enemy" />
+                              <span className="mc-part-name">{p.gameName || '?'}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* 확장 토글 버튼 */}
+                      <button
+                        className={`mc-expand-btn ${isExpanded ? 'open' : ''}`}
+                        onClick={() => setExpandedMatch(isExpanded ? null : match.matchId)}
+                        title="상세 보기"
+                      >▼</button>
                     </div>
 
-                    {/* 챔피언 아이콘 */}
-                    <div className="mc-champ">
-                      <div className="mc-champ-wrap">
-                        <img src={champIconUrl(ddVersion, match.championId)} alt={match.championName} className="mc-champ-img" />
-                        <span className="mc-champ-level">{match.champLevel}</span>
+                    {/* ── 확장 상세 뷰 ── */}
+                    {isExpanded && match.allParticipants.length > 0 && (
+                      <div className="mc-detail">
+                        {[blueTeam, redTeam].map((team, ti) => {
+                          const isMyTeam = (ti === 0 ? 100 : 200) === myTeamId
+                          return (
+                            <div key={ti} className={`mc-detail-team ${ti === 0 ? 'blue' : 'red'}`}>
+                              <div className="mc-detail-team-label">{ti === 0 ? '🔵 블루팀' : '🔴 레드팀'}{isMyTeam ? ' (내 팀)' : ''}</div>
+                              <div className="mc-detail-header">
+                                <span className="mc-dh-champ">챔피언</span>
+                                <span className="mc-dh-name">닉네임</span>
+                                <span className="mc-dh-kda">KDA</span>
+                                <span className="mc-dh-dmg">피해량</span>
+                                <span className="mc-dh-cs">CS</span>
+                                <span className="mc-dh-items">아이템</span>
+                              </div>
+                              {team.map(p => {
+                                const pkda = p.deaths === 0
+                                  ? (p.kills + p.assists).toFixed(2)
+                                  : ((p.kills + p.assists) / p.deaths).toFixed(2)
+                                const spell1 = spellMap[p.spell1Id]
+                                const spell2 = spellMap[p.spell2Id]
+                                const pRune  = runeMap[p.primaryRuneId]
+                                const subStyle = runeMap[p.subStyleId]
+                                const isMe = p.puuid === account?.puuid
+                                return (
+                                  <div key={p.puuid} className={`mc-detail-row ${isMe ? 'me' : ''}`}>
+                                    <div className="mc-dr-champ">
+                                      <div className="mc-dr-icons">
+                                        <img src={champIconUrl(ddVersion, p.championId)} alt="" className="mc-dr-champ-img" />
+                                        <div className="mc-dr-spells">
+                                          {spell1 && <img src={spellIconUrl(ddVersion, spell1.id)} alt={spell1.name} className="mc-dr-spell" />}
+                                          {spell2 && <img src={spellIconUrl(ddVersion, spell2.id)} alt={spell2.name} className="mc-dr-spell" />}
+                                        </div>
+                                        <div className="mc-dr-runes">
+                                          {pRune && <img src={runeIconUrl(pRune.icon)} alt={pRune.name} className="mc-dr-rune" />}
+                                          {subStyle && <img src={runeIconUrl(subStyle.icon)} alt={subStyle.name} className="mc-dr-rune mc-dr-rune-sub" />}
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div className="mc-dr-name">
+                                      <span
+                                        className={`mc-dr-nick ${isMe ? 'me' : ''}`}
+                                        onClick={() => navigate(`/summoner/${encodeURIComponent(`${p.gameName}#${p.tagLine}`)}`)}
+                                        style={{ cursor: 'pointer' }}
+                                      >{p.gameName || '?'}</span>
+                                      {p.tagLine && <span className="mc-dr-tag">#{p.tagLine}</span>}
+                                    </div>
+                                    <div className="mc-dr-kda">
+                                      <span>{p.kills}/<span style={{ color:'#ef4444' }}>{p.deaths}</span>/{p.assists}</span>
+                                      <span className="mc-dr-kda-ratio">{pkda} KDA</span>
+                                    </div>
+                                    <div className="mc-dr-dmg">{p.totalDamage.toLocaleString()}</div>
+                                    <div className="mc-dr-cs">{p.cs}</div>
+                                    <div className="mc-dr-items">
+                                      {p.items.slice(0, 7).map((id, idx) =>
+                                        id > 0
+                                          ? <img key={idx} src={itemIconUrl(ddVersion, id)} alt="" className="mc-dr-item" />
+                                          : <div key={idx} className="mc-dr-item-empty" />
+                                      )}
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          )
+                        })}
                       </div>
-                      <div className="mc-champ-name">{match.championName}</div>
-                    </div>
-
-                    {/* KDA */}
-                    <div className="mc-kda">
-                      <div className="mc-kda-numbers">
-                        <span className="mc-k">{match.kills}</span>
-                        <span className="mc-slash"> / </span>
-                        <span className="mc-d">{match.deaths}</span>
-                        <span className="mc-slash"> / </span>
-                        <span className="mc-a">{match.assists}</span>
-                      </div>
-                      <div className="mc-kda-ratio">{kda} 평점</div>
-                      <div className="mc-cs">CS {match.cs} · 시야 {match.visionScore}</div>
-                    </div>
-
-                    {/* 아이템 */}
-                    <div className="mc-items">
-                      <div className="mc-items-row">
-                        {match.items.slice(0, 6).map((id, idx) =>
-                          id > 0
-                            ? <img key={idx} src={itemIconUrl(ddVersion, id)} alt="아이템" className="mc-item-img" />
-                            : <div key={idx} className="mc-item-empty" />
-                        )}
-                      </div>
-                      <div className="mc-trinket-row">
-                        {match.items[6] > 0
-                          ? <img src={itemIconUrl(ddVersion, match.items[6])} alt="장신구" className="mc-trinket-img" />
-                          : <div className="mc-item-empty mc-trinket-empty" />
-                        }
-                      </div>
-                    </div>
-
-                    {/* 참가자 */}
-                    <div className="mc-participants">
-                      <div className="mc-team-col">
-                        {match.teammates.slice(0, 4).map(p => (
-                          <div key={p.puuid} className="mc-part">
-                            <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className="mc-part-icon" />
-                            <span className="mc-part-name">{p.gameName}</span>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="mc-team-col">
-                        {match.opponents.slice(0, 4).map(p => (
-                          <div key={p.puuid} className="mc-part">
-                            <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className="mc-part-icon mc-part-enemy" />
-                            <span className="mc-part-name">{p.gameName}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
+                    )}
                   </div>
                 )
               })

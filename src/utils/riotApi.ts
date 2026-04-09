@@ -78,6 +78,8 @@ export async function getMatch(matchId: string) {
 // Data Dragon (CDN, no API key needed)
 let _version: string | null = null
 let _champMap: Record<string, { name: string; id: string }> | null = null
+let _spellMap: Record<string, { id: string; name: string }> | null = null
+let _runeMap: Record<number, { icon: string; name: string }> | null = null
 
 export async function getDDVersion(): Promise<string> {
   if (_version) return _version
@@ -97,6 +99,41 @@ export async function getChampMap(): Promise<Record<string, { name: string; id: 
     _champMap![String(champ.key)] = { name: champ.name, id: champ.id }
   }
   return _champMap!
+}
+
+export async function getSpellMap(): Promise<Record<string, { id: string; name: string }>> {
+  if (_spellMap) return _spellMap
+  const version = await getDDVersion()
+  const data = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/summoner.json`).then(r => r.json()) as any
+  _spellMap = {}
+  for (const spell of Object.values(data.data) as any[]) {
+    _spellMap![String(spell.key)] = { id: spell.id, name: spell.name }
+  }
+  return _spellMap!
+}
+
+export async function getRuneMap(): Promise<Record<number, { icon: string; name: string }>> {
+  if (_runeMap) return _runeMap
+  const version = await getDDVersion()
+  const data = await fetch(`https://ddragon.leagueoflegends.com/cdn/${version}/data/ko_KR/runesReforged.json`).then(r => r.json()) as any[]
+  _runeMap = {}
+  for (const tree of data) {
+    _runeMap![tree.id] = { icon: tree.icon, name: tree.name }
+    for (const slot of tree.slots) {
+      for (const rune of slot.runes) {
+        _runeMap![rune.id] = { icon: rune.icon, name: rune.name }
+      }
+    }
+  }
+  return _runeMap!
+}
+
+export function spellIconUrl(version: string, spellId: string) {
+  return `https://ddragon.leagueoflegends.com/cdn/${version}/img/spell/${spellId}.png`
+}
+
+export function runeIconUrl(icon: string) {
+  return `https://ddragon.leagueoflegends.com/cdn/img/${icon}`
 }
 
 export function champIconUrl(version: string, champId: string) {
