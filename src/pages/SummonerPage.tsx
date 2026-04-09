@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import {
   getAccount, getSummonerByPuuid, getRankedInfo,
   getMatchIds, getMatch, getDDVersion, getChampMap,
@@ -97,6 +97,7 @@ interface MatchData {
 }
 
 export default function SummonerPage() {
+  const navigate = useNavigate()
   const { name } = useParams<{ name: string }>()
   const decoded = decodeURIComponent(name || '')
   const hashIdx = decoded.indexOf('#')
@@ -111,6 +112,7 @@ export default function SummonerPage() {
   const [matches, setMatches] = useState<MatchData[]>([])
   const [ddVersion, setDdVersion] = useState('')
   const [activeFilter, setActiveFilter] = useState('전체')
+  const [mostFilter, setMostFilter] = useState('전체')
   const [refresh, setRefresh] = useState(0)
   const [rankHistory, setRankHistory] = useState<Array<{ season: string; tier: string; rank: string; leaguePoints: number; wins: number; losses: number }>>([])
   const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(null)
@@ -265,8 +267,14 @@ export default function SummonerPage() {
     ? (Number(avgKills) + Number(avgAssists)).toFixed(2)
     : ((Number(avgKills) + Number(avgAssists)) / Number(avgDeaths)).toFixed(2)
 
+  const mostFilteredMatches = matches.filter(m => {
+    if (mostFilter === '솔로랭크') return m.queueId === 420
+    if (mostFilter === '자유랭크') return m.queueId === 440
+    return true
+  })
+
   const champStats: Record<string, { name: string; id: string; wins: number; total: number; kills: number; deaths: number; assists: number }> = {}
-  matches.forEach(m => {
+  mostFilteredMatches.forEach(m => {
     if (!champStats[m.championId]) {
       champStats[m.championId] = { name: m.championName, id: m.championId, wins: 0, total: 0, kills: 0, deaths: 0, assists: 0 }
     }
@@ -276,7 +284,8 @@ export default function SummonerPage() {
     champStats[m.championId].deaths  += m.deaths
     champStats[m.championId].assists += m.assists
   })
-  const mostChamps = Object.values(champStats).sort((a, b) => b.total - a.total).slice(0, 5)
+  const allMostChamps = Object.values(champStats).sort((a, b) => b.total - a.total)
+  const mostChamps = allMostChamps.slice(0, 6)
 
   const teammateStats: Record<string, { gameName: string; tagLine: string; puuid: string; total: number; wins: number }> = {}
   matches.forEach(m => {
@@ -450,38 +459,57 @@ export default function SummonerPage() {
             </div>
 
             {/* 모스트 챔피언 */}
-            {mostChamps.length > 0 && (
-              <div className="sp-card">
-                <div className="sp-card-title">모스트 챔피언</div>
-                <div className="sp-most-list">
-                  {mostChamps.map((c) => {
-                    const wr = Math.round((c.wins / c.total) * 100)
-                    const kda = c.deaths === 0
-                      ? (c.kills + c.assists).toFixed(2)
-                      : ((c.kills + c.assists) / c.deaths).toFixed(2)
-                    return (
-                      <div key={c.id} className="sp-most-row">
-                        <img src={champIconUrl(ddVersion, c.id)} alt={c.name} className="sp-most-icon" />
-                        <div className="sp-most-info">
-                          <div className="sp-most-name">{c.name}</div>
-                          <div className="sp-most-bar-wrap">
-                            <div className="sp-most-bar" style={{ width: `${wr}%`, background: wr >= 60 ? '#3b82f6' : wr >= 50 ? '#7c5af6' : '#ef4444' }} />
-                          </div>
-                          <div className="sp-most-meta">
-                            <span style={{ color: wr >= 60 ? '#3b82f6' : wr >= 50 ? '#7c5af6' : '#ef4444', fontWeight: 700 }}>{wr}%</span>
-                            <span className="sp-most-games">{c.total}게임</span>
-                          </div>
-                        </div>
-                        <div className="sp-most-kda-col">
-                          <span className="sp-most-kda-val">{kda}</span>
-                          <span className="sp-most-kda-lbl">평점</span>
-                        </div>
-                      </div>
-                    )
-                  })}
+            <div className="sp-card">
+              <div className="sp-card-title-row">
+                <span className="sp-card-title">모스트 챔피언</span>
+                <div className="sp-most-filter-tabs">
+                  {(['전체', '솔로랭크', '자유랭크'] as const).map(f => (
+                    <button key={f} className={`sp-most-filter-btn ${mostFilter === f ? 'active' : ''}`} onClick={() => setMostFilter(f)}>{f}</button>
+                  ))}
                 </div>
               </div>
-            )}
+              {mostChamps.length === 0 ? (
+                <div className="sp-most-empty">해당 모드의 전적이 없습니다.</div>
+              ) : (
+                <>
+                  <div className="sp-most-list">
+                    {mostChamps.map((c) => {
+                      const wr = Math.round((c.wins / c.total) * 100)
+                      const kda = c.deaths === 0
+                        ? (c.kills + c.assists).toFixed(2)
+                        : ((c.kills + c.assists) / c.deaths).toFixed(2)
+                      return (
+                        <div key={c.id} className="sp-most-row">
+                          <img src={champIconUrl(ddVersion, c.id)} alt={c.name} className="sp-most-icon" />
+                          <div className="sp-most-info">
+                            <div className="sp-most-name">{c.name}</div>
+                            <div className="sp-most-bar-wrap">
+                              <div className="sp-most-bar" style={{ width: `${wr}%`, background: wr >= 60 ? '#3b82f6' : wr >= 50 ? '#7c5af6' : '#ef4444' }} />
+                            </div>
+                            <div className="sp-most-meta">
+                              <span style={{ color: wr >= 60 ? '#3b82f6' : wr >= 50 ? '#7c5af6' : '#ef4444', fontWeight: 700 }}>{wr}%</span>
+                              <span className="sp-most-games">{c.total}게임</span>
+                            </div>
+                          </div>
+                          <div className="sp-most-kda-col">
+                            <span className="sp-most-kda-val">{kda}</span>
+                            <span className="sp-most-kda-lbl">평점</span>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                  {allMostChamps.length > 6 && (
+                    <button
+                      className="sp-more-btn"
+                      onClick={() => navigate(`/summoner/${encodeURIComponent(name!)}/champions`, { state: { allMostChamps, ddVersion, mostFilter } })}
+                    >
+                      더보기 ({allMostChamps.length}개)
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
 
             {/* 같이한 유저 */}
             {topTeammates.length > 0 && (

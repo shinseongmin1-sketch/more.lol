@@ -1,0 +1,190 @@
+.mcp-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 16px;
+}
+
+.mcp-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.mcp-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+  flex-shrink: 0;
+}
+.mcp-back:hover { opacity: 0.75; }
+
+.mcp-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.mcp-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.mcp-summoner {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.mcp-tag {
+  color: var(--text-muted);
+  font-weight: 500;
+  margin-left: 2px;
+}
+
+.mcp-filters {
+  display: flex;
+  gap: 6px;
+}
+
+.mcp-filter-btn {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.mcp-filter-btn.active,
+.mcp-filter-btn:hover {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: var(--accent-primary);
+}
+
+.mcp-body {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.mcp-table-head {
+  display: grid;
+  grid-template-columns: 2fr 80px 160px 140px 100px;
+  padding: 10px 16px;
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.mcp-row {
+  display: grid;
+  grid-template-columns: 2fr 80px 160px 140px 100px;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background 0.1s;
+}
+.mcp-row:last-child { border-bottom: none; }
+.mcp-row:hover { background: var(--bg-hover, rgba(255,255,255,0.03)); }
+
+.mcp-col-champ {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mcp-champ-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.mcp-champ-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mcp-col-games {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.mcp-col-wr {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.mcp-bar-wrap {
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+  width: 100px;
+}
+
+.mcp-bar {
+  height: 100%;
+  border-radius: 2px;
+}
+
+.mcp-wl {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.mcp-col-kda {
+  font-size: 13px;
+}
+
+.mcp-kda-nums {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.mcp-col-avg {
+  font-size: 13px;
+}
+
+.mcp-kda-val {
+  font-weight: 800;
+}
+
+.mcp-kda-lbl {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.mcp-empty {
+  padding: 40px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}

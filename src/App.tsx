@@ -19,6 +19,7 @@ import PostDetailPage from './pages/PostDetailPage'
 import EditPostPage from './pages/EditPostPage'
 import ProfileSettingsPage from './pages/ProfileSettingsPage'
 import RankingPage from './pages/RankingPage'
+import MostChampsPage from './pages/MostChampsPage'
 import './App.css'
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
         <Route path="/champion/:champId" element={<ChampionDetailPage />} />
         <Route path="/community" element={<CommunityPage />} />
         <Route path="/summoner/:name" element={<SummonerPage />} />
+        <Route path="/summoner/:name/champions" element={<MostChampsPage />} />
         <Route path="/notice" element={<NoticePage />} />
         <Route path="/faq" element={<FaqPage />} />
         <Route path="/contact" element={<ContactPage />} />
