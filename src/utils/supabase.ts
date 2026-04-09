@@ -24,6 +24,27 @@ export async function saveSummoners(list: Array<{ gameName: string; tagLine: str
   }).catch(() => {})
 }
 
+// 시즌 랭크 히스토리 저장
+export async function saveRankHistory(puuid: string, tier: string, rank: string, leaguePoints: number, wins: number, losses: number) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return
+  const season = String(new Date().getFullYear())
+  await fetch(`${SUPABASE_URL}/rest/v1/rank_history`, {
+    method: 'POST',
+    headers: { ...headers(), 'Prefer': 'resolution=merge-duplicates' },
+    body: JSON.stringify([{ puuid, season, tier, rank, league_points: leaguePoints, wins, losses }]),
+  }).catch(() => {})
+}
+
+// 시즌 랭크 히스토리 조회
+export async function getRankHistory(puuid: string): Promise<Array<{ season: string; tier: string; rank: string; leaguePoints: number; wins: number; losses: number }>> {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return []
+  const url = `${SUPABASE_URL}/rest/v1/rank_history?puuid=eq.${encodeURIComponent(puuid)}&order=season.desc&limit=5`
+  const res = await fetch(url, { headers: headers() }).catch(() => null)
+  if (!res || !res.ok) return []
+  const data = await res.json()
+  return data.map((r: any) => ({ season: r.season, tier: r.tier, rank: r.rank, leaguePoints: r.league_points, wins: r.wins, losses: r.losses }))
+}
+
 // 닉네임 포함 검색
 export async function searchSummoners(query: string): Promise<Array<{ gameName: string; tagLine: string }>> {
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY || !query.trim()) return []

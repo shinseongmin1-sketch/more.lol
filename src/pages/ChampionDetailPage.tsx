@@ -161,7 +161,7 @@ export default function ChampionDetailPage() {
                   : (
                     <div className="rune-screen">
 
-                      {/* ── 좌: 주 특성 트리 전체 ── */}
+                      {/* ── 주 특성 트리 ── */}
                       <div className="rune-primary">
                         <div className="rune-tree-header">
                           <div className="rune-tree-header-glow" style={{ background: `radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%)` }} />
@@ -190,60 +190,56 @@ export default function ChampionDetailPage() {
                         ))}
                       </div>
 
-                      {/* ── 우: 보조 특성 + 스탯 파편 ── */}
-                      <div className="rune-secondary-wrap">
-
-                        {/* 보조 특성 */}
-                        <div className="rune-secondary">
-                          <div className="rune-tree-header rune-tree-header-sm">
-                            <img src={RUNE_CDN + secTree.icon} className="rune-tree-logo rune-tree-logo-sm" alt="" />
-                            <div className="rune-tree-header-text">
-                              <span className="rune-tree-name">{secTree.name}</span>
-                              <span className="rune-tree-sub">보조 특성</span>
-                            </div>
+                      {/* ── 보조 특성 ── */}
+                      <div className="rune-secondary">
+                        <div className="rune-tree-header rune-tree-header-sm">
+                          <img src={RUNE_CDN + secTree.icon} className="rune-tree-logo rune-tree-logo-sm" alt="" />
+                          <div className="rune-tree-header-text">
+                            <span className="rune-tree-name">{secTree.name}</span>
+                            <span className="rune-tree-sub">보조 특성</span>
                           </div>
-                          {secTree.slots.slice(1).map((slot: any, si: number) => (
-                            <div key={si} className="rune-tree-row rune-tree-row-sm">
-                              {slot.runes.map((r: any) => {
-                                const sel = selectedRunes.has(r.id)
-                                return (
-                                  <div key={r.id} className={`rune-circle rune-circle-sm ${sel ? 'sel' : ''}`}>
-                                    <div className="rune-circle-ring" />
-                                    <img src={RUNE_CDN + r.icon} alt={r.name} />
-                                    <div className="rune-tooltip rune-tooltip-left">
-                                      <span className="rune-tooltip-name">{r.name}</span>
-                                      <span className="rune-tooltip-desc">{cleanHtml(r.shortDesc ?? r.longDesc ?? '')}</span>
-                                    </div>
-                                  </div>
-                                )
-                              })}
-                            </div>
-                          ))}
                         </div>
-
-                        {/* 스탯 파편 */}
-                        <div className="rune-shards">
-                          <span className="rune-shards-title">스탯 파편</span>
-                          {(['offense','flex','defense'] as const).map((row, ri) => {
-                            const labels = ['공격', '유연', '방어']
-                            return (
-                              <div key={row} className="rune-shard-row">
-                                <span className="rune-shard-label">{labels[ri]}</span>
-                                {statShards[row].map(s => (
-                                  <div key={s.id} className={`rune-circle rune-circle-shard ${s.id === statShards.selected[ri] ? 'sel' : ''}`}>
-                                    <div className="rune-circle-ring" />
-                                    <img src={s.icon} alt={s.name} />
-                                    <div className="rune-tooltip rune-tooltip-left">
-                                      <span className="rune-tooltip-name">{s.name}</span>
-                                    </div>
+                        {secTree.slots.slice(1).map((slot: any, si: number) => (
+                          <div key={si} className="rune-tree-row rune-tree-row-sm">
+                            {slot.runes.map((r: any) => {
+                              const sel = selectedRunes.has(r.id)
+                              return (
+                                <div key={r.id} className={`rune-circle rune-circle-sm ${sel ? 'sel' : ''}`}>
+                                  <div className="rune-circle-ring" />
+                                  <img src={RUNE_CDN + r.icon} alt={r.name} />
+                                  <div className="rune-tooltip">
+                                    <span className="rune-tooltip-name">{r.name}</span>
+                                    <span className="rune-tooltip-desc">{cleanHtml(r.shortDesc ?? r.longDesc ?? '')}</span>
                                   </div>
-                                ))}
-                              </div>
-                            )
-                          })}
-                        </div>
-
+                                </div>
+                              )
+                            })}
+                          </div>
+                        ))}
                       </div>
+
+                      {/* ── 스탯 파편 ── */}
+                      <div className="rune-shards">
+                        <span className="rune-shards-title">스탯 파편</span>
+                        {(['offense','flex','defense'] as const).map((row, ri) => {
+                          const labels = ['공격', '유연', '방어']
+                          return (
+                            <div key={row} className="rune-shard-row">
+                              <span className="rune-shard-label">{labels[ri]}</span>
+                              {statShards[row].map(s => (
+                                <div key={s.id} className={`rune-circle rune-circle-shard ${s.id === statShards.selected[ri] ? 'sel' : ''}`}>
+                                  <div className="rune-circle-ring" />
+                                  <img src={s.icon} alt={s.name} />
+                                  <div className="rune-tooltip">
+                                    <span className="rune-tooltip-name">{s.name}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )
+                        })}
+                      </div>
+
                     </div>
                   )
                 }

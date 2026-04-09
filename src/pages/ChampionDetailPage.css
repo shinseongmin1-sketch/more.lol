@@ -48,32 +48,21 @@
 
 /* ── 카드 1: 룬 — 인게임 룬 선택 화면 레이아웃 ── */
 
-/* 전체 컨테이너: 좌(주특성) + 우(보조+파편) */
+/* 전체 컨테이너: 세로 단일 컬럼 */
 .rune-screen {
   display: flex;
+  flex-direction: column;
   gap: 0;
-  min-height: 320px;
   padding: 4px 0;
 }
 
-/* ── 좌: 주 특성 트리 ── */
+/* ── 주 특성 트리 ── */
 .rune-primary {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 20px 16px 16px;
-  border-right: 1px solid var(--border-color);
-}
-
-/* ── 우: 보조 특성 + 파편 ── */
-.rune-secondary-wrap {
-  width: 220px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 16px 16px 16px 20px;
-  gap: 20px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 /* ── 트리 헤더 (주/보조 공통) ── */
@@ -293,11 +282,22 @@
   line-height: 1.5;
 }
 
+/* ── 보조 특성 섹션 ── */
+.rune-secondary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
 /* ── 스탯 파편 섹션 ── */
 .rune-shards {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  align-items: center;
+  padding: 16px 20px;
 }
 
 .rune-shards-title {

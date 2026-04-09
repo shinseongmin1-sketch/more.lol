@@ -96,6 +96,34 @@
   padding-top: 6px;
 }
 
+.sp-season-history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.sp-season-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sp-season-year {
+  opacity: 0.7;
+  font-weight: 600;
+}
+
+.sp-season-tier {
+  font-weight: 800;
+}
+
 .sp-name {
   font-size: 28px;
   font-weight: 900;
@@ -155,16 +183,19 @@
 }
 
 .sp-rank-emblem {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  border: 2px solid;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
-  font-weight: 900;
-  flex-shrink: 0;
+}
+
+.sp-rank-emblem-img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
 }
 
 .sp-rank-emblem-none {

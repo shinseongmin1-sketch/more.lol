@@ -5,7 +5,7 @@ import {
   getMatchIds, getMatch, getDDVersion, getChampMap,
   champIconUrl, itemIconUrl, profileIconUrl, QUEUE_LABELS,
 } from '../utils/riotApi'
-import { saveSummoners } from '../utils/supabase'
+import { saveSummoners, saveRankHistory, getRankHistory } from '../utils/supabase'
 import './SummonerPage.css'
 
 const TIER_COLORS: Record<string, string> = {
@@ -19,6 +19,10 @@ const TIER_COLORS: Record<string, string> = {
   MASTER: '#9d5da8',
   GRANDMASTER: '#e25c5c',
   CHALLENGER: '#e8d5b7',
+}
+
+function tierEmblemUrl(tier: string): string {
+  return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-${tier.toLowerCase()}.png`
 }
 
 const TIER_BG: Record<string, string> = {
@@ -99,6 +103,8 @@ export default function SummonerPage() {
   const [ddVersion, setDdVersion] = useState('')
   const [activeFilter, setActiveFilter] = useState('전체')
   const [refresh, setRefresh] = useState(0)
+  const [rankHistory, setRankHistory] = useState<Array<{ season: string; tier: string; rank: string; leaguePoints: number; wins: number; losses: number }>>([])
+
 
   useEffect(() => {
     let cancelled = false
@@ -129,6 +135,14 @@ export default function SummonerPage() {
         const ranks = await getRankedInfo(acc.puuid)
         if (cancelled) return
         setRankInfo(ranks)
+
+        // 솔로랭크 히스토리 저장 및 로드
+        const solo = ranks.find((r: any) => r.queueType === 'RANKED_SOLO_5x5')
+        if (solo) {
+          saveRankHistory(acc.puuid, solo.tier, solo.rank, solo.leaguePoints, solo.wins, solo.losses)
+        }
+        const history = await getRankHistory(acc.puuid)
+        if (!cancelled) setRankHistory(history)
 
         // 5개씩 배치로 순차 호출 (rate limit 방지)
         const BATCH = 5
@@ -292,6 +306,16 @@ export default function SummonerPage() {
               <div className="sp-level-badge">{summoner?.summonerLevel ?? '-'}</div>
             </div>
             <div className="sp-profile-info">
+              {rankHistory.length > 0 && (
+                <div className="sp-season-history">
+                  {rankHistory.map(h => (
+                    <div key={h.season} className="sp-season-badge" style={{ color: TIER_COLORS[h.tier] ?? '#9096b8', borderColor: (TIER_COLORS[h.tier] ?? '#9096b8') + '55', background: (TIER_COLORS[h.tier] ?? '#9096b8') + '18' }}>
+                      <span className="sp-season-year">{h.season}</span>
+                      <span className="sp-season-tier">{h.tier.charAt(0) + h.tier.slice(1).toLowerCase()} {h.rank}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
               <h1 className="sp-name">{account?.gameName ?? gameName}</h1>
               <div className="sp-tag">#{account?.tagLine ?? tagLine}</div>
               <div className="sp-actions">
@@ -312,8 +336,8 @@ export default function SummonerPage() {
               flexRank ? { ...flexRank, label: '자유랭크' } : null,
             ].map((r, idx) => r ? (
               <div key={r.queueType} className="sp-rank-card" style={{ background: TIER_BG[r.tier] ?? '#7c5af61a', borderColor: (TIER_COLORS[r.tier] ?? '#7c5af6') + '44' }}>
-                <div className="sp-rank-emblem" style={{ color: TIER_COLORS[r.tier] ?? '#6b7280', borderColor: (TIER_COLORS[r.tier] ?? '#6b7280') + '55', background: (TIER_COLORS[r.tier] ?? '#6b7280') + '15' }}>
-                  {r.tier[0]}
+                <div className="sp-rank-emblem">
+                  <img src={tierEmblemUrl(r.tier)} alt={r.tier} className="sp-rank-emblem-img" />
                 </div>
                 <div className="sp-rank-info">
                   <div className="sp-rank-queue">{r.label}</div>
