@@ -20,7 +20,9 @@
 .contact-page .subpage-desc { color: rgba(20, 184, 166, 0.7); margin-top: 5px; font-size: 13px; }
 .contact-page .patch-badge { display: none; }
 
-.contact-layout { display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: start; }
+.contact-layout { display: grid; grid-template-columns: 1fr; gap: 24px; align-items: start; }
+
+.contact-form-full { max-width: 640px; margin: 0 auto; width: 100%; }
 
 .contact-form-card {
   background: var(--bg-card); border: 1px solid var(--border-color);

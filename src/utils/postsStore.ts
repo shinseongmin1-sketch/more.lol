@@ -7,6 +7,8 @@ export interface Post {
   authorNickname: string
   views: number
   likes: number
+  dislikes: number
+  images: string[]   // base64 data URLs
   createdAt: string
 }
 
@@ -19,9 +21,10 @@ export interface Comment {
   createdAt: string
 }
 
-const POSTS_KEY    = 'morelol_posts'
-const COMMENTS_KEY = 'morelol_comments'
-const LIKES_KEY    = 'morelol_post_likes' // { [postId]: userId[] }
+const POSTS_KEY     = 'morelol_posts'
+const COMMENTS_KEY  = 'morelol_comments'
+const LIKES_KEY     = 'morelol_post_likes'    // { [postId]: userId[] }
+const DISLIKES_KEY  = 'morelol_post_dislikes' // { [postId]: userId[] }
 
 // ── Posts ──────────────────────────────────────────────
 
@@ -41,20 +44,22 @@ export function savePosts(posts: Post[]) {
   localStorage.setItem(POSTS_KEY, JSON.stringify(posts))
 }
 
-export function addPost(post: Omit<Post, 'id' | 'views' | 'likes' | 'createdAt'>): Post {
+export function addPost(post: Omit<Post, 'id' | 'views' | 'likes' | 'dislikes' | 'createdAt'>): Post {
   const posts = getPosts()
   const newPost: Post = {
     ...post,
     id: Date.now().toString(),
     views: 0,
     likes: 0,
+    dislikes: 0,
+    images: post.images ?? [],
     createdAt: new Date().toISOString(),
   }
   savePosts([newPost, ...posts])
   return newPost
 }
 
-export function updatePost(id: string, patch: Partial<Pick<Post, 'title' | 'content' | 'category'>>): boolean {
+export function updatePost(id: string, patch: Partial<Pick<Post, 'title' | 'content' | 'category' | 'images'>>): boolean {
   const posts = getPosts()
   const idx = posts.findIndex(p => p.id === id)
   if (idx === -1) return false
@@ -112,6 +117,39 @@ export function toggleLike(postId: string, userId: string): number {
 
   savePosts(posts)
   localStorage.setItem(LIKES_KEY, JSON.stringify(map))
+  return next
+}
+
+// ── Dislikes ───────────────────────────────────────────
+
+function getDislikesMap(): Record<string, string[]> {
+  return JSON.parse(localStorage.getItem(DISLIKES_KEY) || '{}')
+}
+
+export function isDislikedByUser(postId: string, userId: string): boolean {
+  return (getDislikesMap()[postId] ?? []).includes(userId)
+}
+
+export function toggleDislike(postId: string, userId: string): number {
+  const posts    = getPosts()
+  const map      = getDislikesMap()
+  const dislikers = map[postId] ?? []
+  const idx      = posts.findIndex(p => p.id === postId)
+  if (idx === -1) return 0
+
+  let next: number
+  if (dislikers.includes(userId)) {
+    map[postId]  = dislikers.filter(id => id !== userId)
+    posts[idx]   = { ...posts[idx], dislikes: Math.max(0, (posts[idx].dislikes ?? 0) - 1) }
+    next         = posts[idx].dislikes
+  } else {
+    map[postId]  = [...dislikers, userId]
+    posts[idx]   = { ...posts[idx], dislikes: (posts[idx].dislikes ?? 0) + 1 }
+    next         = posts[idx].dislikes
+  }
+
+  savePosts(posts)
+  localStorage.setItem(DISLIKES_KEY, JSON.stringify(map))
   return next
 }
 

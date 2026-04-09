@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getSession, updateNickname, updatePassword } from '../utils/auth'
+import { getSession, updateNickname, updatePassword, deleteAccount } from '../utils/auth'
 import { checkNickname } from '../utils/nicknameFilter'
 import './ProfileSettingsPage.css'
 
@@ -25,6 +25,18 @@ export default function ProfileSettingsPage() {
   const [showCurrent, setShowCurrent] = useState(false)
   const [showNew, setShowNew]         = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+
+  const [showWithdraw, setShowWithdraw] = useState(false)
+  const [agreePost, setAgreePost]       = useState(false)
+  const [agreeData, setAgreeData]       = useState(false)
+  const [agreeNoUndo, setAgreeNoUndo]   = useState(false)
+  const allAgreed = agreePost && agreeData && agreeNoUndo
+
+  const handleWithdraw = () => {
+    if (!allAgreed || !user) return
+    deleteAccount(user.id)
+    navigate('/')
+  }
 
   if (!user) {
     return (
@@ -262,6 +274,71 @@ export default function ProfileSettingsPage() {
                : '비밀번호 변경'}
             </button>
           </form>
+        </div>
+
+        {/* 회원탈퇴 */}
+        <div className="settings-card settings-withdraw-card">
+          <div className="settings-card-header">
+            <div className="settings-card-icon" style={{ background: 'linear-gradient(135deg,#ef4444,#b91c1c)' }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6M14 11v6"/>
+                <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+              </svg>
+            </div>
+            <div>
+              <div className="settings-card-title">회원탈퇴</div>
+              <div className="settings-card-sub">탈퇴 시 모든 데이터가 영구 삭제됩니다</div>
+            </div>
+          </div>
+
+          {!showWithdraw ? (
+            <button className="withdraw-open-btn" onClick={() => setShowWithdraw(true)}>
+              회원탈퇴 진행
+            </button>
+          ) : (
+            <div className="withdraw-panel">
+              <div className="withdraw-warning">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                탈퇴 전 아래 내용을 반드시 확인해주세요
+              </div>
+
+              <div className="withdraw-agrees">
+                <label className="withdraw-agree-item">
+                  <input type="checkbox" checked={agreePost} onChange={e => setAgreePost(e.target.checked)} />
+                  <span>작성한 <strong>게시글 및 댓글이 모두 삭제</strong>되며 복구할 수 없습니다.</span>
+                </label>
+                <label className="withdraw-agree-item">
+                  <input type="checkbox" checked={agreeData} onChange={e => setAgreeData(e.target.checked)} />
+                  <span>아이디, 닉네임 등 <strong>계정 정보가 영구 삭제</strong>되며 동일 아이디로 <strong>탈퇴 후 2개월간 재가입이 제한</strong>됩니다.</span>
+                </label>
+                <label className="withdraw-agree-item">
+                  <input type="checkbox" checked={agreeNoUndo} onChange={e => setAgreeNoUndo(e.target.checked)} />
+                  <span>위 내용을 모두 확인했으며, <strong>탈퇴 후 되돌릴 수 없음</strong>에 동의합니다.</span>
+                </label>
+              </div>
+
+              <div className="withdraw-actions">
+                <button className="withdraw-cancel-btn" onClick={() => {
+                  setShowWithdraw(false)
+                  setAgreePost(false); setAgreeData(false); setAgreeNoUndo(false)
+                }}>
+                  취소
+                </button>
+                <button
+                  className={`withdraw-confirm-btn ${allAgreed ? 'ready' : ''}`}
+                  onClick={handleWithdraw}
+                  disabled={!allAgreed}
+                >
+                  탈퇴하기
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
       </div>

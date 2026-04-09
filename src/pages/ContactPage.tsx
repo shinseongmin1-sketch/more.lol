@@ -1,10 +1,26 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import { addInquiry } from '../utils/inquiryStore'
 import './SubPage.css'
 import './ContactPage.css'
 
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false)
-  const handleSubmit = (e: React.FormEvent) => { e.preventDefault(); setSubmitted(true) }
+  const nameRef    = useRef<HTMLInputElement>(null)
+  const emailRef   = useRef<HTMLInputElement>(null)
+  const typeRef    = useRef<HTMLSelectElement>(null)
+  const contentRef = useRef<HTMLTextAreaElement>(null)
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    addInquiry({
+      name:    nameRef.current?.value.trim() || '',
+      email:   emailRef.current?.value.trim() || '',
+      type:    typeRef.current?.value || '',
+      content: contentRef.current?.value.trim() || '',
+    })
+    setSubmitted(true)
+  }
+
   return (
     <div className="subpage contact-page">
       <div className="subpage-header">
@@ -18,7 +34,7 @@ export default function ContactPage() {
       </div>
       <div className="subpage-body">
         <div className="contact-layout">
-          <div className="contact-form-card">
+          <div className="contact-form-card contact-form-full">
             {submitted ? (
               <div style={{ textAlign: 'center', padding: '40px 0' }}>
                 <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
@@ -31,15 +47,15 @@ export default function ContactPage() {
                 <div className="contact-form-title">문의 내용 작성</div>
                 <div className="form-group">
                   <label className="form-label">이름 <span className="form-required">*</span></label>
-                  <input type="text" className="form-input" placeholder="홍길동" required />
+                  <input ref={nameRef} type="text" className="form-input" placeholder="홍길동" required />
                 </div>
                 <div className="form-group">
                   <label className="form-label">이메일 <span className="form-required">*</span></label>
-                  <input type="email" className="form-input" placeholder="example@email.com" required />
+                  <input ref={emailRef} type="email" className="form-input" placeholder="example@email.com" required />
                 </div>
                 <div className="form-group">
                   <label className="form-label">문의 유형 <span className="form-required">*</span></label>
-                  <select className="form-select" required>
+                  <select ref={typeRef} className="form-select" required>
                     <option value="">선택해 주세요</option>
                     <option>서비스 이용 문의</option>
                     <option>데이터 오류 신고</option>
@@ -51,24 +67,11 @@ export default function ContactPage() {
                 </div>
                 <div className="form-group">
                   <label className="form-label">문의 내용 <span className="form-required">*</span></label>
-                  <textarea className="form-textarea" placeholder="문의 내용을 자세히 작성해 주세요." required />
+                  <textarea ref={contentRef} className="form-textarea" placeholder="문의 내용을 자세히 작성해 주세요." required />
                 </div>
                 <button type="submit" className="form-submit">문의 접수하기</button>
               </form>
             )}
-          </div>
-          <div className="contact-sidebar">
-            <div className="contact-info-card">
-              <div className="contact-info-title">연락처 정보</div>
-              <div className="contact-info-item"><span className="contact-info-icon">📧</span><div className="contact-info-text"><strong>이메일</strong><span>support@more.lol</span></div></div>
-              <div className="contact-info-item"><span className="contact-info-icon">💬</span><div className="contact-info-text"><strong>Discord</strong><span>discord.gg/morelol</span></div></div>
-            </div>
-            <div className="contact-info-card contact-hours">
-              <div className="contact-hours-title">⏰ 답변 운영 시간</div>
-              <div className="contact-hours-row"><span>평일 (월~금)</span><span>10:00 – 18:00</span></div>
-              <div className="contact-hours-row"><span>토요일</span><span>11:00 – 15:00</span></div>
-              <div className="contact-hours-row"><span>일요일 / 공휴일</span><span>휴무</span></div>
-            </div>
           </div>
         </div>
       </div>

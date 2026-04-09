@@ -320,3 +320,128 @@
   min-height: 60vh;
   gap: 12px;
 }
+
+/* ── 회원탈퇴 ── */
+.settings-withdraw-card { border-color: rgba(239,68,68,0.25); }
+
+.withdraw-open-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1.5px solid rgba(239,68,68,0.4);
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  margin-top: 4px;
+}
+.withdraw-open-btn:hover {
+  background: rgba(239,68,68,0.06);
+  border-color: #ef4444;
+}
+
+.withdraw-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.withdraw-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(239,68,68,0.07);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #ef4444;
+}
+.withdraw-warning svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+.withdraw-agrees {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.withdraw-agree-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  transition: border-color 0.15s;
+}
+.withdraw-agree-item:has(input:checked) {
+  border-color: rgba(239,68,68,0.4);
+  background: rgba(239,68,68,0.04);
+}
+.withdraw-agree-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin-top: 1px;
+  accent-color: #ef4444;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.withdraw-agree-item span {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.withdraw-agree-item span strong { color: var(--text-primary); }
+
+.withdraw-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.withdraw-cancel-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.withdraw-cancel-btn:hover { color: var(--text-primary); border-color: var(--text-muted); }
+
+.withdraw-confirm-btn {
+  background: rgba(239,68,68,0.12);
+  border: 1.5px solid rgba(239,68,68,0.3);
+  color: #ef4444;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 9px 24px;
+  border-radius: 10px;
+  cursor: not-allowed;
+  font-family: inherit;
+  opacity: 0.5;
+  transition: all 0.15s;
+}
+.withdraw-confirm-btn.ready {
+  opacity: 1;
+  cursor: pointer;
+}
+.withdraw-confirm-btn.ready:hover {
+  background: #ef4444;
+  border-color: #ef4444;
+  color: #fff;
+}

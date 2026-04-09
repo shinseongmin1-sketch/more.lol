@@ -20,6 +20,7 @@ import EditPostPage from './pages/EditPostPage'
 import ProfileSettingsPage from './pages/ProfileSettingsPage'
 import RankingPage from './pages/RankingPage'
 import MostChampsPage from './pages/MostChampsPage'
+import AdminInquiriesPage from './pages/AdminInquiriesPage'
 import './App.css'
 
 function App() {
@@ -46,6 +47,7 @@ function App() {
         <Route path="/edit/:id" element={<EditPostPage />} />
         <Route path="/settings" element={<ProfileSettingsPage />} />
         <Route path="/ranking" element={<RankingPage />} />
+        <Route path="/admin/inquiries" element={<AdminInquiriesPage />} />
       </Routes>
     </Layout>
   )

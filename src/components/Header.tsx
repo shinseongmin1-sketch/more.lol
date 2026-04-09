@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import type { User } from '../utils/auth'
+import { isAdmin } from '../utils/auth'
 import './Header.css'
 
 interface HeaderProps {
@@ -214,6 +215,12 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
                       내 게시글
                     </button>
+                    {isAdmin(user) && (
+                      <button className="user-dropdown-item" onClick={() => { setDropdownOpen(false); navigate('/admin/inquiries') }}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16v12H4z"/><path d="M8 20h8M12 16v4"/></svg>
+                        문의내역
+                      </button>
+                    )}
                     <button className="user-dropdown-item" onClick={() => { setDropdownOpen(false); navigate('/settings') }}>
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" /></svg>
                       프로필 설정
