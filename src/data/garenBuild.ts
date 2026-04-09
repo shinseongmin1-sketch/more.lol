@@ -62,8 +62,45 @@ export const statShards = {
   selected: [5008, 5002, 5001] as number[],
 }
 
-// ── 선택된 룬 ID 세트 ─────────────────────────────
-export const selectedRunes = new Set([8010, 9111, 9104, 8299, 8473, 8242])
+// ── 룬 프리셋 (추천 3종) ─────────────────────────
+export interface RunePreset {
+  name: string          // 프리셋 이름
+  keystoneId: number    // 키스톤 ID (버튼 아이콘용)
+  primaryTreeId: number
+  secondaryTreeId: number
+  selectedRunes: Set<number>
+  statShardSelected: number[]
+}
+
+export const runePresets: RunePreset[] = [
+  {
+    name: '정복자',
+    keystoneId: 8010,
+    primaryTreeId: 8000,
+    secondaryTreeId: 8400,
+    selectedRunes: new Set([8010, 9111, 9104, 8299, 8473, 8242]),
+    statShardSelected: [5008, 5002, 5001],
+  },
+  {
+    name: '철갑 수호',
+    keystoneId: 8437,
+    primaryTreeId: 8400,
+    secondaryTreeId: 8000,
+    selectedRunes: new Set([8437, 8446, 8473, 8451, 9111, 8299]),
+    statShardSelected: [5008, 5002, 5001],
+  },
+  {
+    name: '격전',
+    keystoneId: 8005,
+    primaryTreeId: 8000,
+    secondaryTreeId: 8400,
+    selectedRunes: new Set([8005, 9101, 9104, 8014, 8446, 8451]),
+    statShardSelected: [5008, 5002, 5001],
+  },
+]
+
+// 하위 호환 (기존 코드 사용 부분)
+export const selectedRunes = runePresets[0].selectedRunes
 
 // ── 스킬 순서 (레벨 1~18) ─────────────────────────
 // E 선마 → Q → W 순

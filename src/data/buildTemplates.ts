@@ -123,7 +123,7 @@ export function makeSkillOrder(a: string, b: string, c: string): string[] {
 }
 
 // ── 역할별 빌드 템플릿 ────────────────────────────────
-export type RoleName = 'fighter'|'tank'|'mage'|'assassin'|'marksman'|'supportEnchant'|'supportTank'
+export type RoleName = 'fighter'|'tank'|'mage'|'assassin'|'marksman'|'supportEnchant'|'supportTank'|'jungler'
 
 export interface BuildTemplate {
   primaryTreeName: string
@@ -301,6 +301,24 @@ export const TEMPLATES: Record<RoleName, BuildTemplate> = {
     coreItems: [ITEMS.warmog, ITEMS.deadMan, ITEMS.guardianAngel],
     fullBuild: [ITEMS.swiftBoots, ITEMS.warmog, ITEMS.deadMan, ITEMS.guardianAngel, ITEMS.blackCleaver, ITEMS.mortalReminder],
     skillMaxOrder: ['W','E','Q'],
+  },
+
+  // ── 정글 (범용 브루저형) ───────────────────────────
+  jungler: {
+    primaryTreeName: '정밀', primaryTreeIcon: TREE_ICONS.precision,
+    ...PRECISION_ROWS,
+    selectedKeystone: RUNES.conqueror.id,
+    selectedRow1: RUNES.triumph.id,
+    selectedRow2: RUNES.alacrity.id,
+    selectedRow3: RUNES.lastStand.id,
+    secondaryTreeName: '결의', secondaryTreeIcon: TREE_ICONS.resolve,
+    secondaryRune1: RUNES.bonePlating, secondaryRune2: RUNES.overgrowth,
+    shardOff: STAT_SHARDS.adaptive, shardFlex: STAT_SHARDS.armor, shardDef: STAT_SHARDS.health,
+    startItems: [ITEMS.doranShield, ITEMS.hpPotion],
+    boots: ITEMS.steelcaps,
+    coreItems: [ITEMS.blackCleaver, ITEMS.deadMan, ITEMS.warmog],
+    fullBuild: [ITEMS.blackCleaver, ITEMS.steelcaps, ITEMS.deadMan, ITEMS.warmog, ITEMS.mortalReminder, ITEMS.guardianAngel],
+    skillMaxOrder: ['Q', 'E', 'W'],
   },
 }
 

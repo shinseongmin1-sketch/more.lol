@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getDDVersion, champIconUrl } from '../utils/riotApi'
-import {
-  statShards, selectedRunes,
-  skillOrder, skillMaxOrder,
-  startItems, boots, coreItems, fullBuild, situationalItems,
-  buildStats, summonerSpells,
-} from '../data/garenBuild'
+import { statShards } from '../data/garenBuild'
+import { ROLE_PRESETS, ROLE_SUMMONERS, ROLE_POSITION } from '../data/champRunePresets'
+import { TEMPLATES, getRoleFromTags, makeSkillOrder } from '../data/buildTemplates'
+import type { RoleName } from '../data/buildTemplates'
 import './ChampionDetailPage.css'
 
 const POSITIONS = ['탑', '정글', '미드', '원딜', '서포터'] as const
@@ -17,9 +15,23 @@ const TAG_KO: Record<string, string> = {
   Assassin: '암살자', Support: '서포터', Marksman: '원거리딜러',
 }
 
-// 가렌 추천 룬: 주 특성 8000(정밀), 보조 특성 8400(결의)
-const PRIMARY_TREE_ID  = 8000
-const SECONDARY_TREE_ID = 8400
+function getRoleForPosition(pos: string, tags: string[]): RoleName {
+  switch (pos) {
+    case '탑':
+      return (tags.includes('Tank') && !tags.includes('Fighter')) ? 'tank' : 'fighter'
+    case '정글':
+      return 'jungler'
+    case '미드':
+      return tags.includes('Assassin') ? 'assassin' : 'mage'
+    case '원딜':
+      return 'marksman'
+    case '서포터':
+      return (tags.includes('Tank') && !tags.includes('Mage') && !tags.includes('Marksman'))
+        ? 'supportTank' : 'supportEnchant'
+    default:
+      return getRoleFromTags(tags)
+  }
+}
 
 function cleanHtml(s: string) {
   return s.replace(/<[^>]+>/g, '').replace(/&[a-zA-Z]+;/g, m =>
@@ -38,8 +50,9 @@ export default function ChampionDetailPage() {
   const [error, setError] = useState(false)
   const [activeTab, setActiveTab] = useState<'build' | 'skills' | 'stats'>('build')
   const [activePos, setActivePos] = useState('탑')
+  const [activePreset, setActivePreset] = useState(0)
 
-  const isGaren = champId === 'Garen'
+  useEffect(() => { setActivePreset(0) }, [champId])
 
   useEffect(() => {
     if (!champId) return
@@ -53,7 +66,12 @@ export default function ChampionDetailPage() {
         ])
         if (!champRes.ok) throw new Error()
         const champJson = await champRes.json()
-        setChampData(champJson.data[champId])
+        const data = champJson.data[champId]
+        setChampData(data)
+        // 챔피언의 주 포지션으로 자동 이동
+        const initRole = getRoleFromTags(data.tags ?? [])
+        setActivePos(ROLE_POSITION[initRole])
+        setActivePreset(0)
         if (runeRes.ok) {
           const runeJson = await runeRes.json()
           setRuneTreeData(runeJson)
@@ -70,14 +88,21 @@ export default function ChampionDetailPage() {
     <div className="cd-loading"><span>챔피언 정보를 불러올 수 없습니다.</span></div>
   )
 
+  const mainRole = getRoleFromTags(champData.tags ?? [])
+  const mainPosition = ROLE_POSITION[mainRole]
+  const role = getRoleForPosition(activePos, champData.tags ?? [])
+  const template = TEMPLATES[role]
+  const presets = ROLE_PRESETS[role]
+  const summoners = ROLE_SUMMONERS[role]
+  const champSkillOrder = makeSkillOrder(...template.skillMaxOrder)
+
   const splashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_0.jpg`
   const spellIcon = (img: string) => `https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${img}`
   const passiveIcon = (img: string) => `https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/passive/${img}`
   const itemIcon = (id: string) => `https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/item/${id}.png`
 
-  // 스킬 순서 행별 마킹
   const skillRows: Record<string, boolean[]> = { Q: [], W: [], E: [], R: [] }
-  skillOrder.forEach(s => {
+  champSkillOrder.forEach(s => {
     SPELL_KEYS.forEach(k => skillRows[k].push(s === k))
   })
 
@@ -110,23 +135,12 @@ export default function ChampionDetailPage() {
         <div className="cd-header-inner">
           <div className="cd-pos-tabs">
             {POSITIONS.map(p => (
-              <button key={p} className={`cd-pos-tab${activePos === p ? ' active' : ''}`} onClick={() => setActivePos(p)}>
+              <button key={p} className={`cd-pos-tab${activePos === p ? ' active' : ''}`} onClick={() => { setActivePos(p); setActivePreset(0) }}>
                 {p}
-                {p === '탑' && isGaren && <span className="cd-pos-main-dot" />}
+                {p === mainPosition && <span className="cd-pos-main-dot" />}
               </button>
             ))}
           </div>
-          {isGaren && (
-            <div className="cd-header-stats">
-              <div className="cd-hstat">
-                <span className={`cd-tier-badge tier-${buildStats.tier}`}>{buildStats.tier}</span>
-              </div>
-              <div className="cd-hstat"><span className="cd-hstat-val wr">{buildStats.winRate}%</span><span className="cd-hstat-lbl">승률</span></div>
-              <div className="cd-hstat"><span className="cd-hstat-val">{buildStats.pickRate}%</span><span className="cd-hstat-lbl">픽률</span></div>
-              <div className="cd-hstat"><span className="cd-hstat-val">{buildStats.banRate}%</span><span className="cd-hstat-lbl">밴률</span></div>
-              <div className="cd-hstat"><span className="cd-hstat-val">{buildStats.games.toLocaleString()}</span><span className="cd-hstat-lbl">게임 수</span></div>
-            </div>
-          )}
         </div>
       </div>
 
@@ -142,26 +156,59 @@ export default function ChampionDetailPage() {
       <div className="cd-main">
 
         {/* ══════ 빌드 탭 ══════ */}
-        {activeTab === 'build' && isGaren && (() => {
+        {activeTab === 'build' && (() => {
           const RUNE_CDN = 'https://ddragon.leagueoflegends.com/cdn/img/'
-          const primTree = runeTreeData.find((t: any) => t.id === PRIMARY_TREE_ID)
-          const secTree  = runeTreeData.find((t: any) => t.id === SECONDARY_TREE_ID)
+          const preset   = presets[activePreset] ?? presets[0]
+          const primTree = runeTreeData.find((t: any) => t.id === preset.primaryTreeId)
+          const secTree  = runeTreeData.find((t: any) => t.id === preset.secondaryTreeId)
+
+          const findRuneIcon = (treeId: number, runeId: number): string => {
+            const tree = runeTreeData.find((t: any) => t.id === treeId)
+            if (!tree) return ''
+            for (const slot of tree.slots)
+              for (const r of slot.runes)
+                if (r.id === runeId) return RUNE_CDN + r.icon
+            return RUNE_CDN + tree.icon
+          }
+
           return (
             <div className="build-cards">
 
-              {/* ── 카드 1: 룬 (인게임 선택 화면) ── */}
+              {/* ── 카드 1: 룬 ── */}
               <div className="build-card rune-card">
                 <div className="build-card-head">
                   <span className="build-card-icon">💎</span>
                   <span className="build-card-title">룬</span>
                   <span className="build-card-sub">추천 룬 세팅</span>
                 </div>
+
+                {/* ── 프리셋 선택 (인게임 추천 3종) ── */}
+                <div className="rune-presets">
+                  {presets.map((p, i) => {
+                    const tree = runeTreeData.find((t: any) => t.id === p.primaryTreeId)
+                    const ksIcon = findRuneIcon(p.primaryTreeId, p.keystoneId)
+                    return (
+                      <button
+                        key={i}
+                        className={`rune-preset-btn ${activePreset === i ? 'active' : ''}`}
+                        onClick={() => setActivePreset(i)}
+                      >
+                        <div className="rune-preset-icons">
+                          {tree && <img src={RUNE_CDN + tree.icon} className="rune-preset-tree-icon" alt="" />}
+                          {ksIcon && <img src={ksIcon} className="rune-preset-ks-icon" alt={p.name} />}
+                        </div>
+                        <span className="rune-preset-name">{p.name}</span>
+                        {activePreset === i && <span className="rune-preset-check">✓</span>}
+                      </button>
+                    )
+                  })}
+                </div>
                 {(!primTree || !secTree)
                   ? <div className="build-card-body"><p className="build-empty">룬 데이터 로딩 중...</p></div>
                   : (
                     <div className="rune-screen">
 
-                      {/* ── 주 특성 트리 ── */}
+                      {/* ── 왼쪽: 주 특성 트리 ── */}
                       <div className="rune-primary">
                         <div className="rune-tree-header">
                           <div className="rune-tree-header-glow" style={{ background: `radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%)` }} />
@@ -174,7 +221,7 @@ export default function ChampionDetailPage() {
                         {primTree.slots.map((slot: any, si: number) => (
                           <div key={si} className={`rune-tree-row ${si === 0 ? 'rune-keystone-row' : ''}`}>
                             {slot.runes.map((r: any) => {
-                              const sel = selectedRunes.has(r.id)
+                              const sel = preset.selectedRunes.has(r.id)
                               return (
                                 <div key={r.id} className={`rune-circle ${si === 0 ? 'keystone' : ''} ${sel ? 'sel' : ''}`}>
                                   <div className="rune-circle-ring" />
@@ -190,56 +237,60 @@ export default function ChampionDetailPage() {
                         ))}
                       </div>
 
-                      {/* ── 보조 특성 ── */}
-                      <div className="rune-secondary">
-                        <div className="rune-tree-header rune-tree-header-sm">
-                          <img src={RUNE_CDN + secTree.icon} className="rune-tree-logo rune-tree-logo-sm" alt="" />
-                          <div className="rune-tree-header-text">
-                            <span className="rune-tree-name">{secTree.name}</span>
-                            <span className="rune-tree-sub">보조 특성</span>
-                          </div>
-                        </div>
-                        {secTree.slots.slice(1).map((slot: any, si: number) => (
-                          <div key={si} className="rune-tree-row rune-tree-row-sm">
-                            {slot.runes.map((r: any) => {
-                              const sel = selectedRunes.has(r.id)
-                              return (
-                                <div key={r.id} className={`rune-circle rune-circle-sm ${sel ? 'sel' : ''}`}>
-                                  <div className="rune-circle-ring" />
-                                  <img src={RUNE_CDN + r.icon} alt={r.name} />
-                                  <div className="rune-tooltip">
-                                    <span className="rune-tooltip-name">{r.name}</span>
-                                    <span className="rune-tooltip-desc">{cleanHtml(r.shortDesc ?? r.longDesc ?? '')}</span>
-                                  </div>
-                                </div>
-                              )
-                            })}
-                          </div>
-                        ))}
-                      </div>
+                      {/* ── 오른쪽: 보조특성 + 스탯파편 ── */}
+                      <div className="rune-right-col">
 
-                      {/* ── 스탯 파편 ── */}
-                      <div className="rune-shards">
-                        <span className="rune-shards-title">스탯 파편</span>
-                        {(['offense','flex','defense'] as const).map((row, ri) => {
-                          const labels = ['공격', '유연', '방어']
-                          return (
-                            <div key={row} className="rune-shard-row">
-                              <span className="rune-shard-label">{labels[ri]}</span>
-                              {statShards[row].map(s => (
-                                <div key={s.id} className={`rune-circle rune-circle-shard ${s.id === statShards.selected[ri] ? 'sel' : ''}`}>
-                                  <div className="rune-circle-ring" />
-                                  <img src={s.icon} alt={s.name} />
-                                  <div className="rune-tooltip">
-                                    <span className="rune-tooltip-name">{s.name}</span>
-                                  </div>
-                                </div>
-                              ))}
+                        {/* 보조 특성 */}
+                        <div className="rune-secondary">
+                          <div className="rune-tree-header rune-tree-header-sm">
+                            <img src={RUNE_CDN + secTree.icon} className="rune-tree-logo rune-tree-logo-sm" alt="" />
+                            <div className="rune-tree-header-text">
+                              <span className="rune-tree-name">{secTree.name}</span>
+                              <span className="rune-tree-sub">보조 특성</span>
                             </div>
-                          )
-                        })}
-                      </div>
+                          </div>
+                          {secTree.slots.slice(1).map((slot: any, si: number) => (
+                            <div key={si} className="rune-tree-row rune-tree-row-sm">
+                              {slot.runes.map((r: any) => {
+                                const sel = preset.selectedRunes.has(r.id)
+                                return (
+                                  <div key={r.id} className={`rune-circle rune-circle-sm ${sel ? 'sel' : ''}`}>
+                                    <div className="rune-circle-ring" />
+                                    <img src={RUNE_CDN + r.icon} alt={r.name} />
+                                    <div className="rune-tooltip">
+                                      <span className="rune-tooltip-name">{r.name}</span>
+                                      <span className="rune-tooltip-desc">{cleanHtml(r.shortDesc ?? r.longDesc ?? '')}</span>
+                                    </div>
+                                  </div>
+                                )
+                              })}
+                            </div>
+                          ))}
+                        </div>
 
+                        {/* 스탯 파편 */}
+                        <div className="rune-shards">
+                          <span className="rune-shards-title">스탯 파편</span>
+                          {(['offense','flex','defense'] as const).map((row, ri) => {
+                            const labels = ['공격', '유연', '방어']
+                            return (
+                              <div key={row} className="rune-shard-row">
+                                <span className="rune-shard-label">{labels[ri]}</span>
+                                {statShards[row].map(s => (
+                                  <div key={s.id} className={`rune-circle rune-circle-shard ${s.id === preset.statShardSelected[ri] ? 'sel' : ''}`}>
+                                    <div className="rune-circle-ring" />
+                                    <img src={s.icon} alt={s.name} />
+                                    <div className="rune-tooltip">
+                                      <span className="rune-tooltip-name">{s.name}</span>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )
+                          })}
+                        </div>
+
+                      </div>
                     </div>
                   )
                 }
@@ -254,7 +305,7 @@ export default function ChampionDetailPage() {
                 </div>
                 <div className="build-card-body">
                   <div className="spell-row">
-                    {summonerSpells.map(s => (
+                    {summoners.map(s => (
                       <div key={s.id} className="spell-item">
                         <img src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${s.id}.png`} alt={s.name} />
                         <span>{s.name}</span>
@@ -273,11 +324,10 @@ export default function ChampionDetailPage() {
                 </div>
                 <div className="build-card-body">
                   {[
-                    { label: '시작 아이템', items: startItems },
-                    { label: '신발',        items: [boots] },
-                    { label: '코어 아이템', items: coreItems },
-                    { label: '완성 빌드',   items: fullBuild },
-                    { label: '상황별 아이템', items: situationalItems },
+                    { label: '시작 아이템', items: template.startItems },
+                    { label: '신발',        items: [template.boots] },
+                    { label: '코어 아이템', items: template.coreItems },
+                    { label: '완성 빌드',   items: template.fullBuild },
                   ].map(({ label, items }) => (
                     <div key={label} className="item-group">
                       <span className="item-group-label">{label}</span>
@@ -309,7 +359,7 @@ export default function ChampionDetailPage() {
                   <div className="skill-maxorder">
                     <span className="skill-maxorder-label">스킬 우선순위</span>
                     <div className="skill-maxorder-items">
-                      {skillMaxOrder.map((k, i) => (
+                      {template.skillMaxOrder.map((k, i) => (
                         <span key={i} className="skill-maxorder-item">
                           {i > 0 && <span className="skill-maxorder-arrow">›</span>}
                           <img src={spellIcon(champData.spells[SPELL_KEYS.indexOf(k as typeof SPELL_KEYS[number])].image.full)} alt={k} />
@@ -349,14 +399,6 @@ export default function ChampionDetailPage() {
             </div>
           )
         })()}
-
-        {/* 다른 챔피언 빌드 탭 (데이터 미지원) */}
-        {activeTab === 'build' && !isGaren && (
-          <div className="cd-no-data">
-            <div className="cd-no-data-icon">🔧</div>
-            <p>해당 챔피언의 빌드 데이터를 수집 중입니다.</p>
-          </div>
-        )}
 
         {/* ══════ 스킬 탭 ══════ */}
         {activeTab === 'skills' && (

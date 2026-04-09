@@ -16,7 +16,12 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  overflow: hidden;
+  overflow: visible;
+}
+
+/* 카드 헤더는 모서리 클리핑 유지 */
+.build-card > .build-card-head:first-child {
+  border-radius: 16px 16px 0 0;
 }
 
 .build-card-head {
@@ -46,23 +51,119 @@
 
 .build-empty { color: var(--text-muted); font-size: 13px; }
 
-/* ── 카드 1: 룬 — 인게임 룬 선택 화면 레이아웃 ── */
-
-/* 전체 컨테이너: 세로 단일 컬럼 */
-.rune-screen {
+/* ── 프리셋 선택 버튼 ── */
+.rune-presets {
   display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 4px 0;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* ── 주 특성 트리 ── */
-.rune-primary {
+.rune-preset-btn {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
+  gap: 6px;
+  padding: 10px 8px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+  position: relative;
+}
+.rune-preset-btn:hover {
+  border-color: rgba(200,155,60,0.4);
+  background: rgba(200,155,60,0.05);
+}
+.rune-preset-btn.active {
+  border-color: #c89b3c;
+  background: rgba(200,155,60,0.08);
+  box-shadow: 0 0 0 1px rgba(200,155,60,0.2);
+}
+
+.rune-preset-icons {
+  position: relative;
+  width: 44px;
+  height: 44px;
+}
+
+.rune-preset-tree-icon {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  object-fit: contain;
+}
+
+.rune-preset-ks-icon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid var(--border-color);
+}
+.rune-preset-btn.active .rune-preset-ks-icon {
+  border-color: #c89b3c;
+  box-shadow: 0 0 10px rgba(200,155,60,0.5);
+}
+
+.rune-preset-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.rune-preset-btn.active .rune-preset-name {
+  color: #c89b3c;
+}
+
+.rune-preset-check {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  font-size: 9px;
+  color: #c89b3c;
+  font-weight: 900;
+}
+
+/* ── 카드 1: 룬 — 좌(주특성) / 우(보조특성+스탯파편) ── */
+
+.rune-screen {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 12px 16px;
+  gap: 8px;
+  justify-content: flex-start;
+}
+
+/* ── 왼쪽: 주 특성 트리 ── */
+.rune-primary {
+  width: 220px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+}
+
+/* ── 오른쪽 컬럼: 보조특성 + 스탯파편 ── */
+.rune-right-col {
+  width: 175px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 /* ── 트리 헤더 (주/보조 공통) ── */
@@ -72,17 +173,20 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  margin-bottom: 16px;
-  padding: 8px 10px;
+  height: 44px;
+  margin-bottom: 12px;
+  padding: 0 10px;
   border-radius: 10px;
   background: rgba(99,102,241,0.06);
   border: 1px solid rgba(99,102,241,0.15);
   overflow: hidden;
+  flex-shrink: 0;
+  box-sizing: border-box;
 }
 
 .rune-tree-header-sm {
-  padding: 6px 8px;
-  margin-bottom: 12px;
+  height: 36px;
+  margin-bottom: 10px;
   background: rgba(255,255,255,0.03);
   border-color: rgba(255,255,255,0.08);
 }
@@ -133,25 +237,26 @@
   justify-content: center;
   align-items: center;
   gap: 14px;
-  margin-bottom: 10px;
   width: 100%;
+  height: 46px;
+  flex-shrink: 0;
 }
 
 .rune-keystone-row {
   gap: 10px;
-  margin-bottom: 14px;
+  height: 58px;
 }
 
 .rune-tree-row-sm {
   gap: 10px;
-  margin-bottom: 8px;
+  height: 40px;
 }
 
 /* ── 룬 원형 (기본) ── */
 .rune-circle {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -185,8 +290,8 @@
 
 /* 키스톤 (더 큼) */
 .rune-circle.keystone {
-  width: 58px;
-  height: 58px;
+  width: 50px;
+  height: 50px;
 }
 
 /* 선택된 룬 */
@@ -205,14 +310,14 @@
 
 /* 보조 특성 (조금 작음) */
 .rune-circle-sm {
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
 }
 
 /* 스탯 파편 (가장 작음) */
 .rune-circle-shard {
-  width: 30px;
-  height: 30px;
+  width: 26px;
+  height: 26px;
 }
 
 /* ── 툴팁 ── */
@@ -237,7 +342,7 @@
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.15s, visibility 0.15s;
-  z-index: 200;
+  z-index: 9999;
   box-shadow: 0 4px 20px rgba(0,0,0,0.6);
   white-space: normal;
 }
@@ -257,17 +362,38 @@
   border-top-color: rgba(99,102,241,0.35);
 }
 
-/* 우측 패널 룬: 툴팁을 왼쪽으로 */
-.rune-tooltip-left {
-  left: auto;
-  right: 50%;
-  transform: translateX(50%);
+/* 행에서 첫 번째 룬 → 툴팁 왼쪽 기준으로 오른쪽 열기 */
+.rune-tree-row .rune-circle:first-child .rune-tooltip {
+  left: 0;
+  transform: none;
+}
+.rune-tree-row .rune-circle:first-child .rune-tooltip::after {
+  left: 16px;
+  transform: none;
 }
 
-.rune-tooltip-left::after {
+/* 행에서 마지막 룬 → 툴팁 오른쪽 기준으로 왼쪽 열기 */
+.rune-tree-row .rune-circle:last-child .rune-tooltip {
   left: auto;
-  right: 50%;
-  transform: translateX(50%);
+  right: 0;
+  transform: none;
+}
+.rune-tree-row .rune-circle:last-child .rune-tooltip::after {
+  left: auto;
+  right: 16px;
+  transform: none;
+}
+
+/* 오른쪽 컬럼(보조특성) 룬 툴팁 → 왼쪽으로 열기 */
+.rune-right-col .rune-tooltip {
+  left: auto;
+  right: 0;
+  transform: none;
+}
+.rune-right-col .rune-tooltip::after {
+  left: auto;
+  right: 16px;
+  transform: none;
 }
 
 .rune-tooltip-name {
@@ -287,8 +413,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color);
+  padding: 0;
 }
 
 /* ── 스탯 파편 섹션 ── */
@@ -297,7 +422,7 @@
   flex-direction: column;
   gap: 2px;
   align-items: center;
-  padding: 16px 20px;
+  padding: 0;
 }
 
 .rune-shards-title {
@@ -312,8 +437,9 @@
 .rune-shard-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  gap: 6px;
+  height: 32px;
+  flex-shrink: 0;
 }
 
 .rune-shard-label {
@@ -806,6 +932,13 @@
 /* ── 스탯 탭 ── */
 .cd-stats-wrap { display:grid; grid-template-columns:320px 1fr; gap:20px; align-items:start; }
 @media(max-width:860px){ .cd-stats-wrap{ grid-template-columns:1fr; } }
+
+@media(max-width:600px) {
+  .rune-screen { flex-direction: column; }
+  .rune-right-col { width: 100%; flex-direction: row; }
+  .rune-secondary { flex: 1; }
+  .rune-shards { flex: 1; }
+}
 .cd-stat-grid { display:flex; flex-direction:column; gap:2px; }
 .cd-stat-row { display:flex; align-items:center; padding:9px 10px; border-radius:8px; font-size:13px; color:var(--text-secondary); transition:background .1s; }
 .cd-stat-row:hover { background:var(--bg-secondary); }
