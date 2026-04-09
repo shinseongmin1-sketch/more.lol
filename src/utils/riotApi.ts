@@ -48,8 +48,27 @@ export async function getRankedInfo(puuid: string) {
   return riotFetch(`/riot-kr/lol/league/v4/entries/by-puuid/${puuid}`)
 }
 
-export async function getMatchIds(puuid: string, count = 20) {
-  return riotFetch(`/riot-asia/lol/match/v5/matches/by-puuid/${puuid}/ids?start=0&count=${count}`)
+export async function getMatchIds(puuid: string, count = 100, start = 0) {
+  return riotFetch(`/riot-asia/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${count}`)
+}
+
+// 전체 매치 ID 페이지네이션으로 가져오기 (최대 maxTotal개)
+export async function getAllMatchIds(puuid: string, maxTotal = 1000): Promise<string[]> {
+  const PAGE = 100
+  const allIds: string[] = []
+  let start = 0
+  while (allIds.length < maxTotal) {
+    const ids: string[] = await riotFetch(
+      `/riot-asia/lol/match/v5/matches/by-puuid/${puuid}/ids?start=${start}&count=${PAGE}`
+    )
+    if (!ids || ids.length === 0) break
+    allIds.push(...ids)
+    if (ids.length < PAGE) break
+    start += PAGE
+    // rate limit 방지: 페이지 사이 짧은 딜레이
+    await new Promise(r => setTimeout(r, 200))
+  }
+  return allIds.slice(0, maxTotal)
 }
 
 export async function getMatch(matchId: string) {

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import {
   getAccount, getSummonerByPuuid, getRankedInfo,
-  getMatchIds, getMatch, getDDVersion, getChampMap,
+  getMatchIds, getAllMatchIds, getMatch, getDDVersion, getChampMap,
   champIconUrl, itemIconUrl, profileIconUrl, QUEUE_LABELS,
 } from '../utils/riotApi'
 import { saveSummoners, saveRankHistory, getRankHistory } from '../utils/supabase'
@@ -110,6 +110,9 @@ export default function SummonerPage() {
   const [summoner, setSummoner] = useState<any>(null)
   const [rankInfo, setRankInfo] = useState<any[]>([])
   const [matches, setMatches] = useState<MatchData[]>([])
+  const [allMatches, setAllMatches] = useState<MatchData[]>([])
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [totalMatchCount, setTotalMatchCount] = useState(0)
   const [ddVersion, setDdVersion] = useState('')
   const [activeFilter, setActiveFilter] = useState('전체')
   const [mostFilter, setMostFilter] = useState('전체')
@@ -139,12 +142,14 @@ export default function SummonerPage() {
         // 검색된 소환사 DB에 저장 (fire and forget)
         saveSummoners([{ gameName: acc.gameName, tagLine: acc.tagLine }])
 
-        const [summ, matchIds] = await Promise.all([
+        const [summ, recentIds, allIds] = await Promise.all([
           getSummonerByPuuid(acc.puuid),
-          getMatchIds(acc.puuid, 10),
+          getMatchIds(acc.puuid, 20),
+          getAllMatchIds(acc.puuid, 1000),
         ])
         if (cancelled) return
         setSummoner(summ)
+        setTotalMatchCount(allIds.length)
 
         const ranks = await getRankedInfo(acc.puuid)
         if (cancelled) return
@@ -158,13 +163,13 @@ export default function SummonerPage() {
         const history = await getRankHistory(acc.puuid)
         if (!cancelled) setRankHistory(history)
 
-        // 5개씩 배치로 순차 호출 (rate limit 방지)
+        // 최근 20게임 상세 (전적 카드용)
         const BATCH = 5
         const matchDetails: any[] = []
-        for (let i = 0; i < matchIds.length; i += BATCH) {
+        for (let i = 0; i < recentIds.length; i += BATCH) {
           if (cancelled) return
           const batch = await Promise.all(
-            (matchIds as string[]).slice(i, i + BATCH).map(id => getMatch(id))
+            (recentIds as string[]).slice(i, i + BATCH).map((id: string) => getMatch(id))
           )
           matchDetails.push(...batch)
         }
@@ -213,12 +218,57 @@ export default function SummonerPage() {
           .filter(Boolean) as MatchData[]
 
         setMatches(processed)
-        // 같이 게임한 유저 전체 DB에 저장 (빠르게 DB 축적)
+        // 같이 게임한 유저 전체 DB에 저장
         const participants = processed.flatMap(m => [...m.teammates, ...m.opponents])
         const unique = Array.from(
           new Map(participants.filter(p => p.gameName && p.tagLine).map(p => [`${p.gameName}#${p.tagLine}`, p])).values()
         )
         if (unique.length > 0) saveSummoners(unique)
+
+        // 전체 매치 상세 백그라운드 로드 (모스트챔피언용)
+        const remainingIds = (allIds as string[]).filter((id: string) => !(recentIds as string[]).includes(id))
+        if (remainingIds.length > 0 && !cancelled) {
+          setLoadingMore(true)
+          const allDetails: MatchData[] = [...processed]
+          for (let i = 0; i < remainingIds.length; i += BATCH) {
+            if (cancelled) break
+            const batch = await Promise.all(
+              remainingIds.slice(i, i + BATCH).map((id: string) => getMatch(id).catch(() => null))
+            )
+            const batchProcessed = batch
+              .filter(Boolean)
+              .map((match: any) => {
+                const pts: any[] = match.info.participants
+                const me = pts.find((p: any) => p.puuid === acc.puuid)
+                if (!me) return null
+                const champ = champMap[String(me.championId)]
+                return {
+                  matchId: match.metadata.matchId,
+                  win: me.win,
+                  queueId: match.info.queueId,
+                  queueLabel: QUEUE_LABELS[match.info.queueId as number] ?? '기타',
+                  championName: champ?.name ?? me.championName,
+                  championId: champ?.id ?? me.championName,
+                  champLevel: me.champLevel ?? 1,
+                  kills: me.kills, deaths: me.deaths, assists: me.assists,
+                  cs: me.totalMinionsKilled + me.neutralMinionsKilled,
+                  visionScore: me.visionScore ?? 0,
+                  duration: match.info.gameDuration,
+                  gameStartTimestamp: match.info.gameStartTimestamp,
+                  items: [me.item0, me.item1, me.item2, me.item3, me.item4, me.item5, me.item6],
+                  teammates: [], opponents: [],
+                } as MatchData
+              })
+              .filter(Boolean) as MatchData[]
+            allDetails.push(...batchProcessed)
+            if (!cancelled) setAllMatches([...allDetails])
+            // rate limit 방지
+            await new Promise(r => setTimeout(r, 120))
+          }
+          if (!cancelled) setLoadingMore(false)
+        } else {
+          setAllMatches(processed)
+        }
       } catch (e) {
         if (!cancelled) setError(handleApiError(e))
       } finally {
@@ -267,7 +317,7 @@ export default function SummonerPage() {
     ? (Number(avgKills) + Number(avgAssists)).toFixed(2)
     : ((Number(avgKills) + Number(avgAssists)) / Number(avgDeaths)).toFixed(2)
 
-  const mostFilteredMatches = matches.filter(m => {
+  const mostFilteredMatches = allMatches.filter(m => {
     if (mostFilter === '솔로랭크') return m.queueId === 420
     if (mostFilter === '자유랭크') return m.queueId === 440
     return true
@@ -461,7 +511,10 @@ export default function SummonerPage() {
             {/* 모스트 챔피언 */}
             <div className="sp-card">
               <div className="sp-card-title-row">
-                <span className="sp-card-title">모스트 챔피언</span>
+                <span className="sp-card-title">
+                  모스트 챔피언
+                  {loadingMore && <span className="sp-loading-more"> ({allMatches.length}/{totalMatchCount})</span>}
+                </span>
                 <div className="sp-most-filter-tabs">
                   {(['전체', '솔로랭크', '자유랭크'] as const).map(f => (
                     <button key={f} className={`sp-most-filter-btn ${mostFilter === f ? 'active' : ''}`} onClick={() => setMostFilter(f)}>{f}</button>
