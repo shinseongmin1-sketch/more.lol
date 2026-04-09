@@ -264,6 +264,12 @@ export default function SummonerPage() {
   const soloRank = rankInfo.find(r => r.queueType === 'RANKED_SOLO_5x5')
   const flexRank = rankInfo.find(r => r.queueType === 'RANKED_FLEX_SR')
 
+  const currentYear = String(new Date().getFullYear())
+  const displayHistory = [
+    ...(soloRank ? [{ season: currentYear, tier: soloRank.tier, rank: soloRank.rank, leaguePoints: soloRank.leaguePoints, wins: soloRank.wins, losses: soloRank.losses }] : []),
+    ...rankHistory.filter(h => h.season !== currentYear),
+  ].slice(0, 5)
+
   if (loading) {
     return (
       <div className="sp-page">
@@ -306,9 +312,9 @@ export default function SummonerPage() {
               <div className="sp-level-badge">{summoner?.summonerLevel ?? '-'}</div>
             </div>
             <div className="sp-profile-info">
-              {rankHistory.length > 0 && (
+              {displayHistory.length > 0 && (
                 <div className="sp-season-history">
-                  {rankHistory.map(h => (
+                  {displayHistory.map(h => (
                     <div key={h.season} className="sp-season-badge" style={{ color: TIER_COLORS[h.tier] ?? '#9096b8', borderColor: (TIER_COLORS[h.tier] ?? '#9096b8') + '55', background: (TIER_COLORS[h.tier] ?? '#9096b8') + '18' }}>
                       <span className="sp-season-year">{h.season}</span>
                       <span className="sp-season-tier">{h.tier.charAt(0) + h.tier.slice(1).toLowerCase()} {h.rank}</span>
