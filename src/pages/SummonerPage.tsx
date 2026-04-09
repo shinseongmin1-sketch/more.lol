@@ -22,7 +22,7 @@ const TIER_COLORS: Record<string, string> = {
 }
 
 function tierEmblemUrl(tier: string): string {
-  return `https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-shared-components/global/default/images/ranked-emblem/emblem-${tier.toLowerCase()}.png`
+  return `https://opgg-static.akamaized.net/images/medals_new/${tier.toLowerCase()}.png`
 }
 
 const TIER_BG: Record<string, string> = {
