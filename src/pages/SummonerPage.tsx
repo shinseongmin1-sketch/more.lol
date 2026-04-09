@@ -137,6 +137,7 @@ export default function SummonerPage() {
   const [spellMap, setSpellMap] = useState<Record<string, { id: string; name: string }>>({})
   const [runeMap, setRuneMap] = useState<Record<number, { icon: string; name: string }>>({})
   const [expandedMatch, setExpandedMatch] = useState<string | null>(null)
+  const [teammateIcons, setTeammateIcons] = useState<Record<string, number>>({})
 
 
   useEffect(() => {
@@ -381,6 +382,25 @@ export default function SummonerPage() {
   })
   const topTeammates = Object.values(teammateStats).sort((a, b) => b.total - a.total).slice(0, 5)
 
+  // 팀원 프로필 아이콘 백그라운드 로드
+  useEffect(() => {
+    if (topTeammates.length === 0) return
+    let cancelled = false
+    Promise.all(
+      topTeammates.map(t =>
+        getSummonerByPuuid(t.puuid)
+          .then(s => ({ puuid: t.puuid, iconId: s.profileIconId as number }))
+          .catch(() => null)
+      )
+    ).then(results => {
+      if (cancelled) return
+      const map: Record<string, number> = {}
+      results.forEach(r => { if (r) map[r.puuid] = r.iconId })
+      setTeammateIcons(map)
+    })
+    return () => { cancelled = true }
+  }, [topTeammates.map(t => t.puuid).join(',')])
+
   const soloRank = rankInfo.find(r => r.queueType === 'RANKED_SOLO_5x5')
   const flexRank = rankInfo.find(r => r.queueType === 'RANKED_FLEX_SR')
 
@@ -608,7 +628,10 @@ export default function SummonerPage() {
                         className="sp-teammate-row"
                         onClick={() => window.location.href = `/summoner/${encodeURIComponent(`${t.gameName}#${t.tagLine}`)}`}
                       >
-                        <div className="sp-teammate-avatar">{t.gameName.slice(0, 1).toUpperCase()}</div>
+                        {teammateIcons[t.puuid] != null
+                          ? <img src={profileIconUrl(ddVersion, teammateIcons[t.puuid])} alt={t.gameName} className="sp-teammate-icon" />
+                          : <div className="sp-teammate-avatar">{t.gameName.slice(0, 1).toUpperCase()}</div>
+                        }
                         <div className="sp-most-info">
                           <div className="sp-most-name">
                             {t.gameName}

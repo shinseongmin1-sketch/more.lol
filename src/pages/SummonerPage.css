@@ -521,6 +521,15 @@
   flex-shrink: 0;
 }
 
+.sp-teammate-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 2px solid var(--border-color);
+}
+
 .sp-teammate-tag {
   font-size: 11px;
   color: var(--text-muted);
