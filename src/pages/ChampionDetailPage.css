@@ -461,84 +461,142 @@
   font-weight: 600;
 }
 
-/* ── 룬카드 인라인: 소환사 주문 / 아이템 ── */
+/* ══ 3번째 컬럼 섹션 공통 ══ */
 .rune-inline-section {
   width: 100%;
-  padding-top: 10px;
+  padding: 10px 0 0;
 }
 
 .rune-inline-section + .rune-inline-section {
   border-top: 1px solid var(--border-color);
-  margin-top: 4px;
+  margin-top: 10px;
+  padding-top: 12px;
 }
 
 .rune-inline-title {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
+  color: rgba(200,155,60,0.85);
+  letter-spacing: 0.6px;
   text-transform: uppercase;
-  margin-bottom: 8px;
-  text-align: center;
+  margin-bottom: 10px;
 }
 
+.rune-inline-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, rgba(200,155,60,0.3), transparent);
+}
+
+/* ── 소환사 주문 ── */
 .rune-inline-spell-row {
   display: flex;
-  justify-content: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .rune-inline-spell {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
+  padding: 5px 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 8px;
+  flex: 1;
+  transition: background 0.15s;
+}
+
+.rune-inline-spell:hover {
+  background: rgba(200,155,60,0.07);
+  border-color: rgba(200,155,60,0.2);
 }
 
 .rune-inline-spell img {
-  width: 38px;
-  height: 38px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
+  width: 34px;
+  height: 34px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  border: 1px solid rgba(200,155,60,0.25);
 }
 
 .rune-inline-spell span {
-  font-size: 9px;
-  color: var(--text-muted);
-  text-align: center;
-  max-width: 52px;
-  line-height: 1.2;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  line-height: 1.3;
 }
 
-/* ── 룬카드 인라인: 아이템 빌드 ── */
+/* ── 아이템 빌드 ── */
 .rune-inline-item-group {
-  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+}
+
+.rune-inline-item-group + .rune-inline-item-group {
+  border-top: 1px solid rgba(255,255,255,0.04);
 }
 
 .rune-inline-item-label {
-  display: block;
   font-size: 9px;
   font-weight: 700;
   color: rgba(255,255,255,0.3);
   letter-spacing: 0.4px;
   text-transform: uppercase;
-  margin-bottom: 4px;
-  text-align: center;
+  width: 26px;
+  flex-shrink: 0;
 }
 
 .rune-inline-item-row {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: 4px;
+  gap: 3px;
+}
+
+.rune-inline-item-box {
+  position: relative;
 }
 
 .rune-inline-item-box img {
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
+  border-radius: 5px;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: block;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.rune-inline-item-box:hover img {
+  transform: scale(1.15);
+  border-color: rgba(200,155,60,0.5);
+  z-index: 1;
+}
+
+.rune-inline-item-box .rune-item-tip {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a2e;
+  border: 1px solid rgba(200,155,60,0.35);
   border-radius: 6px;
-  border: 1px solid var(--border-color);
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.rune-inline-item-box:hover .rune-item-tip {
   display: block;
 }
 

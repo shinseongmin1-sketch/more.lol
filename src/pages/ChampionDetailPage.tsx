@@ -317,8 +317,9 @@ export default function ChampionDetailPage() {
                               <span className="rune-inline-item-label">{label}</span>
                               <div className="rune-inline-item-row">
                                 {items.map(item => (
-                                  <div key={item.id} className="rune-inline-item-box" title={item.name}>
+                                  <div key={item.id} className="rune-inline-item-box">
                                     <img src={itemIcon(item.id)} alt={item.name} />
+                                    <span className="rune-item-tip">{item.name}</span>
                                   </div>
                                 ))}
                               </div>
