@@ -192,7 +192,7 @@ export const TEMPLATES: Record<RoleName, BuildTemplate> = {
     boots: ITEMS.steelcaps,
     coreItems: [ITEMS.trinity, ITEMS.deadMan, ITEMS.blackCleaver],
     fullBuild: [ITEMS.trinity, ITEMS.steelcaps, ITEMS.deadMan, ITEMS.blackCleaver, ITEMS.mortalReminder, ITEMS.warmog],
-    skillMaxOrder: ['Q','E','W'],
+    skillMaxOrder: ['E','Q','W'],
   },
 
   // ── 탱커 ───────────────────────────────────────────
