@@ -10,31 +10,31 @@ export default function ProfileSettingsPage() {
   const navigate = useNavigate()
   const user = getSession()
 
-  const [nickname, setNickname]   = useState(user?.nickname ?? '')
-  const [nickState, setNickState] = useState<SaveState>('idle')
-  const [nickError, setNickError] = useState('')
-  const [nickMsg, setNickMsg]     = useState('')
+  const [nickname,   setNickname]   = useState(user?.nickname ?? '')
+  const [nickState,  setNickState]  = useState<SaveState>('idle')
+  const [nickError,  setNickError]  = useState('')
+  const [nickMsg,    setNickMsg]    = useState('')
 
   const [currentPw, setCurrentPw] = useState('')
-  const [newPw, setNewPw]         = useState('')
+  const [newPw,     setNewPw]     = useState('')
   const [confirmPw, setConfirmPw] = useState('')
-  const [pwState, setPwState]     = useState<SaveState>('idle')
-  const [pwError, setPwError]     = useState('')
-  const [pwMsg, setPwMsg]         = useState('')
+  const [pwState,   setPwState]   = useState<SaveState>('idle')
+  const [pwError,   setPwError]   = useState('')
+  const [pwMsg,     setPwMsg]     = useState('')
 
   const [showCurrent, setShowCurrent] = useState(false)
-  const [showNew, setShowNew]         = useState(false)
+  const [showNew,     setShowNew]     = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
 
   const [showWithdraw, setShowWithdraw] = useState(false)
-  const [agreePost, setAgreePost]       = useState(false)
-  const [agreeData, setAgreeData]       = useState(false)
-  const [agreeNoUndo, setAgreeNoUndo]   = useState(false)
+  const [agreePost,    setAgreePost]    = useState(false)
+  const [agreeData,    setAgreeData]    = useState(false)
+  const [agreeNoUndo,  setAgreeNoUndo]  = useState(false)
   const allAgreed = agreePost && agreeData && agreeNoUndo
 
-  const handleWithdraw = () => {
+  const handleWithdraw = async () => {
     if (!allAgreed || !user) return
-    deleteAccount(user.id)
+    await deleteAccount(user.id)
     navigate('/')
   }
 
@@ -50,24 +50,24 @@ export default function ProfileSettingsPage() {
   const joinDate = new Date(user.createdAt)
   const joinStr  = `${joinDate.getFullYear()}년 ${joinDate.getMonth() + 1}월 ${joinDate.getDate()}일`
 
-  const handleNickSave = (e: React.FormEvent) => {
+  const handleNickSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setNickError(''); setNickMsg('')
     const trimmed = nickname.trim()
-    if (!trimmed)          { setNickError('닉네임을 입력해주세요.'); return }
+    if (!trimmed)           { setNickError('닉네임을 입력해주세요.'); return }
     if (trimmed.length < 2) { setNickError('닉네임은 2자 이상이어야 합니다.'); return }
     if (trimmed === user.nickname) { setNickError('현재 닉네임과 동일합니다.'); return }
     const check = checkNickname(trimmed, user.id)
-    if (!check.ok)         { setNickError(check.reason!); return }
+    if (!check.ok) { setNickError(check.reason!); return }
     setNickState('saving')
-    const result = updateNickname(user.id, trimmed)
+    const result = await updateNickname(user.id, trimmed)
     if (!result.ok) { setNickError(result.error!); setNickState('error'); return }
     setNickState('saved')
     setNickMsg('닉네임이 변경됐습니다. 다음 로그인 시 적용됩니다.')
     setTimeout(() => setNickState('idle'), 3000)
   }
 
-  const handlePwSave = (e: React.FormEvent) => {
+  const handlePwSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setPwError(''); setPwMsg('')
     if (!currentPw)         { setPwError('현재 비밀번호를 입력해주세요.'); return }
@@ -75,7 +75,7 @@ export default function ProfileSettingsPage() {
     if (newPw !== confirmPw) { setPwError('새 비밀번호가 일치하지 않습니다.'); return }
     if (newPw === currentPw) { setPwError('현재 비밀번호와 동일한 비밀번호는 사용할 수 없습니다.'); return }
     setPwState('saving')
-    const result = updatePassword(user.id, currentPw, newPw)
+    const result = await updatePassword(user.id, currentPw, newPw)
     if (!result.ok) { setPwError(result.error!); setPwState('error'); return }
     setPwState('saved')
     setPwMsg('비밀번호가 변경됐습니다.')
@@ -84,13 +84,12 @@ export default function ProfileSettingsPage() {
   }
 
   const pwStrength = newPw.length === 0 ? 0
-    : newPw.length < 6 ? 1
+    : newPw.length < 6  ? 1
     : newPw.length < 10 ? 2
     : 3
 
   return (
     <div className="settings-page">
-      {/* 상단 바 */}
       <div className="settings-topbar">
         <button className="settings-back-btn" onClick={() => navigate('/profile')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -169,9 +168,7 @@ export default function ProfileSettingsPage() {
               className={`settings-save-btn ${nickState === 'saved' ? 'saved' : ''}`}
               disabled={nickState === 'saving'}
             >
-              {nickState === 'saving' ? '저장 중...'
-               : nickState === 'saved' ? '✓ 저장됨'
-               : '닉네임 저장'}
+              {nickState === 'saving' ? '저장 중...' : nickState === 'saved' ? '✓ 저장됨' : '닉네임 저장'}
             </button>
           </form>
         </div>
@@ -269,9 +266,7 @@ export default function ProfileSettingsPage() {
               className={`settings-save-btn ${pwState === 'saved' ? 'saved' : ''}`}
               disabled={pwState === 'saving'}
             >
-              {pwState === 'saving' ? '저장 중...'
-               : pwState === 'saved' ? '✓ 저장됨'
-               : '비밀번호 변경'}
+              {pwState === 'saving' ? '저장 중...' : pwState === 'saved' ? '✓ 저장됨' : '비밀번호 변경'}
             </button>
           </form>
         </div>
@@ -306,7 +301,6 @@ export default function ProfileSettingsPage() {
                 </svg>
                 탈퇴 전 아래 내용을 반드시 확인해주세요
               </div>
-
               <div className="withdraw-agrees">
                 <label className="withdraw-agree-item">
                   <input type="checkbox" checked={agreePost} onChange={e => setAgreePost(e.target.checked)} />
@@ -321,7 +315,6 @@ export default function ProfileSettingsPage() {
                   <span>위 내용을 모두 확인했으며, <strong>탈퇴 후 되돌릴 수 없음</strong>에 동의합니다.</span>
                 </label>
               </div>
-
               <div className="withdraw-actions">
                 <button className="withdraw-cancel-btn" onClick={() => {
                   setShowWithdraw(false)
