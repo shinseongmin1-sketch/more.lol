@@ -9,6 +9,7 @@ import {
 import { getRecentSearches, addRecentSearch, removeRecentSearch } from '../utils/recentSearchStore'
 import { getDDVersion, champIconUrl, getChampMap } from '../utils/riotApi'
 import { searchSummoners } from '../utils/supabase'
+import { findCelebrity, searchCelebrities, type Celebrity } from '../data/celebrities'
 import './HomePage.css'
 
 const quickLinks = [
@@ -51,6 +52,7 @@ export default function HomePage() {
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [suggestions, setSuggestions] = useState<Array<{gameName: string, tagLine: string}>>([])
   const [isSuggesting, setIsSuggesting] = useState(false)
+  const [celebSuggestions, setCelebSuggestions] = useState<Celebrity[]>([])
   const [ddVersion, setDdVersion] = useState('')
   const [hotChamps, setHotChamps] = useState<HotChamp[]>(fallbackChamps)
   const [champNameMap, setChampNameMap] = useState<Record<string, string>>({})
@@ -85,9 +87,11 @@ export default function HomePage() {
     const query = inputValue.trim()
     if (!query) {
       setSuggestions([])
+      setCelebSuggestions([])
       setIsSuggesting(false)
       return
     }
+    setCelebSuggestions(searchCelebrities(query))
     setIsSuggesting(true)
     const timer = setTimeout(async () => {
       const results = await searchSummoners(query)
@@ -99,10 +103,12 @@ export default function HomePage() {
 
   const handleSearch = (name: string) => {
     if (name.trim()) {
+      const celeb = findCelebrity(name.trim())
+      const target = celeb ? celeb.account : name.trim()
       incrementSummonerSearch()
-      addRecentSearch(name.trim())
+      addRecentSearch(target)
       setRecentSearches(getRecentSearches())
-      navigate(`/summoner/${encodeURIComponent(name.trim())}`)
+      navigate(`/summoner/${encodeURIComponent(target)}`)
     }
   }
 
@@ -198,13 +204,37 @@ export default function HomePage() {
                     </>
                   )}
 
+                  {q && celebSuggestions.length > 0 && (
+                    <>
+                      <div className="dropdown-section-title">프로게이머 / 스트리머</div>
+                      {celebSuggestions.map(c => (
+                        <div
+                          key={c.account}
+                          className="dropdown-item"
+                          onMouseDown={() => handleSearch(c.displayName)}
+                        >
+                          <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                          </svg>
+                          <span style={{ flex: 1 }}>
+                            {c.displayName}
+                            {c.team && <span className="dropdown-tag"> {c.team}</span>}
+                          </span>
+                          <span className="dropdown-server" style={{ color: c.type === 'pro' ? '#f59e0b' : '#a78bfa' }}>
+                            {c.type === 'pro' ? '프로' : '스트리머'}
+                          </span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+
                   {q && (
                     <>
                       <div className="dropdown-section-title">
                         소환사 찾기
                         {isSuggesting && <span className="dropdown-loading-dots"><span /><span /><span /></span>}
                       </div>
-                      {!isSuggesting && suggestions.length === 0 && (
+                      {!isSuggesting && suggestions.length === 0 && celebSuggestions.length === 0 && (
                         <div className="dropdown-empty">검색 결과 없음</div>
                       )}
                       {suggestions.map(s => (
