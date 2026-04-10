@@ -16,74 +16,88 @@ const catColors: Record<string, string> = {
 }
 
 export default function PostDetailPage() {
-  const { id }     = useParams<{ id: string }>()
-  const navigate   = useNavigate()
-  const user       = getSession()
+  const { id }   = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const user     = getSession()
 
-  const [post, setPost]               = useState<Post | null>(null)
-  const [liked, setLiked]             = useState(false)
-  const [likeCount, setLikeCount]     = useState(0)
-  const [disliked, setDisliked]       = useState(false)
-  const [dislikeCount, setDislikeCount] = useState(0)
-  const [comments, setComments]       = useState<Comment[]>([])
-  const [commentText, setCommentText] = useState('')
-  const [notFound, setNotFound] = useState(false)
+  const [post, setPost]                   = useState<Post | null>(null)
+  const [liked, setLiked]                 = useState(false)
+  const [likeCount, setLikeCount]         = useState(0)
+  const [disliked, setDisliked]           = useState(false)
+  const [dislikeCount, setDislikeCount]   = useState(0)
+  const [comments, setComments]           = useState<Comment[]>([])
+  const [commentText, setCommentText]     = useState('')
+  const [notFound, setNotFound]           = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [deleting, setDeleting]           = useState(false)
   const viewedRef = useRef(false)
-  const isAuthor = user && post ? user.id === post.authorId : false
+
+  const isAuthor  = user && post ? user.id === post.authorId : false
   const canManage = isAuthor || isAdmin(user)
 
   useEffect(() => {
     if (!id) { setNotFound(true); return }
-    const found = getPostById(id)
-    if (!found) { setNotFound(true); return }
 
-    // 조회수 1회만 증가
-    if (!viewedRef.current) {
-      incrementViews(id)
-      viewedRef.current = true
+    const load = async () => {
+      const found = await getPostById(id)
+      if (!found) { setNotFound(true); return }
+
+      setPost(found)
+      setLikeCount(found.likes)
+      setDislikeCount(found.dislikes ?? 0)
+
+      if (!viewedRef.current) {
+        viewedRef.current = true
+        incrementViews(id) // fire-and-forget
+      }
+
+      const [likedVal, dislikedVal, postComments] = await Promise.all([
+        user ? isLikedByUser(id, user.id)    : Promise.resolve(false),
+        user ? isDislikedByUser(id, user.id) : Promise.resolve(false),
+        getComments(id),
+      ])
+      setLiked(likedVal)
+      setDisliked(dislikedVal)
+      setComments(postComments)
     }
 
-    const updated = getPostById(id)!
-    setPost(updated)
-    setLikeCount(updated.likes)
-    setDislikeCount(updated.dislikes ?? 0)
-    setLiked(user ? isLikedByUser(id, user.id) : false)
-    setDisliked(user ? isDislikedByUser(id, user.id) : false)
-    setComments(getComments(id))
-  }, [id, user])
+    load()
+  }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (!id) return
-    deletePost(id)
+    setDeleting(true)
+    await deletePost(id)
     navigate('/community')
   }
 
-  const handleLike = () => {
+  const handleLike = async () => {
     if (!user || !id) return
-    const next = toggleLike(id, user.id)
+    const next = await toggleLike(id, user.id)
     setLiked(prev => !prev)
     setLikeCount(next)
   }
 
-  const handleDislike = () => {
+  const handleDislike = async () => {
     if (!user || !id) return
-    const next = toggleDislike(id, user.id)
+    const next = await toggleDislike(id, user.id)
     setDisliked(prev => !prev)
     setDislikeCount(next)
   }
 
-  const handleComment = (e: React.FormEvent) => {
+  const handleComment = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!user || !id || !commentText.trim()) return
-    const newComment = addComment({
-      postId: id,
-      authorId: user.id,
-      authorNickname: user.nickname,
-      content: commentText.trim(),
+    const newComment = await addComment({
+      postId:          id,
+      authorId:        user.id,
+      authorNickname:  user.nickname,
+      content:         commentText.trim(),
     })
-    setComments(prev => [...prev, newComment])
-    setCommentText('')
+    if (newComment) {
+      setComments(prev => [...prev, newComment])
+      setCommentText('')
+    }
   }
 
   if (notFound) {
@@ -96,11 +110,17 @@ export default function PostDetailPage() {
     )
   }
 
-  if (!post) return null
+  if (!post) {
+    return (
+      <div className="post-notfound">
+        <div className="post-notfound-icon">⏳</div>
+        <p className="post-notfound-msg">불러오는 중...</p>
+      </div>
+    )
+  }
 
   return (
     <div className="post-detail-page">
-      {/* 상단 바 */}
       <div className="post-topbar">
         <button className="post-back-btn" onClick={() => navigate('/community')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -122,7 +142,9 @@ export default function PostDetailPage() {
             {confirmDelete ? (
               <div className="post-delete-confirm">
                 <span>정말 삭제할까요?</span>
-                <button className="post-delete-yes" onClick={handleDelete}>삭제</button>
+                <button className="post-delete-yes" onClick={handleDelete} disabled={deleting}>
+                  {deleting ? '삭제 중...' : '삭제'}
+                </button>
                 <button className="post-delete-no" onClick={() => setConfirmDelete(false)}>취소</button>
               </div>
             ) : (
@@ -141,15 +163,12 @@ export default function PostDetailPage() {
       </div>
 
       <div className="post-detail-body">
-
-        {/* 게시글 카드 */}
         <article className="post-card">
-          {/* 카테고리 + 메타 */}
           <div className="post-card-meta">
             <span
               className="post-detail-cat"
               style={{
-                color: catColors[post.category] || 'var(--text-muted)',
+                color:      catColors[post.category] || 'var(--text-muted)',
                 background: (catColors[post.category] || '#888') + '18',
               }}
             >
@@ -158,10 +177,8 @@ export default function PostDetailPage() {
             <span className="post-card-time">{formatDate(post.createdAt)}</span>
           </div>
 
-          {/* 제목 */}
           <h1 className="post-card-title">{post.title}</h1>
 
-          {/* 작성자 */}
           <div className="post-card-author">
             <div className="post-author-info">
               <span className="post-author-nick">{post.authorNickname}</span>
@@ -170,17 +187,20 @@ export default function PostDetailPage() {
           </div>
 
           <div className="post-card-divider" />
-
-          {/* 본문 */}
           <div className="post-card-content">{post.content}</div>
 
-          {/* 첨부 이미지 */}
           {post.images && post.images.length > 0 && (
             <>
               <div className="post-card-divider" />
               <div className="post-images">
                 {post.images.map((src, idx) => (
-                  <img key={idx} src={src} alt={`첨부 이미지 ${idx + 1}`} className="post-img" onClick={() => window.open(src, '_blank')} />
+                  <img
+                    key={idx}
+                    src={src}
+                    alt={`첨부 이미지 ${idx + 1}`}
+                    className="post-img"
+                    onClick={() => window.open(src, '_blank')}
+                  />
                 ))}
               </div>
             </>
@@ -188,14 +208,13 @@ export default function PostDetailPage() {
 
           <div className="post-card-divider" />
 
-          {/* 좋아요 / 싫어요 버튼 */}
           <div className="post-reactions">
             <button
               className={`reaction-btn like-btn ${liked ? 'active' : ''} ${!user ? 'disabled' : ''}`}
               onClick={handleLike}
               title={user ? undefined : '로그인 후 이용할 수 있습니다'}
             >
-              <span className="reaction-icon">{liked ? '👍' : '👍'}</span>
+              <span className="reaction-icon">👍</span>
               <span className="reaction-label">좋아요</span>
               <span className="reaction-count">{likeCount}</span>
             </button>
@@ -211,13 +230,11 @@ export default function PostDetailPage() {
           </div>
         </article>
 
-        {/* 댓글 */}
         <section className="comment-section">
           <div className="comment-section-title">
             댓글 <span className="comment-count-badge">{comments.length}</span>
           </div>
 
-          {/* 댓글 입력 */}
           {user ? (
             <form className="comment-form" onSubmit={handleComment}>
               <div className="comment-form-right">
@@ -249,7 +266,6 @@ export default function PostDetailPage() {
             </div>
           )}
 
-          {/* 댓글 목록 */}
           <div className="comment-list">
             {comments.length === 0 ? (
               <div className="comment-empty">첫 번째 댓글을 남겨보세요!</div>
@@ -268,7 +284,6 @@ export default function PostDetailPage() {
             )}
           </div>
         </section>
-
       </div>
     </div>
   )
