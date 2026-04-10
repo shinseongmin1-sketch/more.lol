@@ -157,13 +157,24 @@
   padding: 0;
 }
 
-/* ── 오른쪽 컬럼: 보조특성 + 스탯파편 + 소환사주문 + 아이템 ── */
+/* ── 오른쪽 컬럼: 보조특성 + 스탯파편 ── */
 .rune-right-col {
-  width: 210px;
+  width: 175px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+/* ── 3번째 컬럼: 소환사 주문 + 아이템 빌드 ── */
+.rune-extra-col {
+  width: 180px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-left: 1px solid var(--border-color);
+  padding-left: 12px;
 }
 
 /* ── 트리 헤더 (주/보조 공통) ── */
@@ -450,12 +461,15 @@
   font-weight: 600;
 }
 
-/* ── 룬카드 인라인: 소환사 주문 ── */
+/* ── 룬카드 인라인: 소환사 주문 / 아이템 ── */
 .rune-inline-section {
   width: 100%;
-  border-top: 1px solid var(--border-color);
   padding-top: 10px;
-  margin-top: 2px;
+}
+
+.rune-inline-section + .rune-inline-section {
+  border-top: 1px solid var(--border-color);
+  margin-top: 4px;
 }
 
 .rune-inline-title {

@@ -290,7 +290,10 @@ export default function ChampionDetailPage() {
                           })}
                         </div>
 
-                        {/* 소환사 주문 (인라인) */}
+                      </div>
+
+                      {/* ── 3번째 컬럼: 소환사 주문 + 아이템 빌드 ── */}
+                      <div className="rune-extra-col">
                         <div className="rune-inline-section">
                           <span className="rune-inline-title">소환사 주문</span>
                           <div className="rune-inline-spell-row">
@@ -302,8 +305,6 @@ export default function ChampionDetailPage() {
                             ))}
                           </div>
                         </div>
-
-                        {/* 아이템 빌드 (인라인) */}
                         <div className="rune-inline-section">
                           <span className="rune-inline-title">아이템 빌드</span>
                           {[
@@ -324,8 +325,8 @@ export default function ChampionDetailPage() {
                             </div>
                           ))}
                         </div>
-
                       </div>
+
                     </div>
                   )
                 }

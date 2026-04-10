@@ -10,8 +10,8 @@ export const ROLE_PRESETS: Record<RoleName, RunePreset[]> = {
       selectedRunes: new Set([8010, 9111, 9104, 8299, 8473, 8242]), statShardSelected: [S.adaptive, S.armor, S.health] },
     { name: '철갑 수호', keystoneId: 8437, primaryTreeId: 8400, secondaryTreeId: 8000,
       selectedRunes: new Set([8437, 8446, 8473, 8451, 9111, 8299]), statShardSelected: [S.adaptive, S.armor, S.health] },
-    { name: '격전',     keystoneId: 8005, primaryTreeId: 8000, secondaryTreeId: 8400,
-      selectedRunes: new Set([8005, 9101, 9104, 8014, 8446, 8451]), statShardSelected: [S.adaptive, S.armor, S.health] },
+    { name: '집중 공격', keystoneId: 8008, primaryTreeId: 8000, secondaryTreeId: 8400,
+      selectedRunes: new Set([8008, 9101, 9104, 8014, 8446, 8451]), statShardSelected: [S.adaptive, S.armor, S.health] },
   ],
 
   tank: [
