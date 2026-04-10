@@ -7,45 +7,58 @@ import './WritePostPage.css'
 const CATEGORIES = ['자유게시판', '공략', '질문', '유머']
 const CAT_DESC: Record<string, string> = {
   '자유게시판': '자유롭게 이야기해요',
-  '공략': '챔피언 공략·빌드 공유',
-  '질문': '궁금한 점을 물어보세요',
-  '유머': '웃긴 경험담·짤 공유',
+  '공략':      '챔피언 공략·빌드 공유',
+  '질문':      '궁금한 점을 물어보세요',
+  '유머':      '웃긴 경험담·짤 공유',
 }
 const CAT_ICON: Record<string, string> = {
-  '자유게시판': '💬',
-  '공략': '⚔️',
-  '질문': '❓',
-  '유머': '😂',
+  '자유게시판': '💬', '공략': '⚔️', '질문': '❓', '유머': '😂',
 }
 
 const MAX_TITLE   = 100
 const MAX_CONTENT = 5000
 const MAX_IMAGES  = 5
 
+function resizeImage(file: File): Promise<string> {
+  return new Promise(resolve => {
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const MAX = 1000
+      let { width, height } = img
+      if (width > MAX || height > MAX) {
+        if (width > height) { height = Math.round(height * MAX / width); width = MAX }
+        else                { width  = Math.round(width  * MAX / height); height = MAX }
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = width; canvas.height = height
+      canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
+      resolve(canvas.toDataURL('image/jpeg', 0.8))
+    }
+    img.src = url
+  })
+}
+
 export default function WritePostPage() {
   const navigate = useNavigate()
-  const user = getSession()
+  const user     = getSession()
 
-  const [category, setCategory] = useState('')
-  const [title, setTitle]       = useState('')
-  const [content, setContent]   = useState('')
-  const [images, setImages]     = useState<string[]>([])
-  const [error, setError]       = useState('')
+  const [category,   setCategory]   = useState('')
+  const [title,      setTitle]      = useState('')
+  const [content,    setContent]    = useState('')
+  const [images,     setImages]     = useState<string[]>([])
+  const [error,      setError]      = useState('')
   const [submitting, setSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleImageAdd = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
     const remaining = MAX_IMAGES - images.length
     const toProcess = files.slice(0, remaining)
-    toProcess.forEach(file => {
-      const reader = new FileReader()
-      reader.onload = ev => {
-        setImages(prev => [...prev, ev.target!.result as string])
-      }
-      reader.readAsDataURL(file)
-    })
+    const resized   = await Promise.all(toProcess.map(resizeImage))
+    setImages(prev => [...prev, ...resized])
     e.target.value = ''
   }
 
@@ -63,7 +76,7 @@ export default function WritePostPage() {
     )
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     if (!category)       { setError('카테고리를 선택해주세요.'); return }
@@ -71,14 +84,21 @@ export default function WritePostPage() {
     if (!content.trim()) { setError('내용을 입력해주세요.'); return }
 
     setSubmitting(true)
-    addPost({
-      title: title.trim(),
-      content: content.trim(),
+    const result = await addPost({
+      title:           title.trim(),
+      content:         content.trim(),
       category,
-      authorId: user.id,
-      authorNickname: user.nickname,
+      authorId:        user.id,
+      authorNickname:  user.nickname,
       images,
     })
+
+    if (!result) {
+      setError('게시글 등록에 실패했습니다. 잠시 후 다시 시도해주세요.')
+      setSubmitting(false)
+      return
+    }
+
     navigate('/community', { state: { posted: true } })
   }
 
@@ -86,7 +106,6 @@ export default function WritePostPage() {
 
   return (
     <div className="write-page">
-      {/* 상단 바 */}
       <div className="write-topbar">
         <button className="write-back-btn" onClick={() => navigate('/community')}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -104,7 +123,6 @@ export default function WritePostPage() {
       <form className="write-form" onSubmit={handleSubmit} noValidate>
         <div className="write-body">
 
-          {/* 카테고리 */}
           <div className="write-section">
             <div className="write-label">카테고리 <span className="write-required">*</span></div>
             <div className="write-cat-grid">
@@ -130,7 +148,6 @@ export default function WritePostPage() {
             </div>
           </div>
 
-          {/* 제목 */}
           <div className="write-section">
             <div className="write-label">
               제목 <span className="write-required">*</span>
@@ -146,7 +163,6 @@ export default function WritePostPage() {
             />
           </div>
 
-          {/* 내용 */}
           <div className="write-section write-section-grow">
             <div className="write-label">
               내용 <span className="write-required">*</span>
@@ -163,7 +179,6 @@ export default function WritePostPage() {
             />
           </div>
 
-          {/* 이미지 첨부 */}
           <div className="write-section">
             <div className="write-label">
               사진 첨부
@@ -200,7 +215,6 @@ export default function WritePostPage() {
             />
           </div>
 
-          {/* 에러 */}
           {error && (
             <div className="write-error">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -212,7 +226,6 @@ export default function WritePostPage() {
           )}
         </div>
 
-        {/* 하단 액션 바 */}
         <div className="write-footer">
           <div className="write-footer-left" />
           <div className="write-footer-actions">
@@ -220,6 +233,7 @@ export default function WritePostPage() {
               type="button"
               className="write-cancel-btn"
               onClick={() => navigate('/community')}
+              disabled={submitting}
             >
               취소
             </button>
