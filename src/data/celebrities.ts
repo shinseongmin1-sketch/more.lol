@@ -75,6 +75,7 @@ const CELEBRITY_MAP: Record<string, Celebrity> = {
   '원진':       { account: '원진#KR1',          displayName: '원진',     type: 'streamer' },
   '가나공':     { account: '가나공#KR1',        displayName: '가나공',   type: 'streamer' },
   '동수':       { account: '동수#KR1',          displayName: '동수',     type: 'streamer' },
+  '저라뎃':     { account: '저라뎃#KR1',        displayName: '저라뎃',   type: 'streamer' },
 
   // ===== 치지직 스트리머 (WWME 리더보드 기준) =====
   // 전 프로게이머
