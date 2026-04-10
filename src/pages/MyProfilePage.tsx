@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getSession } from '../utils/auth'
 import { getPostsByUser, deletePost, formatDate } from '../utils/postsStore'
@@ -7,25 +7,35 @@ import './MyProfilePage.css'
 import './SubPage.css'
 
 const catColors: Record<string, string> = {
-  '공략': '#4a90e2',
+  '공략':    '#4a90e2',
   '자유게시판': '#69db7c',
-  '유머': '#ffd43b',
-  '질문': '#ffa94d',
-  '공지': '#ff6b6b',
+  '유머':    '#ffd43b',
+  '질문':    '#ffa94d',
+  '공지':    '#ff6b6b',
 }
 
 const TABS = ['전체', '공략', '자유게시판', '질문', '유머']
 
 export default function MyProfilePage() {
   const navigate = useNavigate()
-  const user = getSession()
+  const user     = getSession()
+
+  const [posts, setPosts]       = useState<Post[]>([])
+  const [loading, setLoading]   = useState(true)
   const [activeTab, setActiveTab] = useState('전체')
-  const [posts, setPosts] = useState(() => user ? getPostsByUser(user.id) : [])
   const [confirmId, setConfirmId] = useState<string | null>(null)
 
-  const handleDelete = (postId: string) => {
-    deletePost(postId)
-    setPosts(prev => prev.filter(p => p.id !== postId))
+  useEffect(() => {
+    if (!user) return
+    getPostsByUser(user.id).then(p => {
+      setPosts(p)
+      setLoading(false)
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleDelete = async (postId: string) => {
+    const ok = await deletePost(postId)
+    if (ok) setPosts(prev => prev.filter(p => p.id !== postId))
     setConfirmId(null)
   }
 
@@ -39,18 +49,14 @@ export default function MyProfilePage() {
     )
   }
 
-  const allPosts = posts
-  const filtered = activeTab === '전체' ? allPosts : allPosts.filter(p => p.category === activeTab)
-
-  const totalLikes = allPosts.reduce((sum, p) => sum + p.likes, 0)
-  const totalViews = allPosts.reduce((sum, p) => sum + p.views, 0)
-
-  const joinDate = new Date(user.createdAt)
-  const joinStr = `${joinDate.getFullYear()}.${String(joinDate.getMonth() + 1).padStart(2, '0')}.${String(joinDate.getDate()).padStart(2, '0')}`
+  const filtered    = activeTab === '전체' ? posts : posts.filter(p => p.category === activeTab)
+  const totalLikes  = posts.reduce((sum, p) => sum + p.likes, 0)
+  const totalViews  = posts.reduce((sum, p) => sum + p.views, 0)
+  const joinDate    = new Date(user.createdAt)
+  const joinStr     = `${joinDate.getFullYear()}.${String(joinDate.getMonth() + 1).padStart(2, '0')}.${String(joinDate.getDate()).padStart(2, '0')}`
 
   return (
     <div className="subpage profile-page">
-      {/* 헤더 */}
       <div className="subpage-header profile-header">
         <div className="subpage-header-inner">
           <div className="profile-hero">
@@ -62,7 +68,7 @@ export default function MyProfilePage() {
           </div>
           <div className="profile-stats-row">
             <div className="profile-stat">
-              <span className="profile-stat-val">{allPosts.length}</span>
+              <span className="profile-stat-val">{posts.length}</span>
               <span className="profile-stat-label">작성 글</span>
             </div>
             <div className="profile-stat-divider" />
@@ -79,11 +85,9 @@ export default function MyProfilePage() {
         </div>
       </div>
 
-      {/* 본문 */}
       <div className="subpage-body">
         <div className="profile-section-title">내 게시글</div>
 
-        {/* 카테고리 탭 */}
         <div className="community-tabs" style={{ marginBottom: 0 }}>
           {TABS.map(tab => (
             <button
@@ -93,33 +97,38 @@ export default function MyProfilePage() {
             >
               {tab}
               {tab === '전체'
-                ? ` (${allPosts.length})`
-                : ` (${allPosts.filter(p => p.category === tab).length})`}
+                ? ` (${posts.length})`
+                : ` (${posts.filter(p => p.category === tab).length})`}
             </button>
           ))}
         </div>
 
-        {/* 게시글 목록 */}
         <div className="post-list profile-post-list">
-          {filtered.length === 0 ? (
+          {loading ? (
+            <div className="profile-empty">
+              <div className="profile-empty-icon">⏳</div>
+              <div className="profile-empty-title">불러오는 중...</div>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="profile-empty">
               <div className="profile-empty-icon">📝</div>
               <div className="profile-empty-title">아직 작성한 게시글이 없습니다</div>
               <div className="profile-empty-desc">커뮤니티에서 첫 글을 작성해보세요!</div>
-              <button
-                className="profile-empty-btn"
-                onClick={() => navigate('/community')}
-              >
+              <button className="profile-empty-btn" onClick={() => navigate('/community')}>
                 커뮤니티 가기
               </button>
             </div>
           ) : (
             filtered.map((post: Post) => (
-              <div key={post.id} className="post-row profile-post-row" onClick={() => navigate(`/post/${post.id}`)}>
+              <div
+                key={post.id}
+                className="post-row profile-post-row"
+                onClick={() => navigate(`/post/${post.id}`)}
+              >
                 <span
                   className="post-cat"
                   style={{
-                    color: catColors[post.category] || 'var(--text-muted)',
+                    color:      catColors[post.category] || 'var(--text-muted)',
                     background: (catColors[post.category] || '#888') + '15',
                   }}
                 >
@@ -136,7 +145,7 @@ export default function MyProfilePage() {
                   {confirmId === post.id ? (
                     <>
                       <button className="profile-delete-yes" onClick={() => handleDelete(post.id)}>삭제</button>
-                      <button className="profile-delete-no" onClick={() => setConfirmId(null)}>취소</button>
+                      <button className="profile-delete-no"  onClick={() => setConfirmId(null)}>취소</button>
                     </>
                   ) : (
                     <button className="profile-delete-btn" onClick={() => setConfirmId(post.id)}>삭제</button>
