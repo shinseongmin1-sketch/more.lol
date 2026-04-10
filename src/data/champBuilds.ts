@@ -1,0 +1,656 @@
+// 챔피언별 소환사 주문 / 아이템 빌드 / 스킬 순서 오버라이드
+// 없으면 role 기반 템플릿으로 폴백
+
+type Spell = { id: string; name: string }
+type Item  = { id: string; name: string }
+
+export interface ChampBuild {
+  summoners:     [Spell, Spell]
+  startItems:    Item[]
+  boots:         Item
+  coreItems:     Item[]
+  fullBuild:     Item[]
+  skillMaxOrder: [string, string, string]
+}
+
+/* ── 소환사 주문 ──────────────────────────────────────── */
+const FL: Spell = { id: 'SummonerFlash',    name: '점멸' }
+const IG: Spell = { id: 'SummonerDot',      name: '점화' }
+const GH: Spell = { id: 'SummonerHaste',    name: '유령' }
+const TP: Spell = { id: 'SummonerTeleport', name: '순간이동' }
+const HL: Spell = { id: 'SummonerHeal',     name: '회복' }
+const BR: Spell = { id: 'SummonerBarrier',  name: '방어막' }
+const EX: Spell = { id: 'SummonerExhaust',  name: '탈진' }
+const SM: Spell = { id: 'SummonerSmite',    name: '강타' }
+
+/* ── 아이템 ──────────────────────────────────────────── */
+const doranShield:    Item = { id:'1054', name:'도란의 방패' }
+const doranBlade:     Item = { id:'1055', name:'도란의 검' }
+const doranRing:      Item = { id:'1056', name:'도란의 반지' }
+const hpPot:          Item = { id:'2003', name:'체력 물약' }
+const longSword:      Item = { id:'1036', name:'긴 검' }
+// 신발
+const steelcaps:      Item = { id:'3047', name:'강철 발목 보호대' }
+// const mercTreads:  Item = { id:'3111', name:'마법 저항력 신발' }
+const sorcShoes:      Item = { id:'3020', name:'마법사의 신발' }
+const berserkers:     Item = { id:'3006', name:'광전사의 군화' }
+const swiftBoots:     Item = { id:'3009', name:'신속의 장화' }
+const ionianBoots:    Item = { id:'3158', name:'아이오니아 장화' }
+// 전사/탱커
+const trinity:        Item = { id:'3078', name:'삼위일체' }
+const deadMan:        Item = { id:'3742', name:'망자의 갑옷' }
+const blackCleaver:   Item = { id:'3071', name:'검은 분쇄자' }
+const mortalReminder: Item = { id:'3033', name:'치명적 기억' }
+const warmog:         Item = { id:'3083', name:'웜 갑옷' }
+const guardianAngel:  Item = { id:'3026', name:'수호 천사' }
+const sunfire:        Item = { id:'3068', name:'쐐기불꽃 방패' }
+const heartsteel:     Item = { id:'3441', name:'심장강철' }
+const frozenHeart:    Item = { id:'3110', name:'얼어붙은 심장' }
+const hullbreaker:    Item = { id:'3709', name:'파선자' }
+// const thornmail:   Item = { id:'3075', name:'가시 갑옷' }
+// const gargoyle:    Item = { id:'3193', name:'가고일 석판' }
+const steraks:        Item = { id:'3053', name:'스테락의 뒤틀린 갑주' }
+// 원딜/물리
+const ie:             Item = { id:'3031', name:'무한의 대검' }
+const bork:           Item = { id:'3153', name:'몰락한 왕의 검' }
+const kraken:         Item = { id:'6672', name:'크라켄 학살자' }
+const runaans:        Item = { id:'3085', name:'루난의 폭풍' }
+const immortalBow:    Item = { id:'6673', name:'불멸의 방패활' }
+const galeforce:      Item = { id:'6671', name:'질풍검' }
+const serpentsFang:   Item = { id:'3814', name:'서펜트 팡' }
+const youmuus:        Item = { id:'3142', name:'유령 검' }
+// AP
+const rabadons:       Item = { id:'3089', name:"라바돈의 죽음 모자" }
+const zhonyas:        Item = { id:'3157', name:"조냐의 모래시계" }
+const voidStaff:      Item = { id:'3135', name:'공허 지팡이' }
+const shadowflame:    Item = { id:'4645', name:'그림자 불꽃' }
+const liandrys:       Item = { id:'6653', name:'리안드리의 고통' }
+const ludens:         Item = { id:'6655', name:'루덴의 동반자' }
+const nashorsTooth:   Item = { id:'3115', name:'내셔의 이빨' }
+const lichBane:       Item = { id:'3100', name:'리치 베인' }
+const riftmaker:      Item = { id:'4633', name:'리프트메이커' }
+const rocketBelt:     Item = { id:'3152', name:'헥스테크 로켓 벨트' }
+const cosmicDrive:    Item = { id:'4629', name:'코스믹 드라이브' }
+// 서포터
+const moonstone:      Item = { id:'6617', name:'달빛 돌' }
+const ardentCenser:   Item = { id:'3504', name:'열의의 향로' }
+const staffFlowing:   Item = { id:'6616', name:'흐르는 물의 지팡이' }
+const redemption:     Item = { id:'3107', name:'구원' }
+const shurelyas:      Item = { id:'2065', name:'슈렐리아의 군가' }
+const locketSolari:   Item = { id:'3190', name:'철의 솔라리 상징' }
+// 기타
+const manamune:       Item = { id:'3004', name:'마나무네' }
+
+/* ── 챔피언별 빌드 ────────────────────────────────────── */
+export const CHAMP_BUILDS: Record<string, ChampBuild> = {
+
+  // ══ 탑 ══════════════════════════════════════════════
+
+  Garen: {
+    summoners: [FL, GH],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, blackCleaver, deadMan],
+    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, warmog],
+    skillMaxOrder: ['E','Q','W'],
+  },
+
+  Darius: {
+    summoners: [FL, GH],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, deadMan, blackCleaver],
+    fullBuild: [trinity, steelcaps, deadMan, blackCleaver, steraks, mortalReminder],
+    skillMaxOrder: ['E','W','Q'],
+  },
+
+  Malphite: {
+    summoners: [FL, TP],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [sunfire, heartsteel, warmog],
+    fullBuild: [steelcaps, sunfire, heartsteel, warmog, deadMan, frozenHeart],
+    skillMaxOrder: ['E','W','Q'],
+  },
+
+  Teemo: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [liandrys, shadowflame, nashorsTooth],
+    fullBuild: [sorcShoes, liandrys, shadowflame, nashorsTooth, rabadons, voidStaff],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Tryndamere: {
+    summoners: [FL, GH],
+    startItems: [longSword, hpPot],
+    boots: berserkers,
+    coreItems: [hullbreaker, ie, bork],
+    fullBuild: [berserkers, hullbreaker, ie, bork, mortalReminder, guardianAngel],
+    skillMaxOrder: ['E','Q','W'],
+  },
+
+  Riven: {
+    summoners: [FL, IG],
+    startItems: [longSword, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, blackCleaver, deadMan],
+    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, steraks, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Irelia: {
+    summoners: [FL, TP],
+    startItems: [doranBlade, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, deadMan, blackCleaver],
+    fullBuild: [trinity, steelcaps, deadMan, blackCleaver, steraks, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Fiora: {
+    summoners: [FL, TP],
+    startItems: [longSword, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, deadMan, mortalReminder],
+    fullBuild: [trinity, steelcaps, deadMan, mortalReminder, guardianAngel, warmog],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Camille: {
+    summoners: [FL, TP],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, blackCleaver, deadMan],
+    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, guardianAngel, warmog],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Urgot: {
+    summoners: [FL, TP],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, blackCleaver, deadMan],
+    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, warmog],
+    skillMaxOrder: ['E','Q','W'],
+  },
+
+  Nasus: {
+    summoners: [FL, TP],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, deadMan, frozenHeart],
+    fullBuild: [trinity, steelcaps, deadMan, frozenHeart, warmog, heartsteel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  // ══ 정글 ═════════════════════════════════════════════
+
+  Amumu: {
+    summoners: [FL, SM],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [sunfire, heartsteel, deadMan],
+    fullBuild: [steelcaps, sunfire, heartsteel, deadMan, frozenHeart, warmog],
+    skillMaxOrder: ['E','W','Q'],
+  },
+
+  LeeSin: {
+    summoners: [FL, SM],
+    startItems: [doranBlade, hpPot],
+    boots: steelcaps,
+    coreItems: [blackCleaver, deadMan, mortalReminder],
+    fullBuild: [steelcaps, blackCleaver, deadMan, mortalReminder, guardianAngel, warmog],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Vi: {
+    summoners: [FL, SM],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, deadMan, blackCleaver],
+    fullBuild: [trinity, steelcaps, deadMan, blackCleaver, guardianAngel, warmog],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  JarvanIV: {
+    summoners: [FL, SM],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, deadMan, blackCleaver],
+    fullBuild: [trinity, steelcaps, deadMan, blackCleaver, mortalReminder, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Graves: {
+    summoners: [FL, SM],
+    startItems: [doranBlade, hpPot],
+    boots: steelcaps,
+    coreItems: [ie, bork, mortalReminder],
+    fullBuild: [steelcaps, ie, bork, mortalReminder, kraken, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  // ══ 미드 ═════════════════════════════════════════════
+
+  Yone: {
+    summoners: [FL, IG],
+    startItems: [longSword, hpPot],
+    boots: berserkers,
+    coreItems: [immortalBow, kraken, bork],
+    fullBuild: [berserkers, immortalBow, kraken, bork, ie, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Yasuo: {
+    summoners: [FL, IG],
+    startItems: [longSword, hpPot],
+    boots: berserkers,
+    coreItems: [immortalBow, kraken, ie],
+    fullBuild: [berserkers, immortalBow, kraken, ie, bork, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Lux: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['E','Q','W'],
+  },
+
+  Ziggs: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Xerath: {
+    summoners: [FL, BR],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Veigar: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Ahri: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Syndra: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Zoe: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  TwistedFate: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [lichBane, shadowflame, rabadons],
+    fullBuild: [sorcShoes, lichBane, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Annie: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Zed: {
+    summoners: [FL, IG],
+    startItems: [longSword, hpPot],
+    boots: steelcaps,
+    coreItems: [youmuus, serpentsFang, deadMan],
+    fullBuild: [steelcaps, youmuus, serpentsFang, deadMan, blackCleaver, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Akali: {
+    summoners: [FL, IG],
+    startItems: [longSword, hpPot],
+    boots: steelcaps,
+    coreItems: [rocketBelt, shadowflame, rabadons],
+    fullBuild: [steelcaps, rocketBelt, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Katarina: {
+    summoners: [FL, IG],
+    startItems: [longSword, hpPot],
+    boots: sorcShoes,
+    coreItems: [rocketBelt, shadowflame, rabadons],
+    fullBuild: [sorcShoes, rocketBelt, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['E','Q','W'],
+  },
+
+  Diana: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [riftmaker, nashorsTooth, rabadons],
+    fullBuild: [sorcShoes, riftmaker, nashorsTooth, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Sylas: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [riftmaker, nashorsTooth, cosmicDrive],
+    fullBuild: [sorcShoes, riftmaker, nashorsTooth, cosmicDrive, rabadons, voidStaff],
+    skillMaxOrder: ['W','Q','E'],
+  },
+
+  Orianna: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Fizz: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, rabadons],
+    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Ekko: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [riftmaker, nashorsTooth, cosmicDrive],
+    fullBuild: [sorcShoes, riftmaker, nashorsTooth, cosmicDrive, rabadons, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  // ══ 원딜 ═════════════════════════════════════════════
+
+  Jinx: {
+    summoners: [FL, BR],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [kraken, bork, ie],
+    fullBuild: [berserkers, kraken, bork, ie, runaans, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Ezreal: {
+    summoners: [FL, HL],
+    startItems: [doranBlade, hpPot],
+    boots: ionianBoots,
+    coreItems: [trinity, manamune, bork],
+    fullBuild: [ionianBoots, trinity, manamune, bork, shadowflame, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  MissFortune: {
+    summoners: [FL, BR],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [kraken, bork, ie],
+    fullBuild: [berserkers, kraken, bork, ie, mortalReminder, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Ashe: {
+    summoners: [FL, BR],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [kraken, bork, ie],
+    fullBuild: [berserkers, kraken, bork, ie, runaans, guardianAngel],
+    skillMaxOrder: ['W','Q','E'],
+  },
+
+  Caitlyn: {
+    summoners: [FL, BR],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [galeforce, ie, bork],
+    fullBuild: [berserkers, galeforce, ie, bork, mortalReminder, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Jhin: {
+    summoners: [FL, BR],
+    startItems: [doranBlade, hpPot],
+    boots: swiftBoots,
+    coreItems: [galeforce, ie, mortalReminder],
+    fullBuild: [swiftBoots, galeforce, ie, mortalReminder, shadowflame, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Vayne: {
+    summoners: [FL, IG],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [kraken, bork, ie],
+    fullBuild: [berserkers, kraken, bork, ie, mortalReminder, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Kaisa: {
+    summoners: [FL, BR],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [kraken, nashorsTooth, bork],
+    fullBuild: [berserkers, kraken, nashorsTooth, bork, ie, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Draven: {
+    summoners: [FL, IG],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [kraken, ie, mortalReminder],
+    fullBuild: [berserkers, kraken, ie, mortalReminder, bork, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Tristana: {
+    summoners: [FL, IG],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [kraken, ie, bork],
+    fullBuild: [berserkers, kraken, ie, bork, mortalReminder, guardianAngel],
+    skillMaxOrder: ['E','Q','W'],
+  },
+
+  Samira: {
+    summoners: [FL, IG],
+    startItems: [doranBlade, hpPot],
+    boots: berserkers,
+    coreItems: [immortalBow, ie, bork],
+    fullBuild: [berserkers, immortalBow, ie, bork, mortalReminder, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  // ══ 서포터 ══════════════════════════════════════════
+
+  Seraphine: {
+    summoners: [FL, EX],
+    startItems: [doranRing, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, ardentCenser, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, rabadons],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Sona: {
+    summoners: [FL, EX],
+    startItems: [doranRing, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, ardentCenser, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Brand: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, liandrys, shadowflame],
+    fullBuild: [sorcShoes, ludens, liandrys, shadowflame, rabadons, voidStaff],
+    skillMaxOrder: ['W','E','Q'],
+  },
+
+  Thresh: {
+    summoners: [FL, EX],
+    startItems: [doranShield, hpPot],
+    boots: ionianBoots,
+    coreItems: [locketSolari, redemption, frozenHeart],
+    fullBuild: [ionianBoots, locketSolari, redemption, frozenHeart, shurelyas, warmog],
+    skillMaxOrder: ['E','W','Q'],
+  },
+
+  Leona: {
+    summoners: [FL, IG],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [locketSolari, heartsteel, frozenHeart],
+    fullBuild: [steelcaps, locketSolari, heartsteel, frozenHeart, redemption, warmog],
+    skillMaxOrder: ['E','W','Q'],
+  },
+
+  Blitzcrank: {
+    summoners: [FL, EX],
+    startItems: [doranShield, hpPot],
+    boots: ionianBoots,
+    coreItems: [locketSolari, shurelyas, redemption],
+    fullBuild: [ionianBoots, locketSolari, shurelyas, redemption, frozenHeart, warmog],
+    skillMaxOrder: ['Q','E','W'],
+  },
+
+  Nautilus: {
+    summoners: [FL, EX],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [locketSolari, heartsteel, frozenHeart],
+    fullBuild: [steelcaps, locketSolari, heartsteel, frozenHeart, redemption, warmog],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Janna: {
+    summoners: [FL, EX],
+    startItems: [doranRing, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, ardentCenser, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, zhonyas],
+    skillMaxOrder: ['W','Q','E'],
+  },
+
+  Soraka: {
+    summoners: [FL, EX],
+    startItems: [doranRing, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, redemption, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, redemption, staffFlowing, ardentCenser, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Nami: {
+    summoners: [FL, EX],
+    startItems: [doranRing, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, ardentCenser, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, rabadons],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Karma: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, shadowflame, rabadons],
+    fullBuild: [ionianBoots, moonstone, shadowflame, rabadons, voidStaff, zhonyas],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Pyke: {
+    summoners: [FL, EX],
+    startItems: [doranBlade, hpPot],
+    boots: ionianBoots,
+    coreItems: [youmuus, serpentsFang, deadMan],
+    fullBuild: [ionianBoots, youmuus, serpentsFang, deadMan, blackCleaver, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
+  },
+
+  Zyra: {
+    summoners: [FL, IG],
+    startItems: [doranRing, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, liandrys, shadowflame],
+    fullBuild: [sorcShoes, ludens, liandrys, shadowflame, rabadons, voidStaff],
+    skillMaxOrder: ['W','Q','E'],
+  },
+
+  // ══ 기타 인기 챔피언 ══════════════════════════════════
+
+  Pantheon: {
+    summoners: [FL, TP],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, blackCleaver, deadMan],
+    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, guardianAngel],
+    skillMaxOrder: ['W','Q','E'],
+  },
+
+  Kayle: {
+    summoners: [FL, TP],
+    startItems: [doranRing, hpPot],
+    boots: berserkers,
+    coreItems: [nashorsTooth, riftmaker, rabadons],
+    fullBuild: [berserkers, nashorsTooth, riftmaker, rabadons, voidStaff, guardianAngel],
+    skillMaxOrder: ['E','Q','W'],
+  },
+
+  Sett: {
+    summoners: [FL, TP],
+    startItems: [doranShield, hpPot],
+    boots: steelcaps,
+    coreItems: [trinity, heartsteel, blackCleaver],
+    fullBuild: [trinity, steelcaps, heartsteel, blackCleaver, deadMan, warmog],
+    skillMaxOrder: ['Q','E','W'],
+  },
+}

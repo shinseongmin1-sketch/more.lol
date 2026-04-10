@@ -4,6 +4,7 @@ import { getDDVersion, champIconUrl } from '../utils/riotApi'
 import { statShards } from '../data/garenBuild'
 import { ROLE_PRESETS, ROLE_SUMMONERS, ROLE_POSITION } from '../data/champRunePresets'
 import { TEMPLATES, getRoleFromTags, makeSkillOrder } from '../data/buildTemplates'
+import { CHAMP_BUILDS } from '../data/champBuilds'
 import type { RoleName } from '../data/buildTemplates'
 import './ChampionDetailPage.css'
 
@@ -99,8 +100,15 @@ export default function ChampionDetailPage() {
   const role = getRoleForPosition(activePos, champData.tags ?? [])
   const template = TEMPLATES[role]
   const presets = ROLE_PRESETS[role]
-  const summoners = ROLE_SUMMONERS[role]
-  const champSkillOrder = makeSkillOrder(...template.skillMaxOrder)
+
+  const champBuild = CHAMP_BUILDS[champId ?? '']
+  const summoners      = champBuild?.summoners     ?? ROLE_SUMMONERS[role]
+  const startItems     = champBuild?.startItems    ?? template.startItems
+  const buildBoots     = champBuild?.boots         ?? template.boots
+  const coreItems      = champBuild?.coreItems     ?? template.coreItems
+  const fullBuild      = champBuild?.fullBuild     ?? template.fullBuild
+  const skillMaxOrder  = champBuild?.skillMaxOrder ?? template.skillMaxOrder
+  const champSkillOrder = makeSkillOrder(...skillMaxOrder)
 
   const splashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_0.jpg`
   const spellIcon = (img: string) => `https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${img}`
@@ -314,10 +322,10 @@ export default function ChampionDetailPage() {
                           <span className="rune-inline-title">아이템 빌드</span>
                           {(() => {
                             const allItems = [
-                              ...template.startItems,
-                              template.boots,
-                              ...template.coreItems,
-                              ...template.fullBuild,
+                              ...startItems,
+                              buildBoots,
+                              ...coreItems,
+                              ...fullBuild,
                             ].filter((item, idx, arr) => arr.findIndex(i => i.id === item.id) === idx)
                             return (
                               <div className="rune-inline-item-row">
@@ -358,7 +366,7 @@ export default function ChampionDetailPage() {
                   <div className="skill-maxorder">
                     <span className="skill-maxorder-label">스킬 우선순위</span>
                     <div className="skill-maxorder-items">
-                      {template.skillMaxOrder.map((k, i) => (
+                      {skillMaxOrder.map((k, i) => (
                         <span key={i} className="skill-maxorder-item">
                           {i > 0 && <span className="skill-maxorder-arrow">›</span>}
                           <img src={spellIcon(champData.spells[SPELL_KEYS.indexOf(k as typeof SPELL_KEYS[number])].image.full)} alt={k} />
