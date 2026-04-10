@@ -6,7 +6,7 @@ import './AuthModal.css'
 
 interface Props {
   onClose: () => void
-  onAuth: (user: User) => void
+  onAuth:  (user: User) => void
 }
 
 type Tab = 'login' | 'signup'
@@ -14,17 +14,17 @@ type Tab = 'login' | 'signup'
 export default function AuthModal({ onClose, onAuth }: Props) {
   const [tab, setTab] = useState<Tab>('login')
 
-  // login fields
-  const [loginId, setLoginId] = useState('')
-  const [loginPw, setLoginPw] = useState('')
+  const [loginId,    setLoginId]    = useState('')
+  const [loginPw,    setLoginPw]    = useState('')
   const [loginError, setLoginError] = useState('')
+  const [loginLoading, setLoginLoading] = useState(false)
 
-  // signup fields
-  const [signId, setSignId] = useState('')
-  const [signPw, setSignPw] = useState('')
+  const [signId,        setSignId]        = useState('')
+  const [signPw,        setSignPw]        = useState('')
   const [signPwConfirm, setSignPwConfirm] = useState('')
-  const [signNick, setSignNick] = useState('')
-  const [signError, setSignError] = useState('')
+  const [signNick,      setSignNick]      = useState('')
+  const [signError,     setSignError]     = useState('')
+  const [signLoading,   setSignLoading]   = useState(false)
 
   const overlayRef = useRef<HTMLDivElement>(null)
 
@@ -34,30 +34,34 @@ export default function AuthModal({ onClose, onAuth }: Props) {
     return () => window.removeEventListener('keydown', handler)
   }, [onClose])
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoginError('')
     if (!loginId.trim() || !loginPw) { setLoginError('아이디와 비밀번호를 입력해주세요.'); return }
-    const result = login(loginId.trim(), loginPw)
+    setLoginLoading(true)
+    const result = await login(loginId.trim(), loginPw)
+    setLoginLoading(false)
     if (!result.ok) { setLoginError(result.error!); return }
     onAuth(result.user!)
     onClose()
   }
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
     setSignError('')
-    if (!signId.trim()) { setSignError('아이디를 입력해주세요.'); return }
-    if (signId.length < 4) { setSignError('아이디는 4자 이상이어야 합니다.'); return }
-    if (!signNick.trim()) { setSignError('닉네임을 입력해주세요.'); return }
-    if (signNick.length < 2) { setSignError('닉네임은 2자 이상이어야 합니다.'); return }
+    if (!signId.trim())           { setSignError('아이디를 입력해주세요.'); return }
+    if (signId.length < 4)        { setSignError('아이디는 4자 이상이어야 합니다.'); return }
+    if (!signNick.trim())         { setSignError('닉네임을 입력해주세요.'); return }
+    if (signNick.length < 2)      { setSignError('닉네임은 2자 이상이어야 합니다.'); return }
     const nickCheck = checkNickname(signNick.trim(), signId.trim())
-    if (!nickCheck.ok) { setSignError(nickCheck.reason!); return }
-    if (signPw.length < 6) { setSignError('비밀번호는 6자 이상이어야 합니다.'); return }
+    if (!nickCheck.ok)            { setSignError(nickCheck.reason!); return }
+    if (signPw.length < 6)        { setSignError('비밀번호는 6자 이상이어야 합니다.'); return }
     if (signPw !== signPwConfirm) { setSignError('비밀번호가 일치하지 않습니다.'); return }
-    const result = signup(signId.trim(), signPw, signNick.trim())
+    setSignLoading(true)
+    const result = await signup(signId.trim(), signPw, signNick.trim())
+    setSignLoading(false)
     if (!result.ok) { setSignError(result.error!); return }
-    onAuth({ id: signId.trim(), nickname: signNick.trim(), createdAt: new Date().toISOString() })
+    onAuth(result.user!)
     onClose()
   }
 
@@ -68,36 +72,28 @@ export default function AuthModal({ onClose, onAuth }: Props) {
       onMouseDown={e => { if (e.target === overlayRef.current) onClose() }}
     >
       <div className="auth-modal">
-        {/* 닫기 버튼 */}
         <button className="auth-close" onClick={onClose} aria-label="닫기">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <path d="M18 6L6 18M6 6l12 12" />
           </svg>
         </button>
 
-        {/* 로고 */}
         <div className="auth-logo">
           <span className="auth-logo-text">more</span>
           <span className="auth-logo-dot">.lol</span>
         </div>
 
-        {/* 탭 */}
         <div className="auth-tabs">
           <button
             className={`auth-tab ${tab === 'login' ? 'active' : ''}`}
             onClick={() => { setTab('login'); setLoginError('') }}
-          >
-            로그인
-          </button>
+          >로그인</button>
           <button
             className={`auth-tab ${tab === 'signup' ? 'active' : ''}`}
             onClick={() => { setTab('signup'); setSignError('') }}
-          >
-            회원가입
-          </button>
+          >회원가입</button>
         </div>
 
-        {/* 로그인 */}
         {tab === 'login' && (
           <form className="auth-form" onSubmit={handleLogin} noValidate>
             <div className="auth-field">
@@ -124,7 +120,9 @@ export default function AuthModal({ onClose, onAuth }: Props) {
               />
             </div>
             {loginError && <p className="auth-error">{loginError}</p>}
-            <button className="auth-submit" type="submit">로그인</button>
+            <button className="auth-submit" type="submit" disabled={loginLoading}>
+              {loginLoading ? '로그인 중...' : '로그인'}
+            </button>
             <p className="auth-switch">
               계정이 없으신가요?{' '}
               <button type="button" className="auth-link" onClick={() => { setTab('signup'); setLoginError('') }}>
@@ -134,7 +132,6 @@ export default function AuthModal({ onClose, onAuth }: Props) {
           </form>
         )}
 
-        {/* 회원가입 */}
         {tab === 'signup' && (
           <form className="auth-form" onSubmit={handleSignup} noValidate>
             <div className="auth-field">
@@ -182,7 +179,9 @@ export default function AuthModal({ onClose, onAuth }: Props) {
               />
             </div>
             {signError && <p className="auth-error">{signError}</p>}
-            <button className="auth-submit" type="submit">회원가입</button>
+            <button className="auth-submit" type="submit" disabled={signLoading}>
+              {signLoading ? '처리 중...' : '회원가입'}
+            </button>
             <p className="auth-switch">
               이미 계정이 있으신가요?{' '}
               <button type="button" className="auth-link" onClick={() => { setTab('login'); setSignError('') }}>
