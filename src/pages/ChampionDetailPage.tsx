@@ -297,7 +297,7 @@ export default function ChampionDetailPage() {
               </div>
 
               {/* ── 카드 2: 소환사 주문 ── */}
-              <div className="build-card">
+              <div className="build-card spell-card">
                 <div className="build-card-head">
                   <span className="build-card-icon">⚡</span>
                   <span className="build-card-title">소환사 주문</span>
@@ -316,7 +316,7 @@ export default function ChampionDetailPage() {
               </div>
 
               {/* ── 카드 3: 아이템 빌드 ── */}
-              <div className="build-card">
+              <div className="build-card item-card">
                 <div className="build-card-head">
                   <span className="build-card-icon">🛡️</span>
                   <span className="build-card-title">아이템 빌드</span>
@@ -348,7 +348,7 @@ export default function ChampionDetailPage() {
               </div>
 
               {/* ── 카드 4: 스킬 순서 ── */}
-              <div className="build-card">
+              <div className="build-card skill-card">
                 <div className="build-card-head">
                   <span className="build-card-icon">📋</span>
                   <span className="build-card-title">스킬 순서</span>

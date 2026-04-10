@@ -2,13 +2,34 @@
    Champion Detail Page  —  deeplol style
 ═══════════════════════════════════════════ */
 
-/* ══ 빌드 카드 4장 (세로 배치) ════════════════════════════════════════════ */
+/* ══ 빌드 카드 레이아웃: 룬(좌) + 소환사/아이템(우) + 스킬(풀폭) ══════════ */
 .build-cards {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto auto;
   gap: 16px;
-  max-width: 860px;
+  max-width: 1100px;
   margin: 0 auto;
+}
+
+.build-card.rune-card {
+  grid-column: 1;
+  grid-row: 1 / 3;
+}
+
+.build-card.spell-card {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.build-card.item-card {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.build-card.skill-card {
+  grid-column: 1 / 3;
+  grid-row: 3;
 }
 
 /* ── 카드 공통 ── */
