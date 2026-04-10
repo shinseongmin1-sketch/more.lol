@@ -109,17 +109,10 @@ export const ITEMS = {
 }
 
 // ── 스킬 순서 생성기 ──────────────────────────────────
+// 1-3렙: 각 스킬 1개씩 → a→b→c 순으로 맥스 / R은 6,11,16렙
+// 결과: a,b,c, a,a, R, a,b,a, b, R, b,b, c,c, R, c,c
 export function makeSkillOrder(a: string, b: string, c: string): string[] {
-  const res: string[] = []
-  const cnt: Record<string,number> = {Q:0,W:0,E:0,R:0}
-  const rLv = new Set([6,11,16])
-  for (let lv = 1; lv <= 18; lv++) {
-    if (rLv.has(lv)) { res.push('R'); continue }
-    if (cnt[a] < 5) { res.push(a); cnt[a]++; continue }
-    if (cnt[b] < 5) { res.push(b); cnt[b]++; continue }
-    res.push(c); cnt[c]++
-  }
-  return res
+  return [a, b, c, a, a, 'R', a, b, a, b, 'R', b, b, c, c, 'R', c, c]
 }
 
 // ── 역할별 빌드 템플릿 ────────────────────────────────

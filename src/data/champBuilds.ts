@@ -146,7 +146,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
     fullBuild: [trinity, steelcaps, deadMan, blackCleaver, steraks, guardianAngel],
-    skillMaxOrder: ['Q','W','E'], // Q(돌진·리셋) 주딜, W(피해감소) 2순위, E 마지막
+    skillMaxOrder: ['Q','E','W'], // Q(돌진·리셋) 주딜, E(스타서지·스턴) 쿨감, W 마지막
   },
 
   Fiora: {
@@ -155,7 +155,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, deadMan, mortalReminder],
     fullBuild: [trinity, steelcaps, deadMan, mortalReminder, guardianAngel, warmog],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(돌격·찌르기) 주딜, E(도발·강화AA) 쿨감, W 마지막
   },
 
   Camille: {
@@ -285,7 +285,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
     fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(사악한 일격·스택) 주딜, E(이벤트 호라이즌·케이지) 쿨감, W 마지막
   },
 
   Ahri: {
@@ -321,7 +321,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [lichBane, shadowflame, rabadons],
     fullBuild: [sorcShoes, lichBane, shadowflame, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(와일드카드) 주딜, E(스택드덱·AS버프) 쿨감, W 마지막
   },
 
   Annie: {
@@ -422,7 +422,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [trinity, manamune, bork],
     fullBuild: [ionianBoots, trinity, manamune, bork, shadowflame, guardianAngel],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(신비로운 발사체) 주딜, E(섬광 수류탄·대쉬) 쿨감, W 마지막
   },
 
   MissFortune: {
@@ -449,7 +449,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: berserkers,
     coreItems: [galeforce, ie, bork],
     fullBuild: [berserkers, galeforce, ie, bork, mortalReminder, guardianAngel],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(필트오버 평화주의자·빔) 주딜, E(90구경 그물) 쿨감, W 마지막
   },
 
   Jhin: {
@@ -485,7 +485,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: berserkers,
     coreItems: [kraken, ie, mortalReminder],
     fullBuild: [berserkers, kraken, ie, mortalReminder, bork, guardianAngel],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(회전 도끼) 주딜, E(스탠드 어사이드·넉백) 쿨감, W 마지막
   },
 
   Tristana: {
@@ -532,7 +532,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [ludens, liandrys, shadowflame],
     fullBuild: [sorcShoes, ludens, liandrys, shadowflame, rabadons, voidStaff],
-    skillMaxOrder: ['W','E','Q'],
+    skillMaxOrder: ['W','Q','E'], // W(파이어볼트·점화주문) 주딜, Q(화염탄+스턴콤보) 쿨감, E 마지막
   },
 
   Thresh: {
@@ -568,7 +568,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [locketSolari, heartsteel, frozenHeart],
     fullBuild: [steelcaps, locketSolari, heartsteel, frozenHeart, redemption, warmog],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['E','W','Q'], // E(잔물결·AOE슬로우) 쿨감, W(타이탄의 분노·쉴드) 2순위, Q 마지막
   },
 
   Janna: {
@@ -586,7 +586,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [moonstone, redemption, staffFlowing],
     fullBuild: [ionianBoots, moonstone, redemption, staffFlowing, ardentCenser, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['W','Q','E'], // W(별의 은혜·힐) 주힐 먼저, Q(스타콜·자가힐) 2순위, E 마지막
   },
 
   Nami: {
