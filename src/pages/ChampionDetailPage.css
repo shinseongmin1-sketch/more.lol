@@ -494,30 +494,34 @@
 /* ── 소환사 주문 ── */
 .rune-inline-spell-row {
   display: flex;
-  gap: 6px;
+  gap: 0;
 }
 
 .rune-inline-spell {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 5px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 8px;
-  transition: background 0.15s;
-}
-
-.rune-inline-spell:hover {
-  background: rgba(200,155,60,0.07);
-  border-color: rgba(200,155,60,0.2);
 }
 
 .rune-inline-spell img {
-  width: 36px;
-  height: 36px;
-  border-radius: 6px;
-  border: 1px solid rgba(200,155,60,0.25);
+  width: 48px;
+  height: 48px;
+  border-radius: 0;
+  border: none;
+  display: block;
+  transition: opacity 0.15s;
+}
+
+.rune-inline-spell:first-child img {
+  border-radius: 8px 0 0 8px;
+}
+
+.rune-inline-spell:last-child img {
+  border-radius: 0 8px 8px 0;
+}
+
+.rune-inline-spell:hover img {
+  opacity: 0.85;
 }
 
 /* ── 아이템 빌드 ── */
@@ -549,9 +553,9 @@
 }
 
 .rune-inline-item-box img {
-  width: 32px;
-  height: 32px;
-  border-radius: 6px;
+  width: 38px;
+  height: 38px;
+  border-radius: 7px;
   border: 1px solid rgba(255,255,255,0.1);
   display: block;
   transition: transform 0.15s, border-color 0.15s;
