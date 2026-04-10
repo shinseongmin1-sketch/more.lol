@@ -125,8 +125,9 @@ export async function getPostsByUser(userId: string): Promise<Post[]> {
 
 export async function addPost(
   post: Omit<Post, 'id' | 'views' | 'likes' | 'dislikes' | 'createdAt'>
-): Promise<Post | null> {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return null
+): Promise<{ post: Post } | { error: string }> {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY)
+    return { error: 'Supabase 환경변수가 설정되지 않았습니다.' }
   const row = {
     id:              Date.now().toString(),
     title:           post.title,
@@ -145,8 +146,12 @@ export async function addPost(
     headers: { ...h(), Prefer: 'return=minimal' },
     body:    JSON.stringify(row),
   }).catch(() => null)
-  if (!res?.ok) return null
-  return toPost(row)
+  if (!res) return { error: '네트워크 오류' }
+  if (!res.ok) {
+    const body = await res.text().catch(() => '')
+    return { error: `DB 오류 (${res.status}): ${body}` }
+  }
+  return { post: toPost(row) }
 }
 
 export async function updatePost(
