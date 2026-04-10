@@ -87,7 +87,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   // ══ 탑 ══════════════════════════════════════════════
 
   Garen: {
-    summoners: [FL, GH],
+    summoners: [GH, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
@@ -96,7 +96,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Darius: {
-    summoners: [FL, GH],
+    summoners: [GH, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
@@ -105,7 +105,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Malphite: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [sunfire, heartsteel, warmog],
@@ -114,7 +114,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Teemo: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [liandrys, shadowflame, nashorsTooth],
@@ -123,7 +123,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Tryndamere: {
-    summoners: [FL, GH],
+    summoners: [GH, FL],
     startItems: [longSword, hpPot],
     boots: berserkers,
     coreItems: [hullbreaker, ie, bork],
@@ -132,7 +132,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Riven: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [longSword, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
@@ -141,7 +141,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Irelia: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [doranBlade, hpPot],
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
@@ -150,7 +150,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Fiora: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [longSword, hpPot],
     boots: steelcaps,
     coreItems: [trinity, deadMan, mortalReminder],
@@ -159,7 +159,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Camille: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
@@ -168,7 +168,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Urgot: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
@@ -177,7 +177,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Nasus: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, deadMan, frozenHeart],
@@ -188,7 +188,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   // ══ 정글 ═════════════════════════════════════════════
 
   Amumu: {
-    summoners: [FL, SM],
+    summoners: [SM, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [sunfire, heartsteel, deadMan],
@@ -197,7 +197,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   LeeSin: {
-    summoners: [FL, SM],
+    summoners: [SM, FL],
     startItems: [doranBlade, hpPot],
     boots: steelcaps,
     coreItems: [blackCleaver, deadMan, mortalReminder],
@@ -206,7 +206,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Vi: {
-    summoners: [FL, SM],
+    summoners: [SM, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
@@ -215,7 +215,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   JarvanIV: {
-    summoners: [FL, SM],
+    summoners: [SM, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
@@ -224,7 +224,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Graves: {
-    summoners: [FL, SM],
+    summoners: [SM, FL],
     startItems: [doranBlade, hpPot],
     boots: steelcaps,
     coreItems: [ie, bork, mortalReminder],
@@ -235,7 +235,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   // ══ 미드 ═════════════════════════════════════════════
 
   Yone: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [longSword, hpPot],
     boots: berserkers,
     coreItems: [immortalBow, kraken, bork],
@@ -244,7 +244,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Yasuo: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [longSword, hpPot],
     boots: berserkers,
     coreItems: [immortalBow, kraken, ie],
@@ -253,7 +253,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Lux: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -262,7 +262,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Ziggs: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -271,7 +271,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Xerath: {
-    summoners: [FL, BR],
+    summoners: [BR, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -280,7 +280,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Veigar: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -289,7 +289,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Ahri: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -298,7 +298,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Syndra: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -307,7 +307,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Zoe: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -316,7 +316,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   TwistedFate: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [lichBane, shadowflame, rabadons],
@@ -325,7 +325,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Annie: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -334,7 +334,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Zed: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [longSword, hpPot],
     boots: steelcaps,
     coreItems: [youmuus, serpentsFang, deadMan],
@@ -343,7 +343,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Akali: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [longSword, hpPot],
     boots: steelcaps,
     coreItems: [rocketBelt, shadowflame, rabadons],
@@ -352,7 +352,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Katarina: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [longSword, hpPot],
     boots: sorcShoes,
     coreItems: [rocketBelt, shadowflame, rabadons],
@@ -361,7 +361,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Diana: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [riftmaker, nashorsTooth, rabadons],
@@ -370,7 +370,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Sylas: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [riftmaker, nashorsTooth, cosmicDrive],
@@ -379,7 +379,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Orianna: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -388,7 +388,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Fizz: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
@@ -397,7 +397,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Ekko: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [riftmaker, nashorsTooth, cosmicDrive],
@@ -408,7 +408,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   // ══ 원딜 ═════════════════════════════════════════════
 
   Jinx: {
-    summoners: [FL, BR],
+    summoners: [BR, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [kraken, bork, ie],
@@ -417,7 +417,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Ezreal: {
-    summoners: [FL, HL],
+    summoners: [HL, FL],
     startItems: [doranBlade, hpPot],
     boots: ionianBoots,
     coreItems: [trinity, manamune, bork],
@@ -426,7 +426,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   MissFortune: {
-    summoners: [FL, BR],
+    summoners: [BR, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [kraken, bork, ie],
@@ -435,7 +435,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Ashe: {
-    summoners: [FL, BR],
+    summoners: [BR, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [kraken, bork, ie],
@@ -444,7 +444,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Caitlyn: {
-    summoners: [FL, BR],
+    summoners: [BR, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [galeforce, ie, bork],
@@ -453,7 +453,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Jhin: {
-    summoners: [FL, BR],
+    summoners: [BR, FL],
     startItems: [doranBlade, hpPot],
     boots: swiftBoots,
     coreItems: [galeforce, ie, mortalReminder],
@@ -462,7 +462,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Vayne: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [kraken, bork, ie],
@@ -471,7 +471,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Kaisa: {
-    summoners: [FL, BR],
+    summoners: [BR, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [kraken, nashorsTooth, bork],
@@ -480,7 +480,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Draven: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [kraken, ie, mortalReminder],
@@ -489,7 +489,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Tristana: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [kraken, ie, bork],
@@ -498,7 +498,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Samira: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [immortalBow, ie, bork],
@@ -509,7 +509,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   // ══ 서포터 ══════════════════════════════════════════
 
   Seraphine: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranRing, hpPot],
     boots: ionianBoots,
     coreItems: [moonstone, ardentCenser, staffFlowing],
@@ -518,7 +518,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Sona: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranRing, hpPot],
     boots: ionianBoots,
     coreItems: [moonstone, ardentCenser, staffFlowing],
@@ -527,7 +527,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Brand: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, liandrys, shadowflame],
@@ -536,7 +536,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Thresh: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranShield, hpPot],
     boots: ionianBoots,
     coreItems: [locketSolari, redemption, frozenHeart],
@@ -545,7 +545,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Leona: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [locketSolari, heartsteel, frozenHeart],
@@ -554,7 +554,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Blitzcrank: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranShield, hpPot],
     boots: ionianBoots,
     coreItems: [locketSolari, shurelyas, redemption],
@@ -563,7 +563,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Nautilus: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [locketSolari, heartsteel, frozenHeart],
@@ -572,7 +572,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Janna: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranRing, hpPot],
     boots: ionianBoots,
     coreItems: [moonstone, ardentCenser, staffFlowing],
@@ -581,7 +581,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Soraka: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranRing, hpPot],
     boots: ionianBoots,
     coreItems: [moonstone, redemption, staffFlowing],
@@ -590,7 +590,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Nami: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranRing, hpPot],
     boots: ionianBoots,
     coreItems: [moonstone, ardentCenser, staffFlowing],
@@ -599,7 +599,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Karma: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: ionianBoots,
     coreItems: [moonstone, shadowflame, rabadons],
@@ -608,7 +608,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Pyke: {
-    summoners: [FL, EX],
+    summoners: [EX, FL],
     startItems: [doranBlade, hpPot],
     boots: ionianBoots,
     coreItems: [youmuus, serpentsFang, deadMan],
@@ -617,7 +617,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Zyra: {
-    summoners: [FL, IG],
+    summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
     coreItems: [ludens, liandrys, shadowflame],
@@ -628,7 +628,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   // ══ 기타 인기 챔피언 ══════════════════════════════════
 
   Pantheon: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
@@ -637,7 +637,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Kayle: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [doranRing, hpPot],
     boots: berserkers,
     coreItems: [nashorsTooth, riftmaker, rabadons],
@@ -646,7 +646,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Sett: {
-    summoners: [FL, TP],
+    summoners: [TP, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, heartsteel, blackCleaver],
