@@ -526,7 +526,7 @@
   align-items: center;
   flex-wrap: nowrap;
   gap: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .rune-inline-item-cell {
