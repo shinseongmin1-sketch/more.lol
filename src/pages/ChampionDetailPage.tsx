@@ -300,31 +300,33 @@ export default function ChampionDetailPage() {
                             {summoners.map(s => (
                               <div key={s.id} className="rune-inline-spell">
                                 <img src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${s.id}.png`} alt={s.name} />
-                                <span>{s.name}</span>
                               </div>
                             ))}
                           </div>
                         </div>
                         <div className="rune-inline-section">
                           <span className="rune-inline-title">아이템 빌드</span>
-                          {[
-                            { label: '시작', items: template.startItems },
-                            { label: '신발', items: [template.boots] },
-                            { label: '코어', items: template.coreItems },
-                            { label: '완성', items: template.fullBuild },
-                          ].map(({ label, items }) => (
-                            <div key={label} className="rune-inline-item-group">
-                              <span className="rune-inline-item-label">{label}</span>
+                          {(() => {
+                            const allItems = [
+                              ...template.startItems,
+                              template.boots,
+                              ...template.coreItems,
+                              ...template.fullBuild,
+                            ].filter((item, idx, arr) => arr.findIndex(i => i.id === item.id) === idx)
+                            return (
                               <div className="rune-inline-item-row">
-                                {items.map(item => (
-                                  <div key={item.id} className="rune-inline-item-box">
-                                    <img src={itemIcon(item.id)} alt={item.name} />
-                                    <span className="rune-item-tip">{item.name}</span>
+                                {allItems.map((item, i) => (
+                                  <div key={item.id} className="rune-inline-item-cell">
+                                    {i > 0 && <span className="rune-inline-item-arrow">›</span>}
+                                    <div className="rune-inline-item-box">
+                                      <img src={itemIcon(item.id)} alt={item.name} />
+                                      <span className="rune-item-tip">{item.name}</span>
+                                    </div>
                                   </div>
                                 ))}
                               </div>
-                            </div>
-                          ))}
+                            )
+                          })()}
                         </div>
                       </div>
 
