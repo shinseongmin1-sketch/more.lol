@@ -494,7 +494,7 @@
 /* ── 소환사 주문 ── */
 .rune-inline-spell-row {
   display: flex;
-  gap: 0;
+  gap: 1px;
 }
 
 .rune-inline-spell {
@@ -512,12 +512,8 @@
   transition: opacity 0.15s;
 }
 
-.rune-inline-spell:first-child img {
-  border-radius: 8px 0 0 8px;
-}
-
-.rune-inline-spell:last-child img {
-  border-radius: 0 8px 8px 0;
+.rune-inline-spell img {
+  border-radius: 8px;
 }
 
 .rune-inline-spell:hover img {
