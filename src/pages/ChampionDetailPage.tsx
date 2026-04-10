@@ -290,65 +290,49 @@ export default function ChampionDetailPage() {
                           })}
                         </div>
 
+                        {/* 소환사 주문 (인라인) */}
+                        <div className="rune-inline-section">
+                          <span className="rune-inline-title">소환사 주문</span>
+                          <div className="rune-inline-spell-row">
+                            {summoners.map(s => (
+                              <div key={s.id} className="rune-inline-spell">
+                                <img src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${s.id}.png`} alt={s.name} />
+                                <span>{s.name}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 아이템 빌드 (인라인) */}
+                        <div className="rune-inline-section">
+                          <span className="rune-inline-title">아이템 빌드</span>
+                          {[
+                            { label: '시작', items: template.startItems },
+                            { label: '신발', items: [template.boots] },
+                            { label: '코어', items: template.coreItems },
+                            { label: '완성', items: template.fullBuild },
+                          ].map(({ label, items }) => (
+                            <div key={label} className="rune-inline-item-group">
+                              <span className="rune-inline-item-label">{label}</span>
+                              <div className="rune-inline-item-row">
+                                {items.map(item => (
+                                  <div key={item.id} className="rune-inline-item-box" title={item.name}>
+                                    <img src={itemIcon(item.id)} alt={item.name} />
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
                       </div>
                     </div>
                   )
                 }
               </div>
 
-              {/* ── 카드 2: 소환사 주문 ── */}
-              <div className="build-card spell-card">
-                <div className="build-card-head">
-                  <span className="build-card-icon">⚡</span>
-                  <span className="build-card-title">소환사 주문</span>
-                  <span className="build-card-sub">추천 소환사 주문 2개</span>
-                </div>
-                <div className="build-card-body">
-                  <div className="spell-row">
-                    {summoners.map(s => (
-                      <div key={s.id} className="spell-item">
-                        <img src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${s.id}.png`} alt={s.name} />
-                        <span>{s.name}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* ── 카드 3: 아이템 빌드 ── */}
-              <div className="build-card item-card">
-                <div className="build-card-head">
-                  <span className="build-card-icon">🛡️</span>
-                  <span className="build-card-title">아이템 빌드</span>
-                  <span className="build-card-sub">추천 빌드 순서</span>
-                </div>
-                <div className="build-card-body">
-                  {[
-                    { label: '시작 아이템', items: template.startItems },
-                    { label: '신발',        items: [template.boots] },
-                    { label: '코어 아이템', items: template.coreItems },
-                    { label: '완성 빌드',   items: template.fullBuild },
-                  ].map(({ label, items }) => (
-                    <div key={label} className="item-group">
-                      <span className="item-group-label">{label}</span>
-                      <div className="item-flow">
-                        {items.map((item, i) => (
-                          <div key={item.id} className="item-flow-cell">
-                            {i > 0 && <span className="item-arrow">›</span>}
-                            <div className="item-box" title={item.name}>
-                              <img src={itemIcon(item.id)} alt={item.name} />
-                              <span>{item.name}</span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* ── 카드 4: 스킬 순서 ── */}
-              <div className="build-card skill-card">
+              {/* ── 카드 2: 스킬 순서 ── */}
+              <div className="build-card">
                 <div className="build-card-head">
                   <span className="build-card-icon">📋</span>
                   <span className="build-card-title">스킬 순서</span>

@@ -2,34 +2,13 @@
    Champion Detail Page  —  deeplol style
 ═══════════════════════════════════════════ */
 
-/* ══ 빌드 카드 레이아웃: 룬(좌) + 소환사/아이템(우) + 스킬(풀폭) ══════════ */
+/* ══ 빌드 카드 (세로 배치) ════════════════════════════════════════════════ */
 .build-cards {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-template-rows: auto auto auto;
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-  max-width: 1100px;
+  max-width: 860px;
   margin: 0 auto;
-}
-
-.build-card.rune-card {
-  grid-column: 1;
-  grid-row: 1 / 3;
-}
-
-.build-card.spell-card {
-  grid-column: 2;
-  grid-row: 1;
-}
-
-.build-card.item-card {
-  grid-column: 2;
-  grid-row: 2;
-}
-
-.build-card.skill-card {
-  grid-column: 1 / 3;
-  grid-row: 3;
 }
 
 /* ── 카드 공통 ── */
@@ -178,9 +157,9 @@
   padding: 0;
 }
 
-/* ── 오른쪽 컬럼: 보조특성 + 스탯파편 ── */
+/* ── 오른쪽 컬럼: 보조특성 + 스탯파편 + 소환사주문 + 아이템 ── */
 .rune-right-col {
-  width: 175px;
+  width: 210px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -469,6 +448,84 @@
   width: 26px;
   flex-shrink: 0;
   font-weight: 600;
+}
+
+/* ── 룬카드 인라인: 소환사 주문 ── */
+.rune-inline-section {
+  width: 100%;
+  border-top: 1px solid var(--border-color);
+  padding-top: 10px;
+  margin-top: 2px;
+}
+
+.rune-inline-title {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.rune-inline-spell-row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.rune-inline-spell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.rune-inline-spell img {
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.rune-inline-spell span {
+  font-size: 9px;
+  color: var(--text-muted);
+  text-align: center;
+  max-width: 52px;
+  line-height: 1.2;
+}
+
+/* ── 룬카드 인라인: 아이템 빌드 ── */
+.rune-inline-item-group {
+  margin-bottom: 8px;
+}
+
+.rune-inline-item-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.3);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.rune-inline-item-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+}
+
+.rune-inline-item-box img {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  display: block;
 }
 
 /* ── 카드 2: 소환사 주문 ── */
