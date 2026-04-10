@@ -566,23 +566,38 @@
 .rune-inline-item-box .rune-item-tip {
   display: none;
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 8px);
   left: 50%;
   transform: translateX(-50%);
-  background: #1a1a2e;
-  border: 1px solid rgba(200,155,60,0.35);
-  border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 10px;
-  font-weight: 600;
-  color: var(--text-primary);
-  white-space: nowrap;
-  z-index: 100;
+  background: #12121e;
+  border: 1px solid rgba(200,155,60,0.4);
+  border-radius: 8px;
+  padding: 8px 10px;
+  min-width: 120px;
+  max-width: 180px;
+  z-index: 200;
   pointer-events: none;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .rune-inline-item-box:hover .rune-item-tip {
-  display: block;
+  display: flex;
+}
+
+.rune-item-tip-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: rgba(200,155,60,0.95);
+  white-space: nowrap;
+}
+
+.rune-item-tip-desc {
+  font-size: 11px;
+  font-weight: 400;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.4;
+  white-space: normal;
 }
 
 /* ── 카드 2: 소환사 주문 ── */

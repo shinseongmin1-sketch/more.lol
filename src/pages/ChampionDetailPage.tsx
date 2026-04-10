@@ -46,6 +46,7 @@ export default function ChampionDetailPage() {
   const [ddVersion, setDdVersion] = useState('')
   const [champData, setChampData] = useState<any>(null)
   const [runeTreeData, setRuneTreeData] = useState<any[]>([])
+  const [itemData, setItemData] = useState<any>({})
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
   const [activeTab, setActiveTab] = useState<'build' | 'skills' | 'stats'>('build')
@@ -60,9 +61,10 @@ export default function ChampionDetailPage() {
     getDDVersion()
       .then(async v => {
         setDdVersion(v)
-        const [champRes, runeRes] = await Promise.all([
+        const [champRes, runeRes, itemRes] = await Promise.all([
           fetch(`https://ddragon.leagueoflegends.com/cdn/${v}/data/ko_KR/champion/${champId}.json`),
           fetch(`https://ddragon.leagueoflegends.com/cdn/${v}/data/ko_KR/runesReforged.json`),
+          fetch(`https://ddragon.leagueoflegends.com/cdn/${v}/data/ko_KR/item.json`),
         ])
         if (!champRes.ok) throw new Error()
         const champJson = await champRes.json()
@@ -75,6 +77,10 @@ export default function ChampionDetailPage() {
         if (runeRes.ok) {
           const runeJson = await runeRes.json()
           setRuneTreeData(runeJson)
+        }
+        if (itemRes.ok) {
+          const itemJson = await itemRes.json()
+          setItemData(itemJson.data ?? {})
         }
       })
       .catch(() => setError(true))
@@ -320,7 +326,12 @@ export default function ChampionDetailPage() {
                                     {i > 0 && <span className="rune-inline-item-arrow">›</span>}
                                     <div className="rune-inline-item-box">
                                       <img src={itemIcon(item.id)} alt={item.name} />
-                                      <span className="rune-item-tip">{item.name}</span>
+                                      <div className="rune-item-tip">
+                                        <span className="rune-item-tip-name">{item.name}</span>
+                                        {itemData[item.id]?.plaintext && (
+                                          <span className="rune-item-tip-desc">{itemData[item.id].plaintext}</span>
+                                        )}
+                                      </div>
                                     </div>
                                   </div>
                                 ))}
