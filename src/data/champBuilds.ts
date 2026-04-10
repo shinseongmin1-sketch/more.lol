@@ -101,7 +101,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
     fullBuild: [trinity, steelcaps, deadMan, blackCleaver, steraks, mortalReminder],
-    skillMaxOrder: ['E','W','Q'],
+    skillMaxOrder: ['Q','E','W'], // Q(도끼) 주딜+힐, E(끌어당기기) 방관, W 마지막
   },
 
   Malphite: {
@@ -119,7 +119,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [liandrys, shadowflame, nashorsTooth],
     fullBuild: [sorcShoes, liandrys, shadowflame, nashorsTooth, rabadons, voidStaff],
-    skillMaxOrder: ['Q','E','W'],
+    skillMaxOrder: ['E','Q','W'], // E(독침) 주딜·지속딜, Q(실명) 2순위, W 마지막
   },
 
   Tryndamere: {
@@ -146,7 +146,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
     fullBuild: [trinity, steelcaps, deadMan, blackCleaver, steraks, guardianAngel],
-    skillMaxOrder: ['Q','E','W'],
+    skillMaxOrder: ['Q','W','E'], // Q(돌진·리셋) 주딜, W(피해감소) 2순위, E 마지막
   },
 
   Fiora: {
@@ -164,7 +164,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
     fullBuild: [trinity, steelcaps, blackCleaver, deadMan, guardianAngel, warmog],
-    skillMaxOrder: ['Q','E','W'],
+    skillMaxOrder: ['Q','W','E'], // Q(강화평타) 주딜, W(부채꼴슬로우+힐) 2순위, E 마지막
   },
 
   Urgot: {
@@ -173,7 +173,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
     fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, warmog],
-    skillMaxOrder: ['E','Q','W'],
+    skillMaxOrder: ['W','E','Q'], // W(퍼지·연속사격) 주딜, E(훅+돌진) 2순위, Q 마지막
   },
 
   Nasus: {
@@ -202,7 +202,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [blackCleaver, deadMan, mortalReminder],
     fullBuild: [steelcaps, blackCleaver, deadMan, mortalReminder, guardianAngel, warmog],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(음파) 주딜, E(점멸+슬로우) 쿨감, W 마지막
   },
 
   Vi: {
@@ -220,7 +220,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
     fullBuild: [trinity, steelcaps, deadMan, blackCleaver, mortalReminder, guardianAngel],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(돌진) 주딜, E(깃발·벽콤보) 쿨감, W 마지막
   },
 
   Graves: {
@@ -229,7 +229,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [ie, bork, mortalReminder],
     fullBuild: [steelcaps, ie, bork, mortalReminder, kraken, guardianAngel],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(산탄) 주딜, E(대쉬) 쿨감, W 마지막
   },
 
   // ══ 미드 ═════════════════════════════════════════════
@@ -267,7 +267,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
     fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(폭탄) 주딜·라인, E(지뢰) 슬로우·존, W 마지막
   },
 
   Xerath: {
@@ -312,7 +312,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
     fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(별똥별) 주딜, E(수면) 쿨감·CC, W 마지막
   },
 
   TwistedFate: {
@@ -339,7 +339,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [youmuus, serpentsFang, deadMan],
     fullBuild: [steelcaps, youmuus, serpentsFang, deadMan, blackCleaver, guardianAngel],
-    skillMaxOrder: ['Q','E','W'],
+    skillMaxOrder: ['Q','W','E'], // Q(표창) 주딜, W(그림자) 쿨감, E 마지막
   },
 
   Akali: {
@@ -366,7 +366,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [riftmaker, nashorsTooth, rabadons],
     fullBuild: [sorcShoes, riftmaker, nashorsTooth, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(초승달) 주딜·마크, E(달빛돌진) 쿨감, W 마지막
   },
 
   Sylas: {
@@ -393,7 +393,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [ludens, shadowflame, rabadons],
     fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'], // Q(돌진강타) 주딜, E(콩닥콩닥) 쿨감·회피, W 마지막
   },
 
   Ekko: {
@@ -458,7 +458,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: swiftBoots,
     coreItems: [galeforce, ie, mortalReminder],
     fullBuild: [swiftBoots, galeforce, ie, mortalReminder, shadowflame, guardianAngel],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['W','Q','E'], // W(원거리속박) 킬찬스, Q(도탄) 라인·딜, E 마지막
   },
 
   Vayne: {
@@ -514,7 +514,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [moonstone, ardentCenser, staffFlowing],
     fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, rabadons],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['W','Q','E'], // W(서라운드사운드) 힐·쉴드, Q(하이노트) 2순위, E 마지막
   },
 
   Sona: {
@@ -523,7 +523,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [moonstone, ardentCenser, staffFlowing],
     fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['W','Q','E'], // W(아리아) 힐·쉴드 먼저, Q(찬가) 딜, E 마지막
   },
 
   Brand: {
@@ -541,7 +541,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [locketSolari, redemption, frozenHeart],
     fullBuild: [ionianBoots, locketSolari, redemption, frozenHeart, shurelyas, warmog],
-    skillMaxOrder: ['E','W','Q'],
+    skillMaxOrder: ['E','Q','W'], // E(회초리) 주CC·딜, Q(훅) 쿨감, W 마지막
   },
 
   Leona: {
@@ -577,7 +577,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [moonstone, ardentCenser, staffFlowing],
     fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, zhonyas],
-    skillMaxOrder: ['W','Q','E'],
+    skillMaxOrder: ['E','W','Q'], // E(아이오브더스톰) 쉴드 쿨감, W(서풍) 슬로우, Q 마지막
   },
 
   Soraka: {
@@ -595,7 +595,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [moonstone, ardentCenser, staffFlowing],
     fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, rabadons],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['W','Q','E'],
   },
 
   Karma: {
@@ -604,7 +604,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [moonstone, shadowflame, rabadons],
     fullBuild: [ionianBoots, moonstone, shadowflame, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'],
   },
 
   Pyke: {
@@ -613,7 +613,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: ionianBoots,
     coreItems: [youmuus, serpentsFang, deadMan],
     fullBuild: [ionianBoots, youmuus, serpentsFang, deadMan, blackCleaver, guardianAngel],
-    skillMaxOrder: ['Q','W','E'],
+    skillMaxOrder: ['Q','E','W'],
   },
 
   Zyra: {
@@ -622,7 +622,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: sorcShoes,
     coreItems: [ludens, liandrys, shadowflame],
     fullBuild: [sorcShoes, ludens, liandrys, shadowflame, rabadons, voidStaff],
-    skillMaxOrder: ['W','Q','E'],
+    skillMaxOrder: ['Q','E','W'],
   },
 
   // ══ 기타 인기 챔피언 ══════════════════════════════════
@@ -651,6 +651,6 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, heartsteel, blackCleaver],
     fullBuild: [trinity, steelcaps, heartsteel, blackCleaver, deadMan, warmog],
-    skillMaxOrder: ['Q','E','W'],
+    skillMaxOrder: ['Q','W','E'],
   },
 }
