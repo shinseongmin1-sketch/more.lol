@@ -168,13 +168,13 @@
 
 /* ── 3번째 컬럼: 소환사 주문 + 아이템 빌드 ── */
 .rune-extra-col {
-  width: 180px;
-  flex-shrink: 0;
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0;
   border-left: 1px solid var(--border-color);
-  padding-left: 12px;
+  padding-left: 14px;
 }
 
 /* ── 트리 헤더 (주/보조 공통) ── */
@@ -476,12 +476,11 @@
 .rune-inline-title {
   display: flex;
   align-items: center;
-  gap: 5px;
-  font-size: 10px;
-  font-weight: 700;
-  color: rgba(200,155,60,0.85);
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(200,155,60,0.9);
+  letter-spacing: 0.3px;
   margin-bottom: 10px;
 }
 
@@ -495,7 +494,7 @@
 /* ── 소환사 주문 ── */
 .rune-inline-spell-row {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .rune-inline-spell {
@@ -506,7 +505,6 @@
   background: rgba(255,255,255,0.03);
   border: 1px solid rgba(255,255,255,0.07);
   border-radius: 8px;
-  flex: 1;
   transition: background 0.15s;
 }
 
@@ -526,21 +524,24 @@
 .rune-inline-item-row {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 2px;
+  flex-wrap: nowrap;
+  gap: 0;
+  overflow: hidden;
 }
 
 .rune-inline-item-cell {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 1px;
+  flex-shrink: 0;
 }
 
 .rune-inline-item-arrow {
-  font-size: 11px;
-  color: rgba(255,255,255,0.25);
+  font-size: 12px;
+  color: rgba(255,255,255,0.3);
   line-height: 1;
   flex-shrink: 0;
+  padding: 0 2px;
 }
 
 .rune-inline-item-box {
@@ -548,9 +549,9 @@
 }
 
 .rune-inline-item-box img {
-  width: 26px;
-  height: 26px;
-  border-radius: 5px;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   border: 1px solid rgba(255,255,255,0.1);
   display: block;
   transition: transform 0.15s, border-color 0.15s;
