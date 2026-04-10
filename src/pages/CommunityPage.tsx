@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getPosts, formatDate } from '../utils/postsStore'
 import type { Post } from '../utils/postsStore'
@@ -7,17 +7,25 @@ import './SubPage.css'
 
 const categories = ['전체', '자유게시판', '공략', '질문', '유머']
 const catColors: Record<string, string> = {
-  '공략': '#4a90e2',
+  '공략':    '#4a90e2',
   '자유게시판': '#69db7c',
-  '유머': '#ffd43b',
-  '질문': '#ffa94d',
+  '유머':    '#ffd43b',
+  '질문':    '#ffa94d',
 }
 
 export default function CommunityPage() {
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('전체')
+  const [allPosts, setAllPosts]   = useState<Post[]>([])
+  const [loading, setLoading]     = useState(true)
 
-  const allPosts = getPosts()
+  useEffect(() => {
+    getPosts().then(posts => {
+      setAllPosts(posts)
+      setLoading(false)
+    })
+  }, [])
+
   const filtered = activeTab === '전체' ? allPosts : allPosts.filter(p => p.category === activeTab)
   const hotPosts = allPosts.filter(p => p.likes >= 5).slice(0, 5)
 
@@ -49,7 +57,12 @@ export default function CommunityPage() {
               ))}
             </div>
             <div className="post-list">
-              {filtered.length === 0 ? (
+              {loading ? (
+                <div className="community-empty">
+                  <div className="community-empty-icon">⏳</div>
+                  <div className="community-empty-title">불러오는 중...</div>
+                </div>
+              ) : filtered.length === 0 ? (
                 <div className="community-empty">
                   <div className="community-empty-icon">📭</div>
                   <div className="community-empty-title">아직 게시글이 없습니다</div>
@@ -64,7 +77,7 @@ export default function CommunityPage() {
                     <span
                       className="post-cat"
                       style={{
-                        color: catColors[post.category] || 'var(--text-muted)',
+                        color:      catColors[post.category] || 'var(--text-muted)',
                         background: (catColors[post.category] || '#888') + '15',
                       }}
                     >
@@ -89,7 +102,12 @@ export default function CommunityPage() {
                 <div className="sidebar-empty">아직 인기글이 없습니다</div>
               ) : (
                 hotPosts.map(post => (
-                  <div key={post.id} className="sidebar-post">
+                  <div
+                    key={post.id}
+                    className="sidebar-post"
+                    onClick={() => navigate(`/post/${post.id}`)}
+                    style={{ cursor: 'pointer' }}
+                  >
                     <span className="sidebar-post-cat" style={{ color: catColors[post.category] || 'var(--text-muted)' }}>
                       [{post.category}]
                     </span>
