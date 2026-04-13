@@ -337,3 +337,14 @@ export async function updateComment(id: string, content: string): Promise<boolea
   ).catch(() => null)
   return !!(res?.ok)
 }
+
+export async function getCommentCountByUser(userId: string): Promise<number> {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return 0
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/community_comments?author_id=eq.${encodeURIComponent(userId)}&select=id`,
+    { headers: h() }
+  ).catch(() => null)
+  if (!res?.ok) return 0
+  const data = await res.json()
+  return data.length
+}
