@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getSession } from '../utils/auth'
 import { getPostsByUser, deletePost, formatDate, getCommentCountByUser } from '../utils/postsStore'
 import { calcCount, getLevelData, getTierList } from '../utils/levelSystem'
+import { getAvatar } from '../utils/avatarStore'
 import type { Post } from '../utils/postsStore'
 import './MyProfilePage.css'
 import './SubPage.css'
@@ -27,9 +28,11 @@ export default function MyProfilePage() {
   const [activeTab, setActiveTab]       = useState('전체')
   const [confirmId, setConfirmId]       = useState<string | null>(null)
   const [showAllLevels, setShowAllLevels] = useState(false)
+  const [avatarUrl, setAvatarUrl]         = useState<string | null>(null)
 
   useEffect(() => {
     if (!user) return
+    setAvatarUrl(getAvatar(user.id))
     Promise.all([
       getPostsByUser(user.id),
       getCommentCountByUser(user.id),
@@ -74,7 +77,12 @@ export default function MyProfilePage() {
 
           <div className="profile-hero">
             <div className="profile-avatar-wrap">
-              <div className="profile-avatar-lg">{user.nickname.slice(0,1).toUpperCase()}</div>
+              <div className="profile-avatar-lg">
+                {avatarUrl
+                  ? <img src={avatarUrl} alt="avatar" className="profile-avatar-img" />
+                  : user.nickname.slice(0,1).toUpperCase()
+                }
+              </div>
               <div className="profile-level-badge" style={{background: lv.bg, border: `1.5px solid ${lv.border}`, color: lv.color}}>
                 Lv.{lv.level}
               </div>

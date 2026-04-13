@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getSession, updateNickname, updatePassword, deleteAccount } from '../utils/auth'
 import { getPostsByUser, getCommentCountByUser } from '../utils/postsStore'
 import { calcCount, getLevelData } from '../utils/levelSystem'
+import { getAvatar, saveAvatar, removeAvatar, resizeToSquare } from '../utils/avatarStore'
 import { checkNickname } from '../utils/nicknameFilter'
 import './ProfileSettingsPage.css'
 
@@ -27,6 +28,9 @@ export default function ProfileSettingsPage() {
   const [showCurrent, setShowCurrent] = useState(false)
   const [showNew,     setShowNew]     = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+
+  const [avatarUrl,    setAvatarUrl]    = useState<string | null>(() => user ? getAvatar(user.id) : null)
+  const [avatarMsg,    setAvatarMsg]    = useState('')
 
   const [showWithdraw, setShowWithdraw] = useState(false)
   const [postCount,    setPostCount]    = useState(0)
@@ -160,6 +164,65 @@ export default function ProfileSettingsPage() {
               })()}
             </div>
           </div>
+        </div>
+
+        {/* 프로필 아이콘 변경 */}
+        <div className="settings-card">
+          <div className="settings-card-header">
+            <div className="settings-card-icon" style={{ background: 'linear-gradient(135deg,#10b981,#059669)' }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/>
+                <path d="M21 15l-5-5L5 21"/>
+              </svg>
+            </div>
+            <div>
+              <div className="settings-card-title">프로필 아이콘</div>
+              <div className="settings-card-sub">본인 사진으로 변경할 수 있습니다</div>
+            </div>
+          </div>
+          <div className="settings-avatar-section">
+            <div className="settings-avatar-preview">
+              {avatarUrl
+                ? <img src={avatarUrl} alt="avatar" className="settings-avatar-img" />
+                : <span className="settings-avatar-initial">{user.nickname.slice(0,1).toUpperCase()}</span>
+              }
+            </div>
+            <div className="settings-avatar-actions">
+              <label className="settings-avatar-upload-btn">
+                사진 변경
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={async e => {
+                    const file = e.target.files?.[0]
+                    if (!file) return
+                    try {
+                      const dataUrl = await resizeToSquare(file, 200)
+                      saveAvatar(user.id, dataUrl)
+                      setAvatarUrl(dataUrl)
+                      setAvatarMsg('아이콘이 변경됐습니다.')
+                      setTimeout(() => setAvatarMsg(''), 2500)
+                    } catch {
+                      setAvatarMsg('이미지 처리 중 오류가 발생했습니다.')
+                    }
+                    e.target.value = ''
+                  }}
+                />
+              </label>
+              {avatarUrl && (
+                <button className="settings-avatar-remove-btn" onClick={() => {
+                  removeAvatar(user.id)
+                  setAvatarUrl(null)
+                  setAvatarMsg('기본 아이콘으로 변경됐습니다.')
+                  setTimeout(() => setAvatarMsg(''), 2500)
+                }}>
+                  기본으로
+                </button>
+              )}
+            </div>
+          </div>
+          {avatarMsg && <div className="settings-success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 13l4 4L19 7"/></svg>{avatarMsg}</div>}
         </div>
 
         {/* 닉네임 변경 */}
