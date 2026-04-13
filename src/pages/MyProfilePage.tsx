@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getSession } from '../utils/auth'
 import { getPostsByUser, deletePost, formatDate, getCommentCountByUser } from '../utils/postsStore'
-import { calcCount, getLevelData, LEVELS } from '../utils/levelSystem'
+import { calcCount, getLevelData, getNearbyLevels } from '../utils/levelSystem'
 import type { Post } from '../utils/postsStore'
 import './MyProfilePage.css'
 import './SubPage.css'
@@ -107,7 +107,7 @@ export default function MyProfilePage() {
 
           {showAllLevels && (
             <div className="profile-levels-grid">
-              {LEVELS.map(l => {
+              {getNearbyLevels(lv.level).map(l => {
                 const reached   = total >= l.minCount
                 const isCurrent = lv.level === l.level
                 return (
