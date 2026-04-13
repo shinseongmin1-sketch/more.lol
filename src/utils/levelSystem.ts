@@ -8,23 +8,46 @@ export interface LevelInfo {
   minCount: number
 }
 
-// 티어: maxLevel 이하 레벨에 적용
-const TIERS = [
-  { maxLevel:  10, name:'동메달',     icon:'🥉', color:'#cd7f32', bg:'rgba(205,127,50,0.12)',  border:'rgba(205,127,50,0.4)'  },
-  { maxLevel:  20, name:'은메달',     icon:'🥈', color:'#9ca3af', bg:'rgba(156,163,175,0.12)', border:'rgba(156,163,175,0.4)' },
-  { maxLevel:  30, name:'금메달',     icon:'🥇', color:'#f59e0b', bg:'rgba(245,158,11,0.12)',  border:'rgba(245,158,11,0.4)'  },
-  { maxLevel:  40, name:'은트로피',   icon:'🏆', color:'#8b9cb0', bg:'rgba(139,156,176,0.12)', border:'rgba(139,156,176,0.4)' },
-  { maxLevel:  50, name:'금트로피',   icon:'🏆', color:'#f97316', bg:'rgba(249,115,22,0.12)',  border:'rgba(249,115,22,0.4)'  },
-  { maxLevel:  60, name:'플래티넘',   icon:'💠', color:'#06b6d4', bg:'rgba(6,182,212,0.12)',   border:'rgba(6,182,212,0.4)'   },
-  { maxLevel:  70, name:'다이아',     icon:'💎', color:'#3b82f6', bg:'rgba(59,130,246,0.12)',  border:'rgba(59,130,246,0.4)'  },
-  { maxLevel:  80, name:'마스터',     icon:'🌟', color:'#8b5cf6', bg:'rgba(139,92,246,0.12)',  border:'rgba(139,92,246,0.4)'  },
-  { maxLevel:  90, name:'그랜드마스터', icon:'✨', color:'#ec4899', bg:'rgba(236,72,153,0.12)',  border:'rgba(236,72,153,0.4)'  },
-  { maxLevel: 100, name:'챌린저',     icon:'👑', color:'#ef4444', bg:'rgba(239,68,68,0.12)',   border:'rgba(239,68,68,0.4)'   },
-  { maxLevel: Infinity, name:'레전드', icon:'⚡', color:'#7c3aed', bg:'rgba(124,58,237,0.15)',  border:'rgba(124,58,237,0.5)'  },
+// 카테고리 (동→은→금 순으로 각 10레벨씩, 총 500레벨+)
+const CATEGORIES: { name: string; icons: [string, string, string] }[] = [
+  { name: '메달',      icons: ['🥉', '🥈', '🥇'] },
+  { name: '트로피',    icons: ['🏆', '🏆', '🏆'] },
+  { name: '실드',      icons: ['🛡️', '🛡️', '🛡️'] },
+  { name: '크레스트',  icons: ['⚜️', '⚜️', '⚜️'] },
+  { name: '엠블럼',    icons: ['🔰', '🔰', '🔰'] },
+  { name: '크라운',    icons: ['👑', '👑', '👑'] },
+  { name: '스타',      icons: ['⭐', '⭐', '⭐'] },
+  { name: '에이스',    icons: ['♠️', '♠️', '♠️'] },
+  { name: '아너',      icons: ['🎖️', '🎖️', '🎖️'] },
+  { name: '프레스티지', icons: ['💠', '💠', '💠'] },
+  { name: '엘리트',    icons: ['🔷', '🔷', '🔷'] },
+  { name: '마에스트로', icons: ['🎭', '🎭', '🎭'] },
+  { name: '베테랑',    icons: ['🎗️', '🎗️', '🎗️'] },
+  { name: '아이콘',    icons: ['🔮', '🔮', '🔮'] },
+  { name: '서프림',    icons: ['🌐', '🌐', '🌐'] },
+  { name: '레가시',    icons: ['🔱', '🔱', '🔱'] },
+  { name: '그랜드',    icons: ['♾️', '♾️', '♾️'] },
 ]
 
-function getTier(level: number) {
-  return TIERS.find(t => level <= t.maxLevel) ?? TIERS[TIERS.length - 1]
+const GRADES = [
+  { prefix: '동', color: '#cd7f32', bg: 'rgba(205,127,50,0.13)',  border: 'rgba(205,127,50,0.45)'  },
+  { prefix: '은', color: '#9dafc2', bg: 'rgba(157,175,194,0.13)', border: 'rgba(157,175,194,0.45)' },
+  { prefix: '금', color: '#f5a623', bg: 'rgba(245,166,35,0.13)',  border: 'rgba(245,166,35,0.45)'  },
+]
+
+function getTierForLevel(level: number) {
+  const idx      = Math.floor((level - 1) / 10)
+  const catIdx   = Math.floor(idx / 3)
+  const gradeIdx = idx % 3
+  const cat      = CATEGORIES[Math.min(catIdx, CATEGORIES.length - 1)]
+  const grade    = GRADES[gradeIdx]
+  return {
+    name:   grade.prefix + ' ' + cat.name,
+    icon:   cat.icons[gradeIdx],
+    color:  grade.color,
+    bg:     grade.bg,
+    border: grade.border,
+  }
 }
 
 function minCountForLevel(level: number): number {
@@ -32,19 +55,10 @@ function minCountForLevel(level: number): number {
 }
 
 export function makeLevelInfo(level: number): LevelInfo {
-  const tier = getTier(level)
-  return {
-    level,
-    minCount: minCountForLevel(level),
-    name:   tier.name,
-    icon:   tier.icon,
-    color:  tier.color,
-    bg:     tier.bg,
-    border: tier.border,
-  }
+  const tier = getTierForLevel(level)
+  return { level, minCount: minCountForLevel(level), ...tier }
 }
 
-// 총 활동 횟수 = 게시글 + 댓글 + 받은 좋아요
 export function calcCount(posts: number, comments: number, likes: number): number {
   return posts + comments + likes
 }
@@ -59,7 +73,6 @@ export function getLevelData(totalCount: number) {
   return { info, next, progress, countInLevel, countForNext, totalCount }
 }
 
-// 프로필 로드맵용: 현재 레벨 주변 표시
 export function getNearbyLevels(currentLevel: number): LevelInfo[] {
   const from = Math.max(1, currentLevel - 2)
   const to   = currentLevel + 7
