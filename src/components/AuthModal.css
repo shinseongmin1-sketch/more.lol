@@ -198,3 +198,7 @@
   transition: color 0.15s;
 }
 .auth-link:hover { color: #fff; }
+
+@media (max-width: 480px) {
+  .auth-modal { padding: 24px 16px; margin: 0 12px; }
+}

@@ -483,3 +483,11 @@
   color: var(--text-muted);
   margin-top: 2px;
 }
+
+@media (max-width: 900px) {
+  .summoner-content-inner { grid-template-columns: 1fr; }
+  .summoner-sidebar { display: none; }
+}
+@media (max-width: 768px) {
+  .mc-participants { display: none; }
+}

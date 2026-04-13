@@ -27,6 +27,7 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [champMenuOpen, setChampMenuOpen] = useState(false)
   const [rankMenuOpen, setRankMenuOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const champCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const rankCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()
@@ -192,6 +193,13 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
             </form>
           )}
 
+          <button
+            className={`hamburger-btn ${mobileMenuOpen ? "open" : ""}`}
+            onClick={() => setMobileMenuOpen(v => !v)}
+            aria-label="메뉴"
+          >
+            <span /><span /><span />
+          </button>
           <div className="header-actions">
             {user ? (
               <div className="user-menu" ref={dropdownRef}>
@@ -237,6 +245,43 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
               <button className="btn-primary-sm" onClick={onLoginClick}>로그인</button>
             )}
           </div>
+        </div>
+      </div>
+      {/* 모바일 오버레이 */}
+      {mobileMenuOpen && (
+        <div className="mobile-nav-overlay open" onClick={() => setMobileMenuOpen(false)} />
+      )}
+
+      {/* 모바일 드로어 */}
+      <div className={`mobile-nav-drawer ${mobileMenuOpen ? "open" : ""}`}>
+        <button className="mobile-nav-close" onClick={() => setMobileMenuOpen(false)}>✕</button>
+        <nav className="mobile-nav-links">
+          <Link to="/" className={`mobile-nav-link ${location.pathname === "/" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>홈</Link>
+          <div className="mobile-nav-section-label">챔피언 분석</div>
+          <Link to="/champion" className={`mobile-nav-sub-link ${location.pathname === "/champion" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>챔피언</Link>
+          <Link to="/ranked" className={`mobile-nav-sub-link ${location.pathname === "/ranked" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>솔로랭크</Link>
+          <Link to="/normal" className={`mobile-nav-sub-link ${location.pathname === "/normal" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>일반게임</Link>
+          <Link to="/aram" className={`mobile-nav-sub-link ${location.pathname === "/aram" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>칼바람나락</Link>
+          <div className="mobile-nav-divider" />
+          <div className="mobile-nav-section-label">랭킹</div>
+          <Link to="/ranking" className={`mobile-nav-sub-link ${location.pathname === "/ranking" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>티어랭킹</Link>
+          <Link to="/ranking/pro" className={`mobile-nav-sub-link ${location.pathname === "/ranking/pro" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>프로랭킹</Link>
+          <div className="mobile-nav-divider" />
+          <Link to="/community" className={`mobile-nav-link ${location.pathname.startsWith("/community") ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>커뮤니티</Link>
+        </nav>
+        <div className="mobile-nav-auth">
+          {user ? (
+            <>
+              <div style={{fontSize:"13px",fontWeight:700,color:"var(--text-primary)",padding:"4px 0"}}>
+                {user.nickname}
+              </div>
+              <button className="btn-ghost" style={{width:"100%",padding:"9px",borderRadius:"10px",fontSize:"13px"}} onClick={() => { setMobileMenuOpen(false); navigate("/profile") }}>내 게시글</button>
+              <button className="btn-ghost" style={{width:"100%",padding:"9px",borderRadius:"10px",fontSize:"13px"}} onClick={() => { setMobileMenuOpen(false); navigate("/settings") }}>프로필 설정</button>
+              <button className="btn-primary-sm" style={{width:"100%",padding:"9px",borderRadius:"10px",fontSize:"13px",textAlign:"center"}} onClick={() => { setMobileMenuOpen(false); onLogout() }}>로그아웃</button>
+            </>
+          ) : (
+            <button className="btn-primary-sm" style={{width:"100%",padding:"10px",borderRadius:"10px",fontSize:"13px"}} onClick={() => { setMobileMenuOpen(false); onLoginClick() }}>로그인</button>
+          )}
         </div>
       </div>
     </header>

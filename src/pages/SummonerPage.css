@@ -1022,3 +1022,11 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
 }
+
+@media (max-width: 900px) {
+  .sp-body-inner { grid-template-columns: 1fr; }
+  .sp-sidebar { display: none; }
+}
+@media (max-width: 768px) {
+  .sp-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}

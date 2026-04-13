@@ -303,3 +303,8 @@
   transition: opacity 0.15s;
 }
 .profile-unauth-btn:hover { opacity: 0.88; }
+
+@media (max-width: 768px) {
+  .my-profile-header { padding: 20px 16px; flex-direction: column; gap: 12px; }
+  .my-profile-body { padding: 16px 12px; }
+}

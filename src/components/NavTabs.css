@@ -149,3 +149,10 @@
 .sort-select option {
   background: var(--bg-card);
 }
+
+@media (max-width: 768px) {
+  .mode-tab-sub { display: none; }
+  .filter-row { flex-wrap: wrap; gap: 8px; }
+  .filter-chips { flex-wrap: wrap; gap: 4px; }
+  .filter-right { width: 100%; justify-content: flex-end; }
+}

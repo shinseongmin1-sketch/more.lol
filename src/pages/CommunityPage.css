@@ -269,3 +269,10 @@
   color: #f97316;
   border-bottom-color: rgba(249, 115, 22, 0.2);
 }
+
+@media (max-width: 768px) {
+  .community-layout { grid-template-columns: 1fr; }
+  .community-sidebar { display: none; }
+  .community-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .community-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}

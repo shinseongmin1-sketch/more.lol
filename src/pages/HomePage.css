@@ -491,3 +491,9 @@
 .hot-right { text-align: right; }
 .hot-tier  { font-size: 13px; font-weight: 800; }
 .hot-wr    { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+
+@media (max-width: 768px) {
+  .home-hero { padding: 36px 16px 28px; }
+  .home-body { padding: 16px 12px 40px; }
+  .ad-side { display: none; }
+}

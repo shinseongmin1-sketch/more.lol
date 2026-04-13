@@ -53,3 +53,8 @@
 }
 .faq-item.open .faq-answer { display: block; }
 .faq-answer a { color: #a78bfa; text-decoration: underline; }
+
+@media (max-width: 768px) {
+  .faq-body { padding: 20px 12px 40px; }
+  .faq-cats { flex-wrap: wrap; gap: 6px; }
+}

@@ -261,3 +261,10 @@
   height: 32px;
   background: var(--border-color);
 }
+
+@media (max-width: 768px) {
+  .hero-title { font-size: 36px; letter-spacing: -1px; }
+}
+@media (max-width: 480px) {
+  .hero-title { font-size: 28px; }
+}
