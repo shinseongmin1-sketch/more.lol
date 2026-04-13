@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getSession } from '../utils/auth'
 import { getPostsByUser, deletePost, formatDate, getCommentCountByUser } from '../utils/postsStore'
-import { calcCount, getLevelData, getNearbyLevels } from '../utils/levelSystem'
+import { calcCount, getLevelData, getTierList } from '../utils/levelSystem'
 import type { Post } from '../utils/postsStore'
 import './MyProfilePage.css'
 import './SubPage.css'
@@ -106,23 +106,22 @@ export default function MyProfilePage() {
           </button>
 
           {showAllLevels && (
-            <div className="profile-levels-grid">
-              {getNearbyLevels(lv.level).map(l => {
-                const reached   = total >= l.minCount
-                const isCurrent = lv.level === l.level
+            <div className="profile-tiers-grid">
+              {getTierList().map(t => {
+                const reached    = total >= t.minCount
+                const isCurrent  = lv.level >= t.fromLevel && lv.level <= t.toLevel
                 return (
                   <div
-                    key={l.level}
-                    className={`profile-level-card ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}`}
-                    style={reached ? {borderColor: l.border, background: l.bg} : {}}
+                    key={t.fromLevel}
+                    className={`profile-tier-card ${reached ? 'reached' : ''} ${isCurrent ? 'current' : ''}`}
+                    style={reached ? {borderColor: t.border, background: t.bg} : {}}
                   >
-                    {isCurrent && <div className="plc-current-dot" />}
-                    <div className="plc-medal" style={{filter: reached ? 'none' : 'grayscale(1)', opacity: reached ? 1 : 0.3}}>
-                      {l.icon}
+                    {isCurrent && <div className="ptc-current-dot" />}
+                    <div className="ptc-icon" style={{filter: reached ? 'none' : 'grayscale(1)', opacity: reached ? 1 : 0.25}}>
+                      {t.icon}
                     </div>
-                    <div className="plc-level" style={reached ? {color: l.color} : {}}>{l.level}</div>
-                    <div className="plc-name"  style={reached ? {color: l.color, fontWeight: 700} : {}}>{l.name}</div>
-                    <div className="plc-xp">{l.minCount}횟수~</div>
+                    <div className="ptc-name" style={reached ? {color: t.color, fontWeight: 700} : {}}>{t.name}</div>
+                    <div className="ptc-range" style={isCurrent ? {color: t.color} : {}}>Lv.{t.fromLevel}~{t.toLevel}</div>
                   </div>
                 )
               })}

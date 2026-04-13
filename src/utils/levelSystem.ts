@@ -82,3 +82,31 @@ export function getNearbyLevels(currentLevel: number): LevelInfo[] {
   }
   return result
 }
+
+export interface TierBlock {
+  fromLevel: number
+  toLevel:   number
+  name:      string
+  icon:      string
+  color:     string
+  bg:        string
+  border:    string
+  minCount:  number  // 이 티어에 진입하는 최소 횟수
+}
+
+// 전체 레벨 보기용: 10레벨 단위 티어 블록 목록 (레벨 1~510)
+export function getTierList(): TierBlock[] {
+  const tiers: TierBlock[] = []
+  for (let i = 0; i < CATEGORIES.length * 3; i++) {
+    const fromLevel = i * 10 + 1
+    const toLevel   = i * 10 + 10
+    const tier      = getTierForLevel(fromLevel)
+    tiers.push({
+      fromLevel,
+      toLevel,
+      minCount: minCountForLevel(fromLevel),
+      ...tier,
+    })
+  }
+  return tiers
+}
