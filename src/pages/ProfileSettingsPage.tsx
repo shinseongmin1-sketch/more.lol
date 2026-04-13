@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getSession, updateNickname, updatePassword, deleteAccount } from '../utils/auth'
+import { getPostsByUser, getCommentCountByUser } from '../utils/postsStore'
+import { calcCount, getLevelData } from '../utils/levelSystem'
 import { checkNickname } from '../utils/nicknameFilter'
 import './ProfileSettingsPage.css'
 
@@ -27,6 +29,21 @@ export default function ProfileSettingsPage() {
   const [showConfirm, setShowConfirm] = useState(false)
 
   const [showWithdraw, setShowWithdraw] = useState(false)
+  const [postCount,    setPostCount]    = useState(0)
+  const [commentCount, setCommentCount] = useState(0)
+  const [likeCount,    setLikeCount]    = useState(0)
+
+  useEffect(() => {
+    if (!user) return
+    Promise.all([
+      getPostsByUser(user.id),
+      getCommentCountByUser(user.id),
+    ]).then(([posts, comments]) => {
+      setPostCount(posts.length)
+      setCommentCount(comments)
+      setLikeCount(posts.reduce((s, p) => s + p.likes, 0))
+    })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const [agreePost,    setAgreePost]    = useState(false)
   const [agreeData,    setAgreeData]    = useState(false)
   const [agreeNoUndo,  setAgreeNoUndo]  = useState(false)
@@ -128,6 +145,19 @@ export default function ProfileSettingsPage() {
             <div className="settings-info-row">
               <span className="settings-info-label">가입일</span>
               <span className="settings-info-value">{joinStr}</span>
+            </div>
+            <div className="settings-info-row">
+              {(() => {
+                const lv = getLevelData(calcCount(postCount, commentCount, likeCount))
+                return (
+                  <>
+                    <span className="settings-info-label">레벨</span>
+                    <span className="settings-level-val" style={{color: lv.info.color, background: lv.info.bg, border: `1px solid ${lv.info.border}`}}>
+                      {lv.info.icon} Lv.{lv.info.level} {lv.info.name}
+                    </span>
+                  </>
+                )
+              })()}
             </div>
           </div>
         </div>

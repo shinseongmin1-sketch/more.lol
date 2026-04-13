@@ -445,3 +445,11 @@
   border-color: #ef4444;
   color: #fff;
 }
+
+.settings-level-val {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  letter-spacing: 0.2px;
+}
