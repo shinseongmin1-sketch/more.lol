@@ -4,7 +4,7 @@ import { getSession, isAdmin } from '../utils/auth'
 import {
   getPostById, incrementViews, toggleLike, isLikedByUser,
   toggleDislike, isDislikedByUser,
-  getComments, addComment, deletePost, formatDate,
+  getComments, addComment, deletePost, deleteComment, updateComment, formatDate,
 } from '../utils/postsStore'
 import type { Post, Comment } from '../utils/postsStore'
 import './PostDetailPage.css'
@@ -31,6 +31,9 @@ export default function PostDetailPage() {
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting]           = useState(false)
   const viewedRef = useRef(false)
+  const [editingCommentId, setEditingCommentId]         = useState<string | null>(null)
+  const [editingCommentText, setEditingCommentText]     = useState('')
+  const [confirmDeleteComment, setConfirmDeleteComment] = useState<string | null>(null)
 
   const isAuthor  = user && post ? user.id === post.authorId : false
   const canManage = isAuthor || isAdmin(user)
@@ -69,6 +72,30 @@ export default function PostDetailPage() {
     setDeleting(true)
     await deletePost(id)
     navigate('/community')
+  }
+
+
+  const handleDeleteComment = async (commentId: string) => {
+    const ok = await deleteComment(commentId)
+    if (ok) {
+      setComments(prev => prev.filter(c => c.id !== commentId))
+      setConfirmDeleteComment(null)
+    }
+  }
+
+  const handleEditComment = (c: Comment) => {
+    setEditingCommentId(c.id)
+    setEditingCommentText(c.content)
+    setConfirmDeleteComment(null)
+  }
+
+  const handleSaveComment = async (commentId: string) => {
+    if (!editingCommentText.trim()) return
+    const ok = await updateComment(commentId, editingCommentText.trim())
+    if (ok) {
+      setComments(prev => prev.map(c => c.id === commentId ? { ...c, content: editingCommentText.trim() } : c))
+      setEditingCommentId(null)
+    }
   }
 
   const handleLike = async () => {
@@ -270,17 +297,54 @@ export default function PostDetailPage() {
             {comments.length === 0 ? (
               <div className="comment-empty">첫 번째 댓글을 남겨보세요!</div>
             ) : (
-              comments.map(c => (
-                <div key={c.id} className="comment-item">
-                  <div className="comment-body">
-                    <div className="comment-header">
-                      <span className="comment-nick">{c.authorNickname}</span>
-                      <span className="comment-time">{formatDate(c.createdAt)}</span>
+              comments.map(c => {
+                const isMyComment = !!(user && c.authorId === user.id)
+                const isEditing   = editingCommentId === c.id
+                const confirmDel  = confirmDeleteComment === c.id
+                return (
+                  <div key={c.id} className="comment-item">
+                    <div className="comment-body">
+                      <div className="comment-header">
+                        <span className="comment-nick">{c.authorNickname}</span>
+                        <span className="comment-time">{formatDate(c.createdAt)}</span>
+                        {isMyComment && !isEditing && (
+                          <div className="comment-actions">
+                            {confirmDel ? (
+                              <>
+                                <span className="comment-confirm-text">삭제할까요?</span>
+                                <button className="comment-action-yes" onClick={() => handleDeleteComment(c.id)}>삭제</button>
+                                <button className="comment-action-no" onClick={() => setConfirmDeleteComment(null)}>취소</button>
+                              </>
+                            ) : (
+                              <>
+                                <button className="comment-action-btn" onClick={() => handleEditComment(c)}>수정</button>
+                                <button className="comment-action-btn delete" onClick={() => setConfirmDeleteComment(c.id)}>삭제</button>
+                              </>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      {isEditing ? (
+                        <div className="comment-edit-area">
+                          <textarea
+                            className="comment-input"
+                            value={editingCommentText}
+                            onChange={e => setEditingCommentText(e.target.value)}
+                            rows={3}
+                            autoFocus
+                          />
+                          <div className="comment-edit-footer">
+                            <button className="comment-edit-save" onClick={() => handleSaveComment(c.id)} disabled={!editingCommentText.trim()}>저장</button>
+                            <button className="comment-edit-cancel" onClick={() => setEditingCommentId(null)}>취소</button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="comment-content">{c.content}</p>
+                      )}
                     </div>
-                    <p className="comment-content">{c.content}</p>
                   </div>
-                </div>
-              ))
+                )
+              })
             )}
           </div>
         </section>

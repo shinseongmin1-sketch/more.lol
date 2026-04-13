@@ -529,3 +529,102 @@
   transition: opacity 0.15s;
 }
 .post-img:hover { opacity: 0.9; }
+
+/* ── 댓글 수정/삭제 버튼 ── */
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.comment-action-btn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s;
+}
+.comment-action-btn:hover { color: var(--text-secondary); background: rgba(255,255,255,0.05); }
+.comment-action-btn.delete:hover { color: #f56565; }
+
+.comment-confirm-text {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.comment-action-yes {
+  background: #f56565;
+  border: none;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.comment-action-yes:hover { opacity: 0.85; }
+
+.comment-action-no {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 5px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.comment-action-no:hover { color: var(--text-primary); }
+
+/* 댓글 수정 영역 */
+.comment-edit-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.comment-edit-footer {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.comment-edit-save {
+  background: linear-gradient(135deg, var(--accent-primary), #5e3dd8);
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+.comment-edit-save:hover:not(:disabled) { opacity: 0.9; }
+.comment-edit-save:disabled { opacity: 0.4; cursor: not-allowed; }
+
+.comment-edit-cancel {
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.comment-edit-cancel:hover { color: var(--text-primary); }

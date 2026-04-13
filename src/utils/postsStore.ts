@@ -319,3 +319,21 @@ export function formatDate(iso: string): string {
   if (diff < 604800) return `${Math.floor(diff / 86400)}일 전`
   return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`
 }
+
+export async function deleteComment(id: string): Promise<boolean> {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return false
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/community_comments?id=eq.${encodeURIComponent(id)}`,
+    { method: 'DELETE', headers: h() }
+  ).catch(() => null)
+  return !!(res?.ok)
+}
+
+export async function updateComment(id: string, content: string): Promise<boolean> {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return false
+  const res = await fetch(
+    `${SUPABASE_URL}/rest/v1/community_comments?id=eq.${encodeURIComponent(id)}`,
+    { method: 'PATCH', headers: { ...h(), Prefer: 'return=minimal' }, body: JSON.stringify({ content }) }
+  ).catch(() => null)
+  return !!(res?.ok)
+}
