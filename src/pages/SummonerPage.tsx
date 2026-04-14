@@ -428,6 +428,43 @@ export default function SummonerPage() {
     return () => clearInterval(iv)
   }, [showLiveGame])
 
+  // 인게임 자동 감지 폴링 (30초마다)
+  useEffect(() => {
+    if (!summoner?.id) return
+    let cancelled = false
+
+    const poll = async () => {
+      try {
+        const game = await getLiveGame(summoner.id)
+        if (cancelled) return
+        if (game && !game.status) {
+          setLiveGame(game)
+          setLiveTimer(game.gameLength ?? 0)
+          setShowLiveGame(true)
+          setLiveError(null)
+          const ranks: Record<string, any[]> = {}
+          await Promise.all(game.participants.map(async (p: any) => {
+            try { ranks[p.puuid] = await getRankedInfo(p.puuid) ?? [] }
+            catch { ranks[p.puuid] = [] }
+          }))
+          if (!cancelled) setLiveRanks(ranks)
+        } else {
+          // 게임 종료 감지 — 패널이 열려 있었다면 닫기
+          if (!cancelled) setShowLiveGame(prev => {
+            if (prev) setLiveError(null)
+            return false
+          })
+        }
+      } catch {
+        // 404 = 게임 중 아님, 무시
+      }
+    }
+
+    poll() // 즉시 1회 실행
+    const iv = setInterval(poll, 30000)
+    return () => { cancelled = true; clearInterval(iv) }
+  }, [summoner?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleLiveGame = async () => {
     if (!summoner?.id) return
     setLiveLoading(true)
