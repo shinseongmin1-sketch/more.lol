@@ -469,10 +469,11 @@ export default function SummonerPage() {
     if (!summoner?.id) return
     setLiveLoading(true)
     setLiveError(null)
-    setShowLiveGame(false)
+    // 패널이 이미 열려 있으면 닫지 않고 조용히 갱신
     try {
       const game = await getLiveGame(summoner.id)
       if (!game || game.status) {
+        setShowLiveGame(false)
         setLiveError('현재 게임 중이 아닙니다.')
         return
       }
@@ -485,8 +486,15 @@ export default function SummonerPage() {
         catch { ranks[p.puuid] = [] }
       }))
       setLiveRanks(ranks)
-    } catch {
-      setLiveError('현재 게임 중이 아닙니다.')
+    } catch (e) {
+      const msg = String((e as Error).message)
+      if (msg === '429') {
+        // rate limit: 패널이 이미 열려 있으면 그냥 유지
+        if (!showLiveGame) setLiveError('잠시 후 다시 시도해주세요.')
+      } else {
+        setShowLiveGame(false)
+        setLiveError('현재 게임 중이 아닙니다.')
+      }
     } finally {
       setLiveLoading(false)
     }
@@ -638,11 +646,11 @@ export default function SummonerPage() {
                   {cooldown > 0 ? `${cooldown}초` : '전적 갱신'}
                 </button>
                 <button
-                  className={`sp-btn-ingame ${liveLoading ? 'loading' : ''}`}
+                  className={`sp-btn-ingame ${liveLoading ? 'loading' : ''} ${showLiveGame ? 'active' : ''}`}
                   onClick={handleLiveGame}
                   disabled={liveLoading}
                 >
-                  {liveLoading ? '...' : '인게임'}
+                  {liveLoading ? '확인 중...' : showLiveGame ? '🔴 인게임' : '인게임'}
                 </button>
                 {lastRefreshedAt && (
                   <span className="sp-last-refresh">최근갱신: {formatRefreshedAt(lastRefreshedAt)}</span>

@@ -1280,6 +1280,9 @@
   font-family: inherit;
 }
 .sp-btn-ingame:hover:not(:disabled) { opacity: 0.85; }
+.sp-btn-ingame.active {
+  background: #dc2626;
+}
 .sp-btn-ingame.loading,
 .sp-btn-ingame:disabled {
   background: var(--bg-card);
