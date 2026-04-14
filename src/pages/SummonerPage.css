@@ -1262,3 +1262,214 @@
 @media (max-width: 768px) {
   .sp-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 }
+
+/* ── 인게임 버튼 ── */
+.sp-btn-ingame {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #16a34a;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  font-family: inherit;
+}
+.sp-btn-ingame:hover:not(:disabled) { opacity: 0.85; }
+.sp-btn-ingame.loading,
+.sp-btn-ingame:disabled {
+  background: var(--bg-card);
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  cursor: not-allowed;
+  opacity: 1;
+}
+
+/* ── 인게임 패널 ── */
+.sp-ingame-error {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.sp-ingame {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.sp-ig-topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(0,0,0,0.15);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sp-ig-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef4444;
+  animation: sp-live-pulse 1.2s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+@keyframes sp-live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.sp-ig-live-label {
+  font-size: 12px;
+  font-weight: 800;
+  color: #ef4444;
+  letter-spacing: 1px;
+}
+
+.sp-ig-timer {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-ig-queue {
+  font-size: 13px;
+  color: var(--text-secondary);
+  flex: 1;
+}
+
+.sp-ig-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color 0.15s;
+  font-family: inherit;
+}
+.sp-ig-close:hover { color: var(--text-primary); }
+
+.sp-ig-col-header {
+  display: grid;
+  grid-template-columns: 40px 1fr 160px 90px 60px;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sp-ig-team {
+  padding: 4px 0;
+}
+
+.sp-ig-team-blue {
+  background: rgba(59, 130, 246, 0.04);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sp-ig-team-red {
+  background: rgba(239, 68, 68, 0.04);
+}
+
+.sp-ig-team-label {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 16px 4px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sp-ig-team-blue .sp-ig-team-label { color: #3b82f6; }
+.sp-ig-team-red  .sp-ig-team-label { color: #ef4444; }
+
+.sp-ig-row {
+  display: grid;
+  grid-template-columns: 40px 1fr 160px 90px 60px;
+  gap: 8px;
+  align-items: center;
+  padding: 6px 16px;
+  transition: background 0.1s;
+}
+.sp-ig-row:hover { background: rgba(255,255,255,0.03); }
+.sp-ig-row-me { background: rgba(124, 90, 246, 0.08); }
+.sp-ig-row-me:hover { background: rgba(124, 90, 246, 0.12); }
+
+.sp-ig-champ {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-ig-champ-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border-color);
+}
+
+.sp-ig-name {
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sp-ig-tier {
+  display: flex;
+  align-items: center;
+}
+
+.sp-ig-tier-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+.sp-ig-winrate {
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.sp-ig-spells {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.sp-ig-spell-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+@media (max-width: 600px) {
+  .sp-ig-col-header { grid-template-columns: 36px 1fr 120px 70px 50px; }
+  .sp-ig-row { grid-template-columns: 36px 1fr 120px 70px 50px; }
+}

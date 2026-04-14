@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import {
   getAccount, getSummonerByPuuid, getRankedInfo,
   getMatchIds, getAllMatchIds, getMatch, getDDVersion, getChampMap,
-  getSpellMap, getRuneMap,
+  getSpellMap, getRuneMap, getLiveGame,
   champIconUrl, itemIconUrl, profileIconUrl, spellIconUrl, runeIconUrl, QUEUE_LABELS,
 } from '../utils/riotApi'
 import { saveSummoners, saveRankHistory, getRankHistory } from '../utils/supabase'
@@ -145,6 +145,12 @@ export default function SummonerPage() {
   const [teammateIcons, setTeammateIcons] = useState<Record<string, number>>({})
   const [allMatchIds, setAllMatchIds] = useState<string[]>([])
   const [loadingMoreVisible, setLoadingMoreVisible] = useState(false)
+  const [liveGame, setLiveGame] = useState<any>(null)
+  const [liveLoading, setLiveLoading] = useState(false)
+  const [showLiveGame, setShowLiveGame] = useState(false)
+  const [liveError, setLiveError] = useState<string | null>(null)
+  const [liveRanks, setLiveRanks] = useState<Record<string, any[]>>({})
+  const [liveTimer, setLiveTimer] = useState(0)
 
 
   useEffect(() => {
@@ -415,6 +421,40 @@ export default function SummonerPage() {
     return () => clearInterval(id)
   }, [cooldown])
 
+  // 인게임 타이머
+  useEffect(() => {
+    if (!showLiveGame) return
+    const iv = setInterval(() => setLiveTimer(t => t + 1), 1000)
+    return () => clearInterval(iv)
+  }, [showLiveGame])
+
+  const handleLiveGame = async () => {
+    if (!summoner?.id) return
+    setLiveLoading(true)
+    setLiveError(null)
+    setShowLiveGame(false)
+    try {
+      const game = await getLiveGame(summoner.id)
+      if (!game || game.status) {
+        setLiveError('현재 게임 중이 아닙니다.')
+        return
+      }
+      setLiveGame(game)
+      setLiveTimer(game.gameLength ?? 0)
+      setShowLiveGame(true)
+      const ranks: Record<string, any[]> = {}
+      await Promise.all(game.participants.map(async (p: any) => {
+        try { ranks[p.puuid] = await getRankedInfo(p.puuid) ?? [] }
+        catch { ranks[p.puuid] = [] }
+      }))
+      setLiveRanks(ranks)
+    } catch {
+      setLiveError('현재 게임 중이 아닙니다.')
+    } finally {
+      setLiveLoading(false)
+    }
+  }
+
   const filteredMatches = matches.filter(m => {
     if (activeFilter === '전체')   return true
     if (activeFilter === 'ARAM')   return m.queueId === 450
@@ -559,6 +599,13 @@ export default function SummonerPage() {
                     <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                   </svg>
                   {cooldown > 0 ? `${cooldown}초` : '전적 갱신'}
+                </button>
+                <button
+                  className={`sp-btn-ingame ${liveLoading ? 'loading' : ''}`}
+                  onClick={handleLiveGame}
+                  disabled={liveLoading}
+                >
+                  {liveLoading ? '...' : '인게임'}
                 </button>
                 {lastRefreshedAt && (
                   <span className="sp-last-refresh">최근갱신: {formatRefreshedAt(lastRefreshedAt)}</span>
@@ -746,6 +793,99 @@ export default function SummonerPage() {
 
           {/* ── 오른쪽 매치 목록 ── */}
           <div className="sp-matches">
+
+            {/* ── 인게임 패널 ── */}
+            {liveError && !showLiveGame && (
+              <div className="sp-ingame-error">{liveError}</div>
+            )}
+            {showLiveGame && liveGame && (() => {
+              const blueTeam = liveGame.participants.filter((p: any) => p.teamId === 100)
+              const redTeam  = liveGame.participants.filter((p: any) => p.teamId === 200)
+              const mins = Math.floor(liveTimer / 60)
+              const secs = String(liveTimer % 60).padStart(2, '0')
+              const queueName = QUEUE_LABELS[liveGame.gameQueueConfigId] ?? '게임 중'
+              const TIER_BADGE_COLORS: Record<string, string> = {
+                IRON: '#6b7280', BRONZE: '#b45309', SILVER: '#64748b', GOLD: '#d97706',
+                PLATINUM: '#0891b2', EMERALD: '#059669', DIAMOND: '#2563eb', MASTER: '#7c3aed',
+                GRANDMASTER: '#dc2626', CHALLENGER: '#eab308',
+              }
+              const renderPlayer = (p: any) => {
+                const champInfo = p.championId ? { id: String(p.championId) } : null
+                const soloRankInfo = liveRanks[p.puuid]?.find((r: any) => r.queueType === 'RANKED_SOLO_5x5')
+                const tierColor = soloRankInfo ? (TIER_BADGE_COLORS[soloRankInfo.tier] ?? '#9096b8') : '#9096b8'
+                const wins = soloRankInfo?.wins ?? 0
+                const losses = soloRankInfo?.losses ?? 0
+                const total = wins + losses
+                const wr = total > 0 ? Math.round((wins / total) * 100) : null
+                const isMe = p.puuid === account?.puuid
+                const spell1 = spellMap[String(p.spell1Id)]
+                const spell2 = spellMap[String(p.spell2Id)]
+                return (
+                  <div key={p.puuid} className={`sp-ig-row ${isMe ? 'sp-ig-row-me' : ''}`}>
+                    <div className="sp-ig-champ">
+                      {ddVersion && champInfo && (
+                        <img
+                          src={champIconUrl(ddVersion, champInfo.id)}
+                          alt=""
+                          className="sp-ig-champ-icon"
+                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none' }}
+                        />
+                      )}
+                    </div>
+                    <div className="sp-ig-name" style={{ fontWeight: isMe ? 700 : 400 }}>
+                      {p.riotId ?? p.summonerName ?? '알 수 없음'}
+                    </div>
+                    <div className="sp-ig-tier">
+                      {soloRankInfo ? (
+                        <span className="sp-ig-tier-badge" style={{ color: tierColor, borderColor: tierColor + '55', background: tierColor + '18' }}>
+                          {soloRankInfo.tier.charAt(0) + soloRankInfo.tier.slice(1).toLowerCase()} {soloRankInfo.rank} {soloRankInfo.leaguePoints}LP
+                        </span>
+                      ) : (
+                        <span className="sp-ig-tier-badge" style={{ color: '#9096b8', borderColor: '#9096b855', background: '#9096b818' }}>Unranked</span>
+                      )}
+                    </div>
+                    <div className="sp-ig-winrate">
+                      {wr !== null ? (
+                        <span style={{ color: wr >= 60 ? '#3b82f6' : wr >= 50 ? '#7c5af6' : '#ef4444', fontWeight: 600 }}>
+                          {wr}% <span style={{ color: 'var(--text-muted)', fontWeight: 400 }}>({total})</span>
+                        </span>
+                      ) : <span style={{ color: 'var(--text-muted)' }}>-</span>}
+                    </div>
+                    <div className="sp-ig-spells">
+                      {ddVersion && spell1 && <img src={spellIconUrl(ddVersion, spell1.id)} alt="" className="sp-ig-spell-icon" />}
+                      {ddVersion && spell2 && <img src={spellIconUrl(ddVersion, spell2.id)} alt="" className="sp-ig-spell-icon" />}
+                    </div>
+                  </div>
+                )
+              }
+              return (
+                <div className="sp-ingame">
+                  <div className="sp-ig-topbar">
+                    <span className="sp-ig-live-dot" />
+                    <span className="sp-ig-live-label">LIVE</span>
+                    <span className="sp-ig-timer">{mins}:{secs}</span>
+                    <span className="sp-ig-queue">{queueName}</span>
+                    <button className="sp-ig-close" onClick={() => setShowLiveGame(false)}>✕</button>
+                  </div>
+                  <div className="sp-ig-col-header">
+                    <span className="sp-ig-col-champ">챔피언</span>
+                    <span className="sp-ig-col-name">소환사명</span>
+                    <span className="sp-ig-col-tier">티어/LP</span>
+                    <span className="sp-ig-col-wr">승률</span>
+                    <span className="sp-ig-col-spells">스펠</span>
+                  </div>
+                  <div className="sp-ig-team sp-ig-team-blue">
+                    <div className="sp-ig-team-label">블루팀</div>
+                    {blueTeam.map(renderPlayer)}
+                  </div>
+                  <div className="sp-ig-team sp-ig-team-red">
+                    <div className="sp-ig-team-label">레드팀</div>
+                    {redTeam.map(renderPlayer)}
+                  </div>
+                </div>
+              )
+            })()}
+
             {/* 필터 탭 */}
             <div className="sp-filters">
               {['전체', '솔로랭크', '자유랭크'].map(f => (

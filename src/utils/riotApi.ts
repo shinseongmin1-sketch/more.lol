@@ -147,3 +147,7 @@ export function itemIconUrl(version: string, itemId: number) {
 export function profileIconUrl(version: string, iconId: number) {
   return `https://ddragon.leagueoflegends.com/cdn/${version}/img/profileicon/${iconId}.png`
 }
+
+export async function getLiveGame(summonerId: string) {
+  return riotFetch(`/riot-kr/lol/spectator/v5/active-games/by-summoner/${encodeURIComponent(summonerId)}`)
+}
