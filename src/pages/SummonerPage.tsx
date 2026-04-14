@@ -300,6 +300,10 @@ export default function SummonerPage() {
                   duration: match.info.gameDuration,
                   gameStartTimestamp: match.info.gameStartTimestamp,
                   items: [me.item0, me.item1, me.item2, me.item3, me.item4, me.item5, me.item6],
+                  spell1Id: String(me.summoner1Id ?? ''),
+                  spell2Id: String(me.summoner2Id ?? ''),
+                  primaryRuneId: me.perks?.styles?.[0]?.selections?.[0]?.perk ?? 0,
+                  subStyleId: me.perks?.styles?.[1]?.style ?? 0,
                   teammates: [], opponents: [], allParticipants: [],
                 } as MatchData
               })
@@ -874,14 +878,8 @@ export default function SummonerPage() {
                             const isWinTeam = team[0]?.win ?? false
                             const isMyTeam  = tid === myTeamId
                             const maxDmg     = Math.max(...team.map(p => p.totalDamage), 1)
-                            const avgDmg     = team.reduce((s, p) => s + p.totalDamage, 0) / Math.max(team.length, 1)
-                            const avgDeaths  = team.reduce((s, p) => s + p.deaths, 0) / Math.max(team.length, 1)
                             const avgCs      = team.reduce((s, p) => s + p.cs, 0) / Math.max(team.length, 1)
-                            const avgKills   = team.reduce((s, p) => s + p.kills, 0) / Math.max(team.length, 1)
                             const avgAssists = team.reduce((s, p) => s + p.assists, 0) / Math.max(team.length, 1)
-                            const teamAvgKda = team.reduce((s, p) => s + (p.deaths === 0 ? p.kills + p.assists : (p.kills + p.assists) / p.deaths), 0) / Math.max(team.length, 1)
-
-                            const teamKa = team.reduce((s, q) => s + q.kills + q.assists, 0) / Math.max(team.length, 1)
 
                             const getStyle = (p: typeof team[0], roleIdx: number): [{ label: string; cls: string }, { label: string; cls: string } | null] => {
                               const dur          = (match.duration / 60) || 1
