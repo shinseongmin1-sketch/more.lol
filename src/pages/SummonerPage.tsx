@@ -1090,7 +1090,7 @@ export default function SummonerPage() {
 
                               if (roleIdx === 0) {
                                 // 탑: 흔들림
-                                if      (!skipShaky && (p.deaths >= 8 || (p.deaths >= 6 && dmgShare < 0.15)))  lineTag = { label: '흔들림',     cls: 'troll' }
+                                if      (!skipShaky && (p.deaths >= 8 || (p.deaths >= 6 && dmgShare < 0.15)))  lineTag = { label: '변동성 있음', cls: 'troll' }
                                 // 탑: 캐리·폭딜
                                 else if (p.win && kda >= 3 && dmgShare >= 0.25)                lineTag = { label: '캐리',        cls: 'carry' }
                                 else if (dmgShare >= 0.28 && kda >= 2.5)                       lineTag = { label: '딜 압박',     cls: 'carry' }
@@ -1103,7 +1103,7 @@ export default function SummonerPage() {
                                 else                                                            lineTag = { label: '안정적',      cls: 'stable' }
                               } else if (roleIdx === 1) {
                                 // 정글: 흔들림
-                                if      (!skipShaky && p.deaths >= 7 && cpm < 4.5)             lineTag = { label: '흔들림',      cls: 'troll' }
+                                if      (!skipShaky && p.deaths >= 7 && cpm < 4.5)             lineTag = { label: '변동성 있음', cls: 'troll' }
                                 // 정글: 캐리·영향력
                                 else if (p.win && kp >= 0.6 && dmgShare >= 0.2)               lineTag = { label: '캐리 영향력',  cls: 'carry' }
                                 // 정글: 일반
@@ -1116,7 +1116,7 @@ export default function SummonerPage() {
                                 else                                                            lineTag = { label: '안정적',      cls: 'stable' }
                               } else if (roleIdx === 2) {
                                 // 미드: 흔들림
-                                if      (!skipShaky && (p.deaths >= 7 || (p.deaths >= 6 && dmgShare < 0.15)))  lineTag = { label: '흔들림',      cls: 'troll' }
+                                if      (!skipShaky && (p.deaths >= 7 || (p.deaths >= 6 && dmgShare < 0.15)))  lineTag = { label: '변동성 있음', cls: 'troll' }
                                 // 미드: 캐리·폭딜
                                 else if (p.win && dmgShare >= 0.28 && kda >= 3.5)              lineTag = { label: '캐리',        cls: 'carry' }
                                 else if (dmgShare >= 0.3)                                       lineTag = { label: '폭딜',        cls: 'carry' }
@@ -1129,7 +1129,7 @@ export default function SummonerPage() {
                                 else                                                            lineTag = { label: '안정적',      cls: 'stable' }
                               } else if (roleIdx === 3) {
                                 // 원딜: 흔들림
-                                if      (!skipShaky && (p.deaths >= 6 || (p.deaths >= 5 && dmgShare < 0.15)))  lineTag = { label: '흔들림',      cls: 'troll' }
+                                if      (!skipShaky && (p.deaths >= 6 || (p.deaths >= 5 && dmgShare < 0.15)))  lineTag = { label: '변동성 있음', cls: 'troll' }
                                 // 원딜: 캐리·폭딜
                                 else if (p.win && dmgShare >= 0.3 && kda >= 3)                 lineTag = { label: '캐리',        cls: 'carry' }
                                 else if (dmgShare >= 0.32)                                      lineTag = { label: '폭딜',        cls: 'carry' }
@@ -1141,7 +1141,7 @@ export default function SummonerPage() {
                                 else                                                            lineTag = { label: '안정적',      cls: 'stable' }
                               } else {
                                 // 서폿: 흔들림
-                                if      (!skipShaky && p.deaths >= 8 && kp < 0.4)              lineTag = { label: '흔들림',      cls: 'troll' }
+                                if      (!skipShaky && p.deaths >= 8 && kp < 0.4)              lineTag = { label: '변동성 있음', cls: 'troll' }
                                 // 서폿: 최고 기여
                                 else if (p.assists >= 10 && kp >= 0.65)                        lineTag = { label: '팀 케어',     cls: 'jg-gank' }
                                 // 서폿: 일반
