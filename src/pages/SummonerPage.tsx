@@ -1156,7 +1156,7 @@ export default function SummonerPage() {
                               let commonTag: { label: string; cls: string } | null = null
                               // 억울함: 패배인데 딜·KDA·킬관여 모두 준수한 경우
                               if (!p.win && dmgShare >= 0.28 && kda >= 3 && p.deaths <= 7 && kp >= 0.6)
-                                                                                               commonTag = { label: '억울함',    cls: 'unfair' }
+                                                                                               commonTag = { label: '높은 영향력', cls: 'unfair' }
                               else if (p.deaths >= 7 && dmgShare >= 0.28)                     commonTag = { label: '하이리스크', cls: 'weak' }
                               else if (p.kills >= 10 || dmgShare >= 0.35)                     commonTag = { label: '한방 있음', cls: 'carry' }
 
