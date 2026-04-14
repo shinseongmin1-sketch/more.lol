@@ -21,6 +21,7 @@ import ProfileSettingsPage from './pages/ProfileSettingsPage'
 import RankingPage from './pages/RankingPage'
 import MostChampsPage from './pages/MostChampsPage'
 import AdminInquiriesPage from './pages/AdminInquiriesPage'
+import AdminReportsPage from './pages/AdminReportsPage'
 import './App.css'
 
 function App() {
@@ -48,6 +49,7 @@ function App() {
         <Route path="/settings" element={<ProfileSettingsPage />} />
         <Route path="/ranking" element={<RankingPage />} />
         <Route path="/admin/inquiries" element={<AdminInquiriesPage />} />
+        <Route path="/admin/reports" element={<AdminReportsPage />} />
       </Routes>
     </Layout>
   )

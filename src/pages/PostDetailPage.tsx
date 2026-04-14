@@ -6,9 +6,19 @@ import {
   toggleDislike, isDislikedByUser,
   getComments, addComment, deletePost, deleteComment, updateComment, formatDate,
 } from '../utils/postsStore'
+import { addReport, hasReportedLocally } from '../utils/reportStore'
 import type { Post, Comment } from '../utils/postsStore'
 import './PostDetailPage.css'
 import './SubPage.css'
+
+const REPORT_REASONS = [
+  '욕설 / 혐오 표현',
+  '스팸 / 도배',
+  '음란물 / 선정적 내용',
+  '개인정보 침해',
+  '허위 정보',
+  '기타',
+]
 
 const catColors: Record<string, string> = {
   '공략': '#4a90e2', '자유게시판': '#69db7c',
@@ -34,9 +44,31 @@ export default function PostDetailPage() {
   const [editingCommentId, setEditingCommentId]         = useState<string | null>(null)
   const [editingCommentText, setEditingCommentText]     = useState('')
   const [confirmDeleteComment, setConfirmDeleteComment] = useState<string | null>(null)
+  const [reportOpen, setReportOpen]   = useState(false)
+  const [reportReason, setReportReason] = useState('')
+  const [reportDetail, setReportDetail] = useState('')
+  const [reportSubmitting, setReportSubmitting] = useState(false)
+  const [reportDone, setReportDone]   = useState(false)
 
-  const isAuthor  = user && post ? user.id === post.authorId : false
-  const canManage = isAuthor || isAdmin(user)
+  const isAuthor     = user && post ? user.id === post.authorId : false
+  const canManage    = isAuthor || isAdmin(user)
+  const alreadyReported = user && post ? hasReportedLocally(user.id, post.id) : false
+
+  const handleReport = async () => {
+    if (!user || !post || !reportReason) return
+    setReportSubmitting(true)
+    await addReport({
+      postId:           post.id,
+      postTitle:        post.title,
+      reporterId:       user.id,
+      reporterNickname: user.nickname,
+      reason:           reportReason,
+      detail:           reportDetail.trim(),
+    })
+    setReportSubmitting(false)
+    setReportDone(true)
+    setTimeout(() => { setReportOpen(false); setReportDone(false); setReportReason(''); setReportDetail('') }, 1500)
+  }
 
   useEffect(() => {
     if (!id) { setNotFound(true); return }
@@ -254,7 +286,59 @@ export default function PostDetailPage() {
               <span className="reaction-label">싫어요</span>
               <span className="reaction-count">{dislikeCount}</span>
             </button>
+            {user && !isAuthor && (
+              <button
+                className={`reaction-btn report-btn ${alreadyReported ? 'disabled' : ''}`}
+                onClick={() => !alreadyReported && setReportOpen(true)}
+                title={alreadyReported ? '이미 신고한 게시글입니다' : '신고하기'}
+              >
+                <span className="reaction-icon">🚨</span>
+                <span className="reaction-label">{alreadyReported ? '신고완료' : '신고하기'}</span>
+              </button>
+            )}
           </div>
+
+          {/* 신고 모달 */}
+          {reportOpen && (
+            <div className="report-modal-overlay" onClick={() => setReportOpen(false)}>
+              <div className="report-modal" onClick={e => e.stopPropagation()}>
+                <div className="report-modal-title">🚨 신고하기</div>
+                <div className="report-modal-desc">신고 사유를 선택해주세요.</div>
+                <div className="report-reasons">
+                  {REPORT_REASONS.map(r => (
+                    <button
+                      key={r}
+                      className={`report-reason-btn ${reportReason === r ? 'selected' : ''}`}
+                      onClick={() => setReportReason(r)}
+                    >
+                      {r}
+                    </button>
+                  ))}
+                </div>
+                <textarea
+                  className="report-detail-input"
+                  placeholder="추가 설명 (선택사항)"
+                  value={reportDetail}
+                  onChange={e => setReportDetail(e.target.value)}
+                  rows={3}
+                />
+                {reportDone ? (
+                  <div className="report-done">✅ 신고가 접수되었습니다.</div>
+                ) : (
+                  <div className="report-modal-footer">
+                    <button className="report-cancel-btn" onClick={() => setReportOpen(false)}>취소</button>
+                    <button
+                      className="report-submit-btn"
+                      onClick={handleReport}
+                      disabled={!reportReason || reportSubmitting}
+                    >
+                      {reportSubmitting ? '접수 중...' : '신고 접수'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </article>
 
         <section className="comment-section">

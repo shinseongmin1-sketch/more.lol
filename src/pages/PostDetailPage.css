@@ -628,3 +628,112 @@
   transition: all 0.15s;
 }
 .comment-edit-cancel:hover { color: var(--text-primary); }
+
+/* ── 신고 버튼 ── */
+.report-btn:hover:not(.disabled) {
+  border-color: #ef4444;
+  background: rgba(239, 68, 68, 0.06);
+  transform: translateY(-2px);
+}
+.report-btn.disabled { opacity: 0.5; cursor: default; }
+.report-btn .reaction-label { color: #ef4444; }
+
+/* ── 신고 모달 ── */
+.report-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.report-modal {
+  background: var(--bg-card, #fff);
+  border-radius: 16px;
+  padding: 28px 28px 24px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.report-modal-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.report-modal-desc {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: -8px;
+}
+.report-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.report-reason-btn {
+  background: none;
+  border: 1.5px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.12s;
+  font-family: inherit;
+}
+.report-reason-btn:hover { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.04); }
+.report-reason-btn.selected { border-color: #ef4444; color: #ef4444; background: rgba(239,68,68,0.08); }
+.report-detail-input {
+  border: 1.5px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: var(--bg-input, #f9fafb);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.12s;
+}
+.report-detail-input:focus { border-color: #ef4444; }
+.report-modal-footer { display: flex; gap: 8px; justify-content: flex-end; }
+.report-cancel-btn {
+  background: none;
+  border: 1.5px solid var(--border-color, #e5e7eb);
+  border-radius: 8px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  color: var(--text-secondary);
+  transition: all 0.12s;
+}
+.report-cancel-btn:hover { color: var(--text-primary); }
+.report-submit-btn {
+  background: #ef4444;
+  border: none;
+  border-radius: 8px;
+  padding: 9px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.12s;
+}
+.report-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.report-submit-btn:hover:not(:disabled) { opacity: 0.88; }
+.report-done {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #16a34a;
+  padding: 8px 0;
+}

@@ -90,6 +90,7 @@ export async function getPosts(): Promise<Post[]> {
   const res = await fetch(
     `${SUPABASE_URL}/rest/v1/community_posts` +
     `?select=id,title,category,author_id,author_nickname,views,likes,dislikes,created_at` +
+    `&category=neq.__신고__` +
     `&order=created_at.desc`,
     { headers: h() }
   ).catch(() => null)
@@ -114,6 +115,7 @@ export async function getPostsByUser(userId: string): Promise<Post[]> {
   const res = await fetch(
     `${SUPABASE_URL}/rest/v1/community_posts` +
     `?author_id=eq.${encodeURIComponent(userId)}` +
+    `&category=neq.__신고__` +
     `&select=id,title,category,author_id,author_nickname,views,likes,dislikes,created_at` +
     `&order=created_at.desc`,
     { headers: h() }
