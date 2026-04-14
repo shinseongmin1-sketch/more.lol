@@ -207,6 +207,16 @@ export function findCelebrity(input: string): Celebrity | null {
   return CELEBRITY_MAP[key] ?? null
 }
 
+// gameName#tagLine 형식으로 셀럽 조회
+const ACCOUNT_MAP: Record<string, Celebrity> = {}
+for (const celeb of Object.values(CELEBRITY_MAP)) {
+  ACCOUNT_MAP[celeb.account.toLowerCase()] = celeb
+}
+export function findCelebrityByAccount(gameName: string, tagLine: string): Celebrity | null {
+  const key = `${gameName}#${tagLine}`.toLowerCase()
+  return ACCOUNT_MAP[key] ?? null
+}
+
 export function searchCelebrities(input: string): Celebrity[] {
   if (!input.trim()) return []
   const key = input.trim().toLowerCase()

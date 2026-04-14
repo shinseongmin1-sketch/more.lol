@@ -7,6 +7,7 @@ import {
   champIconUrl, itemIconUrl, profileIconUrl, spellIconUrl, runeIconUrl, QUEUE_LABELS,
 } from '../utils/riotApi'
 import { saveSummoners, saveRankHistory, getRankHistory } from '../utils/supabase'
+import { findCelebrityByAccount } from '../data/celebrities'
 import './SummonerPage.css'
 
 const TIER_COLORS: Record<string, string> = {
@@ -104,6 +105,10 @@ interface MatchData {
   duration: number
   gameStartTimestamp: number
   items: number[]
+  spell1Id: string
+  spell2Id: string
+  primaryRuneId: number
+  subStyleId: number
   teammates: Participant[]
   opponents: Participant[]
   allParticipants: Participant[]
@@ -138,6 +143,8 @@ export default function SummonerPage() {
   const [runeMap, setRuneMap] = useState<Record<number, { icon: string; name: string }>>({})
   const [expandedMatch, setExpandedMatch] = useState<string | null>(null)
   const [teammateIcons, setTeammateIcons] = useState<Record<string, number>>({})
+  const [allMatchIds, setAllMatchIds] = useState<string[]>([])
+  const [loadingMoreVisible, setLoadingMoreVisible] = useState(false)
 
 
   useEffect(() => {
@@ -169,6 +176,7 @@ export default function SummonerPage() {
         if (cancelled) return
         setSummoner(summ)
         setTotalMatchCount(allIds.length)
+        setAllMatchIds(allIds as string[])
 
         const ranks = await getRankedInfo(acc.puuid)
         if (cancelled) return
@@ -242,6 +250,10 @@ export default function SummonerPage() {
               duration: match.info.gameDuration,
               gameStartTimestamp: match.info.gameStartTimestamp,
               items: [me.item0, me.item1, me.item2, me.item3, me.item4, me.item5, me.item6],
+              spell1Id: String(me.summoner1Id),
+              spell2Id: String(me.summoner2Id),
+              primaryRuneId: me.perks?.styles?.[0]?.selections?.[0]?.perk ?? 0,
+              subStyleId: me.perks?.styles?.[1]?.style ?? 0,
               teammates,
               opponents,
               allParticipants,
@@ -311,6 +323,75 @@ export default function SummonerPage() {
     fetchData()
     return () => { cancelled = true }
   }, [gameName, tagLine, refresh])
+
+  // 더보기: 다음 20경기 로드
+  const loadMoreMatches = async () => {
+    if (!account || loadingMoreVisible) return
+    const loaded = matches.length
+    const nextIds = allMatchIds.slice(loaded, loaded + 20)
+    if (nextIds.length === 0) return
+    setLoadingMoreVisible(true)
+    try {
+      const champMap = await getChampMap()
+      const BATCH = 5
+      const details: any[] = []
+      for (let i = 0; i < nextIds.length; i += BATCH) {
+        const batch = await Promise.all(nextIds.slice(i, i + BATCH).map(id => getMatch(id).catch(() => null)))
+        details.push(...batch.filter(Boolean))
+        await new Promise(r => setTimeout(r, 100))
+      }
+      const mapP = (p: any): Participant => {
+        const tc = champMap[String(p.championId)]
+        return {
+          puuid: p.puuid,
+          gameName: p.riotIdGameName ?? '',
+          tagLine: p.riotIdTagline ?? '',
+          championId: tc?.id ?? p.championName,
+          win: p.win, teamId: p.teamId,
+          spell1Id: String(p.summoner1Id),
+          spell2Id: String(p.summoner2Id),
+          primaryRuneId: p.perks?.styles?.[0]?.selections?.[0]?.perk ?? 0,
+          subStyleId: p.perks?.styles?.[1]?.style ?? 0,
+          kills: p.kills, deaths: p.deaths, assists: p.assists,
+          totalDamage: p.totalDamageDealtToChampions ?? 0,
+          cs: (p.totalMinionsKilled ?? 0) + (p.neutralMinionsKilled ?? 0),
+          items: [p.item0, p.item1, p.item2, p.item3, p.item4, p.item5, p.item6],
+        }
+      }
+      const newMatches: MatchData[] = details.map((match: any) => {
+        const pts: any[] = match.info.participants
+        const me = pts.find((p: any) => p.puuid === account.puuid)
+        if (!me) return null
+        const champ = champMap[String(me.championId)]
+        const all = pts.map(mapP)
+        return {
+          matchId: match.metadata.matchId,
+          win: me.win,
+          queueId: match.info.queueId,
+          queueLabel: QUEUE_LABELS[match.info.queueId] ?? '기타',
+          championName: champ?.name ?? me.championName,
+          championId: champ?.id ?? me.championName,
+          champLevel: me.champLevel ?? 1,
+          kills: me.kills, deaths: me.deaths, assists: me.assists,
+          cs: me.totalMinionsKilled + me.neutralMinionsKilled,
+          visionScore: me.visionScore ?? 0,
+          duration: match.info.gameDuration,
+          gameStartTimestamp: match.info.gameStartTimestamp,
+          items: [me.item0, me.item1, me.item2, me.item3, me.item4, me.item5, me.item6],
+          spell1Id: String(me.summoner1Id),
+          spell2Id: String(me.summoner2Id),
+          primaryRuneId: me.perks?.styles?.[0]?.selections?.[0]?.perk ?? 0,
+          subStyleId: me.perks?.styles?.[1]?.style ?? 0,
+          teammates: all.filter(p => p.puuid !== account.puuid && p.teamId === me.teamId),
+          opponents: all.filter(p => p.teamId !== me.teamId),
+          allParticipants: all,
+        } as MatchData
+      }).filter(Boolean) as MatchData[]
+      setMatches(prev => [...prev, ...newMatches])
+    } finally {
+      setLoadingMoreVisible(false)
+    }
+  }
 
   // 갱신 완료 시점 기록
   useEffect(() => {
@@ -487,6 +568,11 @@ export default function SummonerPage() {
 
       {/* ── 본문 ── */}
       <div className="sp-body">
+        {/* 왼쪽 광고 */}
+        <div className="sp-ad-side sp-ad-left">
+          <div className="sp-ad-box">AD</div>
+        </div>
+
         <div className="sp-body-inner">
 
           {/* ── 왼쪽 사이드바 ── */}
@@ -683,22 +769,35 @@ export default function SummonerPage() {
                   <div key={match.matchId} className={`sp-match-card ${match.win ? 'win' : 'lose'}`}>
                     {/* ── 기본 행 ── */}
                     <div className="mc-main-row">
+
+                      {/* 왼쪽: 모드·결과·시간 */}
                       <div className="mc-left">
                         <div className="mc-mode">{match.queueLabel}</div>
-                        <div className={`mc-result ${match.win ? 'win' : 'lose'}`}>{match.win ? '승리' : '패배'}</div>
-                        <div className="mc-sep-line" />
-                        <div className="mc-duration">{formatDuration(match.duration)}</div>
                         <div className="mc-ago">{timeAgo(match.gameStartTimestamp)}</div>
+                        <div className="mc-sep-line" />
+                        <div className={`mc-result ${match.win ? 'win' : 'lose'}`}>{match.win ? '승리' : '패배'}</div>
+                        <div className="mc-duration">{formatDuration(match.duration)}</div>
                       </div>
 
-                      <div className="mc-champ">
+                      {/* 챔피언 + 스펠/룬 */}
+                      <div className="mc-champ-block">
                         <div className="mc-champ-wrap">
-                          <img src={champIconUrl(ddVersion, match.championId)} alt={match.championName} className="mc-champ-img" />
+                          {ddVersion && <img src={champIconUrl(ddVersion, match.championId)} alt={match.championName} className="mc-champ-img" />}
                           <span className="mc-champ-level">{match.champLevel}</span>
                         </div>
-                        <div className="mc-champ-name">{match.championName}</div>
+                        <div className="mc-spells">
+                          {ddVersion && spellMap[match.spell1Id] &&
+                            <img src={spellIconUrl(ddVersion, spellMap[match.spell1Id].id)} alt="" className="mc-spell-img" />}
+                          {ddVersion && spellMap[match.spell2Id] &&
+                            <img src={spellIconUrl(ddVersion, spellMap[match.spell2Id].id)} alt="" className="mc-spell-img" />}
+                          {runeMap[match.primaryRuneId] &&
+                            <img src={runeIconUrl(runeMap[match.primaryRuneId].icon)} alt="" className="mc-rune-img" />}
+                          {runeMap[match.subStyleId] &&
+                            <img src={runeIconUrl(runeMap[match.subStyleId].icon)} alt="" className="mc-rune-img mc-rune-sub" />}
+                        </div>
                       </div>
 
+                      {/* KDA */}
                       <div className="mc-kda">
                         <div className="mc-kda-numbers">
                           <span className="mc-k">{match.kills}</span>
@@ -711,39 +810,48 @@ export default function SummonerPage() {
                         <div className="mc-cs">CS {match.cs} · 시야 {match.visionScore}</div>
                       </div>
 
+                      {/* 아이템 (6개 + 장신구 1개 가로 한 줄) */}
                       <div className="mc-items">
                         <div className="mc-items-row">
                           {match.items.slice(0, 6).map((id, idx) =>
-                            id > 0
-                              ? <img key={idx} src={itemIconUrl(ddVersion, id)} alt="아이템" className="mc-item-img" />
+                            id > 0 && ddVersion
+                              ? <img key={idx} src={itemIconUrl(ddVersion, id)} alt="아이템" className="mc-item-img" onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                               : <div key={idx} className="mc-item-empty" />
                           )}
-                        </div>
-                        <div className="mc-trinket-row">
-                          {match.items[6] > 0
-                            ? <img src={itemIconUrl(ddVersion, match.items[6])} alt="장신구" className="mc-trinket-img" />
+                          {match.items[6] > 0 && ddVersion
+                            ? <img src={itemIconUrl(ddVersion, match.items[6])} alt="장신구" className="mc-item-img mc-trinket-img" onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
                             : <div className="mc-item-empty mc-trinket-empty" />
                           }
                         </div>
+                        <div className="mc-champ-name-label">{match.championName}</div>
                       </div>
 
+                      {/* 참가자 */}
                       <div className="mc-participants">
-                        <div className="mc-team-col">
-                          {blueTeam.slice(0, 5).map(p => (
-                            <div key={p.puuid} className="mc-part">
-                              <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className={`mc-part-icon${p.puuid === account?.puuid ? ' mc-part-me' : ''}`} />
-                              <span className={`mc-part-name${p.puuid === account?.puuid ? ' mc-part-name-me' : ''}`}>{p.gameName || '?'}</span>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="mc-team-col">
-                          {redTeam.slice(0, 5).map(p => (
-                            <div key={p.puuid} className="mc-part">
-                              <img src={champIconUrl(ddVersion, p.championId)} alt={p.gameName} className={`mc-part-icon${p.teamId !== myTeamId ? ' mc-part-enemy' : ''}`} />
-                              <span className="mc-part-name">{p.gameName || '?'}</span>
-                            </div>
-                          ))}
-                        </div>
+                        {[blueTeam, redTeam].map((team, ti) => (
+                          <div key={ti} className="mc-team-col">
+                            {team.slice(0, 5).map(p => {
+                              const celeb = p.gameName && p.tagLine ? findCelebrityByAccount(p.gameName, p.tagLine) : null
+                              const isMe  = p.puuid === account?.puuid
+                              const isEnemy = ti === 1 && p.teamId !== myTeamId
+                              return (
+                                <div
+                                  key={p.puuid}
+                                  className={`mc-part${p.gameName && p.tagLine ? ' mc-part-clickable' : ''}`}
+                                  onClick={() => p.gameName && p.tagLine && navigate(`/summoner/${encodeURIComponent(`${p.gameName}#${p.tagLine}`)}`)}
+                                >
+                                  {celeb && (
+                                    <span className={`mc-celeb-badge ${celeb.type === 'pro' ? 'pro' : 'streamer'}`}>
+                                      {celeb.type === 'pro' ? 'P' : 'S'}
+                                    </span>
+                                  )}
+                                  {ddVersion && <img src={champIconUrl(ddVersion, p.championId)} alt="" className={`mc-part-icon${isMe ? ' mc-part-me' : isEnemy ? ' mc-part-enemy' : ''}`} />}
+                                  <span className={`mc-part-name${isMe ? ' mc-part-name-me' : ''}`}>{p.gameName || '?'}</span>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        ))}
                       </div>
 
                       {/* 확장 토글 버튼 */}
@@ -755,79 +863,231 @@ export default function SummonerPage() {
                     </div>
 
                     {/* ── 확장 상세 뷰 ── */}
-                    {isExpanded && match.allParticipants.length > 0 && (
-                      <div className="mc-detail">
-                        {[blueTeam, redTeam].map((team, ti) => {
-                          const isMyTeam = (ti === 0 ? 100 : 200) === myTeamId
-                          return (
-                            <div key={ti} className={`mc-detail-team ${ti === 0 ? 'blue' : 'red'}`}>
-                              <div className="mc-detail-team-label">{ti === 0 ? '🔵 블루팀' : '🔴 레드팀'}{isMyTeam ? ' (내 팀)' : ''}</div>
-                              <div className="mc-detail-header">
-                                <span className="mc-dh-champ">챔피언</span>
-                                <span className="mc-dh-name">닉네임</span>
-                                <span className="mc-dh-kda">KDA</span>
-                                <span className="mc-dh-dmg">피해량</span>
-                                <span className="mc-dh-cs">CS</span>
-                                <span className="mc-dh-items">아이템</span>
-                              </div>
-                              {team.map(p => {
-                                const pkda = p.deaths === 0
-                                  ? (p.kills + p.assists).toFixed(2)
-                                  : ((p.kills + p.assists) / p.deaths).toFixed(2)
-                                const spell1 = spellMap[p.spell1Id]
-                                const spell2 = spellMap[p.spell2Id]
-                                const pRune  = runeMap[p.primaryRuneId]
-                                const subStyle = runeMap[p.subStyleId]
-                                const isMe = p.puuid === account?.puuid
-                                return (
-                                  <div key={p.puuid} className={`mc-detail-row ${isMe ? 'me' : ''}`}>
-                                    <div className="mc-dr-champ">
-                                      <div className="mc-dr-icons">
-                                        <img src={champIconUrl(ddVersion, p.championId)} alt="" className="mc-dr-champ-img" />
-                                        <div className="mc-dr-spells">
-                                          {spell1 && <img src={spellIconUrl(ddVersion, spell1.id)} alt={spell1.name} className="mc-dr-spell" />}
-                                          {spell2 && <img src={spellIconUrl(ddVersion, spell2.id)} alt={spell2.name} className="mc-dr-spell" />}
+                    {isExpanded && match.allParticipants.length > 0 && (() => {
+                      const teams = [
+                        { team: blueTeam, teamId: 100 },
+                        { team: redTeam,  teamId: 200 },
+                      ]
+                      return (
+                        <div className="mc-detail">
+                          {teams.map(({ team, teamId: tid }) => {
+                            const isWinTeam = team[0]?.win ?? false
+                            const isMyTeam  = tid === myTeamId
+                            const maxDmg     = Math.max(...team.map(p => p.totalDamage), 1)
+                            const avgDmg     = team.reduce((s, p) => s + p.totalDamage, 0) / Math.max(team.length, 1)
+                            const avgDeaths  = team.reduce((s, p) => s + p.deaths, 0) / Math.max(team.length, 1)
+                            const avgCs      = team.reduce((s, p) => s + p.cs, 0) / Math.max(team.length, 1)
+                            const avgKills   = team.reduce((s, p) => s + p.kills, 0) / Math.max(team.length, 1)
+                            const avgAssists = team.reduce((s, p) => s + p.assists, 0) / Math.max(team.length, 1)
+                            const teamAvgKda = team.reduce((s, p) => s + (p.deaths === 0 ? p.kills + p.assists : (p.kills + p.assists) / p.deaths), 0) / Math.max(team.length, 1)
+
+                            const teamKa = team.reduce((s, q) => s + q.kills + q.assists, 0) / Math.max(team.length, 1)
+
+                            const getStyle = (p: typeof team[0], roleIdx: number): [{ label: string; cls: string }, { label: string; cls: string } | null] => {
+                              const dur          = (match.duration / 60) || 1
+                              const teamTotalDmg = team.reduce((s, q) => s + q.totalDamage, 0) || 1
+                              const teamKills    = team.reduce((s, q) => s + q.kills, 0) || 1
+                              const kda      = p.deaths === 0 ? p.kills + p.assists : (p.kills + p.assists) / p.deaths
+                              const dmgShare = p.totalDamage / teamTotalDmg
+                              const kp       = (p.kills + p.assists) / teamKills
+                              const cpm      = p.cs / dur
+
+                              // KDA·딜 모두 준수하면 흔들림 제외
+                              const skipShaky = kda >= 3 && dmgShare >= 0.28
+
+                              // ── 라인 태그 (우선순위: 1.흔들림·리스크 → 2.캐리·폭딜 → 3.일반 → 4.안정적) ──
+                              let lineTag: { label: string; cls: string }
+
+                              if (roleIdx === 0) {
+                                // 탑: 흔들림
+                                if      (!skipShaky && (p.deaths >= 8 || (p.deaths >= 6 && dmgShare < 0.15)))  lineTag = { label: '흔들림',     cls: 'troll' }
+                                // 탑: 캐리·폭딜
+                                else if (p.win && kda >= 3 && dmgShare >= 0.25)                lineTag = { label: '캐리',        cls: 'carry' }
+                                else if (dmgShare >= 0.28 && kda >= 2.5)                       lineTag = { label: '딜 압박',     cls: 'carry' }
+                                // 탑: 일반
+                                else if (p.deaths <= 3 && p.assists >= avgAssists)             lineTag = { label: '철벽',        cls: 'stable' }
+                                else if (cpm >= 6.5)                                            lineTag = { label: '사이드 압박', cls: 'strong' }
+                                else if (kp >= 0.65)                                            lineTag = { label: '한타 강세',   cls: 'jg-gank' }
+                                else if (p.cs >= avgCs * 1.15)                                 lineTag = { label: '라인전 우세', cls: 'strong' }
+                                else if (cpm >= 6.0)                                            lineTag = { label: '성장 중',     cls: 'jg-ks' }
+                                else                                                            lineTag = { label: '안정적',      cls: 'stable' }
+                              } else if (roleIdx === 1) {
+                                // 정글: 흔들림
+                                if      (!skipShaky && p.deaths >= 7 && cpm < 4.5)             lineTag = { label: '흔들림',      cls: 'troll' }
+                                // 정글: 캐리·영향력
+                                else if (p.win && kp >= 0.6 && dmgShare >= 0.2)               lineTag = { label: '캐리 영향력',  cls: 'carry' }
+                                // 정글: 일반
+                                else if (p.assists >= 8 && kp >= 0.6)                          lineTag = { label: '팀 지원',     cls: 'jg-gank' }
+                                else if (kp >= 0.65)                                            lineTag = { label: '갱킹 활발',   cls: 'jg-gank' }
+                                else if (p.win && kda >= 3.0)                                  lineTag = { label: '흐름 좋음',   cls: 'jg-impact' }
+                                else if (p.deaths <= 5 && cpm >= 5.0)                          lineTag = { label: '운영 중심',   cls: 'stable' }
+                                else if (cpm >= 4.5)                                            lineTag = { label: '성장 중',     cls: 'jg-ks' }
+                                else if (kp >= 0.5)                                             lineTag = { label: '갱킹 활발',   cls: 'jg-gank' }
+                                else                                                            lineTag = { label: '안정적',      cls: 'stable' }
+                              } else if (roleIdx === 2) {
+                                // 미드: 흔들림
+                                if      (!skipShaky && (p.deaths >= 7 || (p.deaths >= 6 && dmgShare < 0.15)))  lineTag = { label: '흔들림',      cls: 'troll' }
+                                // 미드: 캐리·폭딜
+                                else if (p.win && dmgShare >= 0.28 && kda >= 3.5)              lineTag = { label: '캐리',        cls: 'carry' }
+                                else if (dmgShare >= 0.3)                                       lineTag = { label: '폭딜',        cls: 'carry' }
+                                // 미드: 일반
+                                else if (kp >= 0.7)                                             lineTag = { label: '플레이메이킹', cls: 'jg-gank' }
+                                else if (kp >= 0.65)                                            lineTag = { label: '로밍 활발',   cls: 'jg-gank' }
+                                else if (p.deaths <= 5 && cpm >= 6.5)                          lineTag = { label: '운영 플레이', cls: 'jg-ks' }
+                                else if (p.cs >= avgCs * 1.1)                                  lineTag = { label: '라인킹',      cls: 'strong' }
+                                else if (kda >= 2.5 && dmgShare >= 0.22 && p.deaths <= 5)      lineTag = { label: '균형 잡힘',   cls: 'stable' }
+                                else                                                            lineTag = { label: '안정적',      cls: 'stable' }
+                              } else if (roleIdx === 3) {
+                                // 원딜: 흔들림
+                                if      (!skipShaky && (p.deaths >= 6 || (p.deaths >= 5 && dmgShare < 0.15)))  lineTag = { label: '흔들림',      cls: 'troll' }
+                                // 원딜: 캐리·폭딜
+                                else if (p.win && dmgShare >= 0.3 && kda >= 3)                 lineTag = { label: '캐리',        cls: 'carry' }
+                                else if (dmgShare >= 0.32)                                      lineTag = { label: '폭딜',        cls: 'carry' }
+                                // 원딜: 일반
+                                else if (p.deaths <= 3)                                         lineTag = { label: '생존력 좋음', cls: 'strong' }
+                                else if (cpm >= 7.0)                                            lineTag = { label: '성장 중',     cls: 'jg-ks' }
+                                else if (p.cs >= avgCs * 1.1)                                  lineTag = { label: '파밍형',      cls: 'jg-ks' }
+                                else if (p.deaths <= 4 && kda >= 2.8)                          lineTag = { label: '딜 집중',     cls: 'carry' }
+                                else                                                            lineTag = { label: '안정적',      cls: 'stable' }
+                              } else {
+                                // 서폿: 흔들림
+                                if      (!skipShaky && p.deaths >= 8 && kp < 0.4)              lineTag = { label: '흔들림',      cls: 'troll' }
+                                // 서폿: 최고 기여
+                                else if (p.assists >= 10 && kp >= 0.65)                        lineTag = { label: '팀 케어',     cls: 'jg-gank' }
+                                // 서폿: 일반
+                                else if (kp >= 0.7)                                             lineTag = { label: '플레이메이킹', cls: 'jg-gank' }
+                                else if (kp >= 0.65)                                            lineTag = { label: '이니시 주도', cls: 'jg-gank' }
+                                else if (p.assists >= 8 && p.deaths <= 6)                      lineTag = { label: '팀 지원',     cls: 'strong' }
+                                else if (p.assists >= 6 && kp >= 0.5)                          lineTag = { label: '로밍 활발',   cls: 'jg-gank' }
+                                else                                                            lineTag = { label: '안정적',      cls: 'stable' }
+                              }
+
+                              // ── 공통 태그 ──
+                              let commonTag: { label: string; cls: string } | null = null
+                              // 억울함: 패배인데 딜·KDA·킬관여 모두 준수한 경우
+                              if (!p.win && dmgShare >= 0.28 && kda >= 3 && p.deaths <= 7 && kp >= 0.6)
+                                                                                               commonTag = { label: '억울함',    cls: 'unfair' }
+                              else if (p.deaths >= 7 && dmgShare >= 0.28)                     commonTag = { label: '하이리스크', cls: 'weak' }
+                              else if (p.kills >= 10 || dmgShare >= 0.35)                     commonTag = { label: '한방 있음', cls: 'carry' }
+
+                              return [lineTag!, commonTag]
+                            }
+                            return (
+                              <div key={tid} className={`mc-detail-team ${isWinTeam ? 'win' : 'lose'}`}>
+                                {/* 팀 헤더 */}
+                                <div className={`mc-dt-header ${isWinTeam ? 'win' : 'lose'}`}>
+                                  <div className="mc-dt-header-left">
+                                    <span className="mc-dt-result">{isWinTeam ? '승리' : '패배'}</span>
+                                    {isMyTeam && <span className="mc-dt-me-badge">내 팀</span>}
+                                  </div>
+                                  <span className="mc-dt-header-col">스타일 유형</span>
+                                  <span className="mc-dt-header-col">KDA</span>
+                                  <span className="mc-dt-header-col">피해량</span>
+                                  <span className="mc-dt-header-col">CS</span>
+                                  <span className="mc-dt-header-col">아이템</span>
+                                </div>
+                                {/* 플레이어 행 */}
+                                {team.map((p, roleIdx) => {
+                                  const pkda   = p.deaths === 0 ? (p.kills + p.assists).toFixed(2) : ((p.kills + p.assists) / p.deaths).toFixed(2)
+                                  const [lineStyle, commonStyle] = getStyle(p, roleIdx)
+                                  const spell1  = spellMap[p.spell1Id]
+                                  const spell2  = spellMap[p.spell2Id]
+                                  const pRune   = runeMap[p.primaryRuneId]
+                                  const subSty  = runeMap[p.subStyleId]
+                                  const isMe    = p.puuid === account?.puuid
+                                  const dmgPct  = Math.round((p.totalDamage / maxDmg) * 100)
+                                  return (
+                                    <div key={p.puuid} className={`mc-dr-row ${isMe ? 'me' : ''} ${isWinTeam ? 'win' : 'lose'}`}>
+                                      {/* 챔피언 + 스펠/룬 */}
+                                      <div className="mc-dr-champ-cell">
+                                        <div className="mc-dr-champ-wrap">
+                                          {ddVersion && <img src={champIconUrl(ddVersion, p.championId)} alt="" className="mc-dr-champ-img" />}
                                         </div>
-                                        <div className="mc-dr-runes">
-                                          {pRune && <img src={runeIconUrl(pRune.icon)} alt={pRune.name} className="mc-dr-rune" />}
-                                          {subStyle && <img src={runeIconUrl(subStyle.icon)} alt={subStyle.name} className="mc-dr-rune mc-dr-rune-sub" />}
+                                        <div className="mc-dr-spells">
+                                          {spell1 && ddVersion && <img src={spellIconUrl(ddVersion, spell1.id)} alt="" className="mc-dr-spell" />}
+                                          {spell2 && ddVersion && <img src={spellIconUrl(ddVersion, spell2.id)} alt="" className="mc-dr-spell" />}
+                                          {pRune  && <img src={runeIconUrl(pRune.icon)} alt="" className="mc-dr-rune" />}
+                                          {subSty && <img src={runeIconUrl(subSty.icon)} alt="" className="mc-dr-rune mc-dr-rune-sub" />}
                                         </div>
                                       </div>
+                                      {/* 닉네임 */}
+                                      <div className="mc-dr-name-cell">
+                                        <span
+                                          className={`mc-dr-nick ${isMe ? 'me' : ''}`}
+                                          onClick={() => p.gameName && navigate(`/summoner/${encodeURIComponent(`${p.gameName}#${p.tagLine}`)}`)}
+                                        >{p.gameName || '?'}</span>
+                                        {p.tagLine && <span className="mc-dr-tag">#{p.tagLine}</span>}
+                                      </div>
+                                      {/* 스타일 유형 */}
+                                      <div className="mc-dr-style-cell">
+                                        <span className={`mc-dr-style-badge ${lineStyle.cls}`}>{lineStyle.label}</span>
+                                        {commonStyle && <span className={`mc-dr-style-badge ${commonStyle.cls}`}>{commonStyle.label}</span>}
+                                      </div>
+                                      {/* KDA */}
+                                      <div className="mc-dr-kda-cell">
+                                        <span className="mc-dr-kda-nums">
+                                          <span className="mc-dr-k">{p.kills}</span>
+                                          <span className="mc-dr-slash"> / </span>
+                                          <span className="mc-dr-d">{p.deaths}</span>
+                                          <span className="mc-dr-slash"> / </span>
+                                          <span className="mc-dr-a">{p.assists}</span>
+                                        </span>
+                                        <span className="mc-dr-kda-ratio">{pkda} KDA</span>
+                                      </div>
+                                      {/* 피해량 + 바 */}
+                                      <div className="mc-dr-dmg-cell">
+                                        <span className="mc-dr-dmg-num">{p.totalDamage.toLocaleString()}</span>
+                                        <div className="mc-dr-dmg-bar-wrap">
+                                          <div className="mc-dr-dmg-bar" style={{ width: `${dmgPct}%`, background: isWinTeam ? '#3b82f6' : '#ef4444' }} />
+                                        </div>
+                                      </div>
+                                      {/* CS */}
+                                      <div className="mc-dr-cs-cell">
+                                        <span>{p.cs}</span>
+                                        <span className="mc-dr-cs-per-min">({(p.cs / (match.duration / 60)).toFixed(1)}/분)</span>
+                                      </div>
+                                      {/* 아이템 */}
+                                      <div className="mc-dr-items-cell">
+                                        {p.items.slice(0, 6).map((id, idx) =>
+                                          id > 0 && ddVersion
+                                            ? <img key={idx} src={itemIconUrl(ddVersion, id)} alt="" className="mc-dr-item" onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                                            : <div key={idx} className="mc-dr-item-empty" />
+                                        )}
+                                        {p.items[6] > 0 && ddVersion
+                                          ? <img src={itemIconUrl(ddVersion, p.items[6])} alt="" className="mc-dr-item mc-dr-trinket" onError={e => { (e.target as HTMLImageElement).style.display = 'none' }} />
+                                          : <div className="mc-dr-item-empty mc-dr-trinket" />}
+                                      </div>
                                     </div>
-                                    <div className="mc-dr-name">
-                                      <span
-                                        className={`mc-dr-nick ${isMe ? 'me' : ''}`}
-                                        onClick={() => navigate(`/summoner/${encodeURIComponent(`${p.gameName}#${p.tagLine}`)}`)}
-                                        style={{ cursor: 'pointer' }}
-                                      >{p.gameName || '?'}</span>
-                                      {p.tagLine && <span className="mc-dr-tag">#{p.tagLine}</span>}
-                                    </div>
-                                    <div className="mc-dr-kda">
-                                      <span>{p.kills}/<span style={{ color:'#ef4444' }}>{p.deaths}</span>/{p.assists}</span>
-                                      <span className="mc-dr-kda-ratio">{pkda} KDA</span>
-                                    </div>
-                                    <div className="mc-dr-dmg">{p.totalDamage.toLocaleString()}</div>
-                                    <div className="mc-dr-cs">{p.cs}</div>
-                                    <div className="mc-dr-items">
-                                      {p.items.slice(0, 7).map((id, idx) =>
-                                        id > 0
-                                          ? <img key={idx} src={itemIconUrl(ddVersion, id)} alt="" className="mc-dr-item" />
-                                          : <div key={idx} className="mc-dr-item-empty" />
-                                      )}
-                                    </div>
-                                  </div>
-                                )
-                              })}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    )}
+                                  )
+                                })}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      )
+                    })()}
                   </div>
                 )
               })
             )}
+          {/* 더보기 버튼 */}
+          {matches.length < allMatchIds.length && (
+            <button
+              className={`sp-load-more-btn ${loadingMoreVisible ? 'loading' : ''}`}
+              onClick={loadMoreMatches}
+              disabled={loadingMoreVisible}
+            >
+              {loadingMoreVisible
+                ? '불러오는 중...'
+                : `더보기 (${matches.length} / ${allMatchIds.length}경기)`}
+            </button>
+          )}
           </div>
+        </div>
+
+        {/* 오른쪽 광고 */}
+        <div className="sp-ad-side sp-ad-right">
+          <div className="sp-ad-box">AD</div>
         </div>
       </div>
     </div>
