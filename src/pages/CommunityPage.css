@@ -166,7 +166,8 @@
 
 .sidebar-post {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
   padding: 10px 16px;
   border-bottom: 1px solid var(--border-color);
   cursor: pointer;
@@ -176,7 +177,14 @@
 .sidebar-post:last-child { border-bottom: none; }
 .sidebar-post:hover { background: var(--bg-card-hover); }
 
+.sidebar-post-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
 .sidebar-post-cat { font-size: 12px; font-weight: 600; flex-shrink: 0; }
+.sidebar-post-likes { font-size: 11px; color: #ef4444; font-weight: 600; flex-shrink: 0; }
 .sidebar-post-title { font-size: 12px; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* ═══════════════════════════════════════

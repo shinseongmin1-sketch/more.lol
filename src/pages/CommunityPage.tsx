@@ -31,7 +31,19 @@ export default function CommunityPage() {
   const pinnedFiltered = pinned.filter(p => activeTab === '전체' || p.category === activeTab)
   const normalFiltered = normal.filter(p => activeTab === '전체' || p.category === activeTab)
   const sortedFiltered = [...pinnedFiltered, ...normalFiltered]
-  const hotPosts = allPosts.filter(p => p.likes >= 5).slice(0, 5)
+  // 인기글 기준: 좋아요×10 + 조회수×0.1 점수, 최근 7일 이내 게시글 우선
+  // 최소 조건: 좋아요 1개 이상, 공지글 제외
+  const now = Date.now()
+  const hotPosts = allPosts
+    .filter(p => p.authorId !== 'admin' && p.likes >= 1)
+    .map(p => {
+      const ageDays = (now - new Date(p.createdAt).getTime()) / 86400000
+      const timeBonus = Math.max(0, (7 - ageDays) / 7) * 15  // 7일 이내 최대 +15점
+      const score = p.likes * 10 + p.views * 0.1 + timeBonus
+      return { ...p, score }
+    })
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
 
   return (
     <div className="subpage community-page">
@@ -116,9 +128,12 @@ export default function CommunityPage() {
                     onClick={() => navigate(`/post/${post.id}`)}
                     style={{ cursor: 'pointer' }}
                   >
-                    <span className="sidebar-post-cat" style={{ color: catColors[post.category] || 'var(--text-muted)' }}>
-                      [{post.category}]
-                    </span>
+                    <div className="sidebar-post-top">
+                      <span className="sidebar-post-cat" style={{ color: catColors[post.category] || 'var(--text-muted)' }}>
+                        [{post.category}]
+                      </span>
+                      <span className="sidebar-post-likes">❤ {post.likes}</span>
+                    </div>
                     <span className="sidebar-post-title">{post.title}</span>
                   </div>
                 ))
