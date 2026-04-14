@@ -1,5 +1,10 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 import Layout from './components/Layout'
+
+declare global {
+  interface Window { gtag?: (...args: unknown[]) => void }
+}
 import HomePage from './pages/HomePage'
 import AramPage from './pages/AramPage'
 import RankedPage from './pages/RankedPage'
@@ -25,6 +30,14 @@ import AdminReportsPage from './pages/AdminReportsPage'
 import './App.css'
 
 function App() {
+  const location = useLocation()
+
+  useEffect(() => {
+    window.gtag?.('event', 'page_view', {
+      page_path: location.pathname + location.search,
+    })
+  }, [location])
+
   return (
     <Layout>
       <Routes>
