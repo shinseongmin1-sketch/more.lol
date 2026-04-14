@@ -455,8 +455,15 @@ export default function SummonerPage() {
             return false
           })
         }
-      } catch {
-        // 404 = 게임 중 아님, 무시
+      } catch (e) {
+        const code = String((e as Error).message)
+        if (code !== '404' && !cancelled) {
+          setLiveError(
+            code === '403' ? '인게임 조회 실패 (API 키 권한 없음)' :
+            code === '429' ? '인게임 조회 실패 (잠시 후 재시도)' :
+            `인게임 조회 실패 (${code})`
+          )
+        }
       }
     }
 
