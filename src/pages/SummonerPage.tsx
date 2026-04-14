@@ -978,7 +978,7 @@ export default function SummonerPage() {
                                     <span className="mc-dt-result">{isWinTeam ? '승리' : '패배'}</span>
                                     {isMyTeam && <span className="mc-dt-me-badge">내 팀</span>}
                                   </div>
-                                  <span className="mc-dt-header-col">스타일 유형</span>
+                                  <span className="mc-dt-header-col">플레이 유형</span>
                                   <span className="mc-dt-header-col">KDA</span>
                                   <span className="mc-dt-header-col">피해량</span>
                                   <span className="mc-dt-header-col">CS</span>
