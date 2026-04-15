@@ -6,7 +6,7 @@ import {
   toggleDislike, isDislikedByUser,
   getComments, addComment, deletePost, deleteComment, updateComment, formatDate,
 } from '../utils/postsStore'
-import { addReport, hasReportedLocally } from '../utils/reportStore'
+import { addReport, hasReportedLocally, addCommentReport, hasReportedCommentLocally } from '../utils/reportStore'
 import { getAvatar } from '../utils/avatarStore'
 import type { Post, Comment } from '../utils/postsStore'
 import './PostDetailPage.css'
@@ -45,11 +45,18 @@ export default function PostDetailPage() {
   const [editingCommentId, setEditingCommentId]         = useState<string | null>(null)
   const [editingCommentText, setEditingCommentText]     = useState('')
   const [confirmDeleteComment, setConfirmDeleteComment] = useState<string | null>(null)
+  const [replyToId, setReplyToId]                       = useState<string | null>(null)
+  const [replyText, setReplyText]                       = useState('')
   const [reportOpen, setReportOpen]   = useState(false)
   const [reportReason, setReportReason] = useState('')
   const [reportDetail, setReportDetail] = useState('')
   const [reportSubmitting, setReportSubmitting] = useState(false)
   const [reportDone, setReportDone]   = useState(false)
+  const [reportCommentTarget, setReportCommentTarget] = useState<{id: string; content: string} | null>(null)
+  const [commentReportReason, setCommentReportReason] = useState('')
+  const [commentReportDetail, setCommentReportDetail] = useState('')
+  const [commentReportSubmitting, setCommentReportSubmitting] = useState(false)
+  const [commentReportDone, setCommentReportDone] = useState(false)
 
   const isAuthor     = user && post ? user.id === post.authorId : false
   const canManage    = isAuthor || isAdmin(user)
@@ -111,7 +118,7 @@ export default function PostDetailPage() {
   const handleDeleteComment = async (commentId: string) => {
     const ok = await deleteComment(commentId)
     if (ok) {
-      setComments(prev => prev.filter(c => c.id !== commentId))
+      setComments(prev => prev.filter(c => c.id !== commentId && c.parentId !== commentId))
       setConfirmDeleteComment(null)
     }
   }
@@ -150,6 +157,7 @@ export default function PostDetailPage() {
     if (!user || !id || !commentText.trim()) return
     const newComment = await addComment({
       postId:          id,
+      parentId:        null,
       authorId:        user.id,
       authorNickname:  user.nickname,
       content:         commentText.trim(),
@@ -157,6 +165,45 @@ export default function PostDetailPage() {
     if (newComment) {
       setComments(prev => [...prev, newComment])
       setCommentText('')
+    }
+  }
+
+  const handleCommentReport = async () => {
+    if (!user || !post || !reportCommentTarget || !commentReportReason) return
+    setCommentReportSubmitting(true)
+    await addCommentReport({
+      postId:           post.id,
+      postTitle:        post.title,
+      commentId:        reportCommentTarget.id,
+      commentContent:   reportCommentTarget.content,
+      reporterId:       user.id,
+      reporterNickname: user.nickname,
+      reason:           commentReportReason,
+      detail:           commentReportDetail.trim(),
+    })
+    setCommentReportSubmitting(false)
+    setCommentReportDone(true)
+    setTimeout(() => {
+      setReportCommentTarget(null)
+      setCommentReportDone(false)
+      setCommentReportReason('')
+      setCommentReportDetail('')
+    }, 1500)
+  }
+
+  const handleReply = async (parentId: string) => {
+    if (!user || !id || !replyText.trim()) return
+    const newReply = await addComment({
+      postId:          id,
+      parentId,
+      authorId:        user.id,
+      authorNickname:  user.nickname,
+      content:         replyText.trim(),
+    })
+    if (newReply) {
+      setComments(prev => [...prev, newReply])
+      setReplyText('')
+      setReplyToId(null)
     }
   }
 
@@ -399,57 +446,190 @@ export default function PostDetailPage() {
             {comments.length === 0 ? (
               <div className="comment-empty">첫 번째 댓글을 남겨보세요!</div>
             ) : (
-              comments.map(c => {
+              comments.filter(c => !c.parentId).map(c => {
+                const replies     = comments.filter(r => r.parentId === c.id)
                 const isMyComment = !!(user && c.authorId === user.id)
                 const isEditing   = editingCommentId === c.id
                 const confirmDel  = confirmDeleteComment === c.id
+                const isReplying  = replyToId === c.id
                 return (
-                  <div key={c.id} className="comment-item">
-                    <div className="comment-avatar">
-                      {getAvatar(c.authorId)
-                        ? <img src={getAvatar(c.authorId)!} alt="" className="author-avatar-img" />
-                        : c.authorNickname.slice(0, 1).toUpperCase()
-                      }
-                    </div>
-                    <div className="comment-body">
-                      <div className="comment-header">
-                        <span className="comment-nick">{c.authorNickname}</span>
-                        <span className="comment-time">{formatDate(c.createdAt)}</span>
-                        {isMyComment && !isEditing && (
-                          <div className="comment-actions">
-                            {confirmDel ? (
-                              <>
-                                <span className="comment-confirm-text">삭제할까요?</span>
-                                <button className="comment-action-yes" onClick={() => handleDeleteComment(c.id)}>삭제</button>
-                                <button className="comment-action-no" onClick={() => setConfirmDeleteComment(null)}>취소</button>
-                              </>
-                            ) : (
-                              <>
-                                <button className="comment-action-btn" onClick={() => handleEditComment(c)}>수정</button>
-                                <button className="comment-action-btn delete" onClick={() => setConfirmDeleteComment(c.id)}>삭제</button>
-                              </>
-                            )}
+                  <div key={c.id} className="comment-thread">
+                    <div className="comment-item">
+                      <div className="comment-avatar">
+                        {getAvatar(c.authorId)
+                          ? <img src={getAvatar(c.authorId)!} alt="" className="author-avatar-img" />
+                          : c.authorNickname.slice(0, 1).toUpperCase()
+                        }
+                      </div>
+                      <div className="comment-body">
+                        <div className="comment-header">
+                          <span className="comment-nick">{c.authorNickname}</span>
+                          <span className="comment-time">{formatDate(c.createdAt)}</span>
+                          {(isMyComment || isAdmin(user)) && !isEditing && (
+                            <div className="comment-actions">
+                              {confirmDel ? (
+                                <>
+                                  <span className="comment-confirm-text">삭제할까요?</span>
+                                  <button className="comment-action-yes" onClick={() => handleDeleteComment(c.id)}>삭제</button>
+                                  <button className="comment-action-no" onClick={() => setConfirmDeleteComment(null)}>취소</button>
+                                </>
+                              ) : (
+                                <>
+                                  {isMyComment && <button className="comment-action-btn" onClick={() => handleEditComment(c)}>수정</button>}
+                                  <button className="comment-action-btn delete" onClick={() => setConfirmDeleteComment(c.id)}>삭제</button>
+                                </>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {isEditing ? (
+                          <div className="comment-edit-area">
+                            <textarea
+                              className="comment-input"
+                              value={editingCommentText}
+                              onChange={e => setEditingCommentText(e.target.value)}
+                              rows={3}
+                              autoFocus
+                            />
+                            <div className="comment-edit-footer">
+                              <button className="comment-edit-save" onClick={() => handleSaveComment(c.id)} disabled={!editingCommentText.trim()}>저장</button>
+                              <button className="comment-edit-cancel" onClick={() => setEditingCommentId(null)}>취소</button>
+                            </div>
                           </div>
+                        ) : (
+                          <>
+                            <p className="comment-content">{c.content}</p>
+                            <div className="comment-bottom-actions">
+                              {user && (
+                                <button
+                                  className={`reply-toggle-btn ${isReplying ? 'active' : ''}`}
+                                  onClick={() => { setReplyToId(isReplying ? null : c.id); setReplyText('') }}
+                                >
+                                  {isReplying ? '취소' : '답글 달기'}
+                                </button>
+                              )}
+                              {user && !isMyComment && (() => {
+                                const alreadyRep = hasReportedCommentLocally(user.id, c.id)
+                                return (
+                                  <button
+                                    className={`comment-report-btn ${alreadyRep ? 'reported' : ''}`}
+                                    onClick={() => !alreadyRep && setReportCommentTarget({ id: c.id, content: c.content })}
+                                    title={alreadyRep ? '이미 신고한 댓글입니다' : '댓글 신고'}
+                                    disabled={alreadyRep}
+                                  >
+                                    {alreadyRep ? '신고완료' : '신고'}
+                                  </button>
+                                )
+                              })()}
+                            </div>
+                          </>
                         )}
                       </div>
-                      {isEditing ? (
-                        <div className="comment-edit-area">
-                          <textarea
-                            className="comment-input"
-                            value={editingCommentText}
-                            onChange={e => setEditingCommentText(e.target.value)}
-                            rows={3}
-                            autoFocus
-                          />
-                          <div className="comment-edit-footer">
-                            <button className="comment-edit-save" onClick={() => handleSaveComment(c.id)} disabled={!editingCommentText.trim()}>저장</button>
-                            <button className="comment-edit-cancel" onClick={() => setEditingCommentId(null)}>취소</button>
+                    </div>
+
+                    {/* 답글 입력 폼 */}
+                    {isReplying && (
+                      <div className="reply-form">
+                        <textarea
+                          className="comment-input reply-input"
+                          placeholder={`${c.authorNickname}님에게 답글 달기...`}
+                          value={replyText}
+                          onChange={e => setReplyText(e.target.value)}
+                          rows={2}
+                          autoFocus
+                          onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleReply(c.id) }}
+                        />
+                        <div className="reply-form-footer">
+                          <span className="comment-form-hint">Ctrl+Enter로 등록</span>
+                          <div style={{ display: 'flex', gap: '6px' }}>
+                            <button className="comment-edit-cancel" onClick={() => { setReplyToId(null); setReplyText('') }}>취소</button>
+                            <button
+                              className="comment-edit-save"
+                              onClick={() => handleReply(c.id)}
+                              disabled={!replyText.trim()}
+                            >등록</button>
                           </div>
                         </div>
-                      ) : (
-                        <p className="comment-content">{c.content}</p>
-                      )}
-                    </div>
+                      </div>
+                    )}
+
+                    {/* 대댓글 목록 */}
+                    {replies.length > 0 && (
+                      <div className="reply-list">
+                        {replies.map(r => {
+                          const isMyReply     = !!(user && r.authorId === user.id)
+                          const isEditingRep  = editingCommentId === r.id
+                          const confirmDelRep = confirmDeleteComment === r.id
+                          return (
+                            <div key={r.id} className="reply-item">
+                              <span className="reply-arrow">↳</span>
+                              <div className="comment-avatar reply-avatar">
+                                {getAvatar(r.authorId)
+                                  ? <img src={getAvatar(r.authorId)!} alt="" className="author-avatar-img" />
+                                  : r.authorNickname.slice(0, 1).toUpperCase()
+                                }
+                              </div>
+                              <div className="comment-body">
+                                <div className="comment-header">
+                                  <span className="comment-nick">{r.authorNickname}</span>
+                                  <span className="comment-time">{formatDate(r.createdAt)}</span>
+                                  {(isMyReply || isAdmin(user)) && !isEditingRep && (
+                                    <div className="comment-actions">
+                                      {confirmDelRep ? (
+                                        <>
+                                          <span className="comment-confirm-text">삭제할까요?</span>
+                                          <button className="comment-action-yes" onClick={() => handleDeleteComment(r.id)}>삭제</button>
+                                          <button className="comment-action-no" onClick={() => setConfirmDeleteComment(null)}>취소</button>
+                                        </>
+                                      ) : (
+                                        <>
+                                          {isMyReply && <button className="comment-action-btn" onClick={() => handleEditComment(r)}>수정</button>}
+                                          <button className="comment-action-btn delete" onClick={() => setConfirmDeleteComment(r.id)}>삭제</button>
+                                        </>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                                {isEditingRep ? (
+                                  <div className="comment-edit-area">
+                                    <textarea
+                                      className="comment-input"
+                                      value={editingCommentText}
+                                      onChange={e => setEditingCommentText(e.target.value)}
+                                      rows={2}
+                                      autoFocus
+                                    />
+                                    <div className="comment-edit-footer">
+                                      <button className="comment-edit-save" onClick={() => handleSaveComment(r.id)} disabled={!editingCommentText.trim()}>저장</button>
+                                      <button className="comment-edit-cancel" onClick={() => setEditingCommentId(null)}>취소</button>
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <p className="comment-content">{r.content}</p>
+                                    {user && !isMyReply && (() => {
+                                      const alreadyRepR = hasReportedCommentLocally(user.id, r.id)
+                                      return (
+                                        <div className="comment-bottom-actions">
+                                          <button
+                                            className={`comment-report-btn ${alreadyRepR ? 'reported' : ''}`}
+                                            onClick={() => !alreadyRepR && setReportCommentTarget({ id: r.id, content: r.content })}
+                                            title={alreadyRepR ? '이미 신고한 댓글입니다' : '댓글 신고'}
+                                            disabled={alreadyRepR}
+                                          >
+                                            {alreadyRepR ? '신고완료' : '신고'}
+                                          </button>
+                                        </div>
+                                      )
+                                    })()}
+                                  </>
+                                )}
+                              </div>
+                            </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 )
               })
@@ -457,6 +637,47 @@ export default function PostDetailPage() {
           </div>
         </section>
       </div>
+      {/* 댓글 신고 모달 */}
+      {reportCommentTarget && (
+        <div className="report-modal-overlay" onClick={() => setReportCommentTarget(null)}>
+          <div className="report-modal" onClick={e => e.stopPropagation()}>
+            <div className="report-modal-title">🚨 댓글 신고하기</div>
+            <div className="report-modal-desc">신고 사유를 선택해주세요.</div>
+            <div className="report-reasons">
+              {REPORT_REASONS.map(r => (
+                <button
+                  key={r}
+                  className={`report-reason-btn ${commentReportReason === r ? 'selected' : ''}`}
+                  onClick={() => setCommentReportReason(r)}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+            <textarea
+              className="report-detail-input"
+              placeholder="추가 설명 (선택사항)"
+              value={commentReportDetail}
+              onChange={e => setCommentReportDetail(e.target.value)}
+              rows={3}
+            />
+            {commentReportDone ? (
+              <div className="report-done">✅ 신고가 접수되었습니다.</div>
+            ) : (
+              <div className="report-modal-footer">
+                <button className="report-cancel-btn" onClick={() => setReportCommentTarget(null)}>취소</button>
+                <button
+                  className="report-submit-btn"
+                  onClick={handleCommentReport}
+                  disabled={!commentReportReason || commentReportSubmitting}
+                >
+                  {commentReportSubmitting ? '접수 중...' : '신고 접수'}
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -13,6 +13,8 @@ export interface Report {
   id:               string
   postId:           string
   postTitle:        string
+  commentId?:       string
+  commentContent?:  string
   reporterId:       string
   reporterNickname: string
   reason:           string
@@ -26,6 +28,18 @@ function reportedKey(userId: string) { return `morelol_reported_${userId}` }
 export function hasReportedLocally(userId: string, postId: string): boolean {
   const set: string[] = JSON.parse(localStorage.getItem(reportedKey(userId)) || '[]')
   return set.includes(postId)
+}
+
+export function hasReportedCommentLocally(userId: string, commentId: string): boolean {
+  const set: string[] = JSON.parse(localStorage.getItem(reportedKey(userId) + '_comment') || '[]')
+  return set.includes(commentId)
+}
+
+function markCommentReported(userId: string, commentId: string) {
+  const set: string[] = JSON.parse(localStorage.getItem(reportedKey(userId) + '_comment') || '[]')
+  if (!set.includes(commentId)) {
+    localStorage.setItem(reportedKey(userId) + '_comment', JSON.stringify([...set, commentId]))
+  }
 }
 
 function markReported(userId: string, postId: string) {
@@ -84,7 +98,9 @@ export async function getReports(): Promise<Report[]> {
     return {
       id:               row.id,
       postId:           p.postId           ?? '',
-      postTitle:        p.postTitle        ?? row.title.replace('[신고] ', ''),
+      postTitle:        p.postTitle        ?? row.title.replace('[댓글신고] ', '').replace('[신고] ', ''),
+      commentId:        p.commentId        ?? undefined,
+      commentContent:   p.commentContent   ?? undefined,
       reporterId:       row.author_id,
       reporterNickname: row.author_nickname,
       reason:           p.reason           ?? '',
@@ -92,6 +108,40 @@ export async function getReports(): Promise<Report[]> {
       createdAt:        row.created_at,
     }
   })
+}
+
+// ── 댓글 신고 등록 ──
+export async function addCommentReport(data: {
+  postId: string; postTitle: string; commentId: string; commentContent: string;
+  reporterId: string; reporterNickname: string; reason: string; detail: string
+}): Promise<boolean> {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return false
+  const row = {
+    id:              Date.now().toString(),
+    title:           '[댓글신고] ' + data.postTitle,
+    content:         JSON.stringify({
+      postId:           data.postId,
+      postTitle:        data.postTitle,
+      commentId:        data.commentId,
+      commentContent:   data.commentContent,
+      reporterId:       data.reporterId,
+      reporterNickname: data.reporterNickname,
+      reason:           data.reason,
+      detail:           data.detail,
+    }),
+    category:        '__신고__',
+    author_id:       data.reporterId,
+    author_nickname: data.reporterNickname,
+    views: 0, likes: 0, dislikes: 0, images: [],
+    created_at: new Date().toISOString(),
+  }
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/community_posts`, {
+    method: 'POST',
+    headers: { ...h(), Prefer: 'return=minimal' },
+    body: JSON.stringify(row),
+  }).catch(() => null)
+  if (res?.ok) markCommentReported(data.reporterId, data.commentId)
+  return !!(res?.ok)
 }
 
 // ── 신고 삭제 ──

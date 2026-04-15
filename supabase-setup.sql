@@ -27,6 +27,7 @@ CREATE TABLE IF NOT EXISTS community_posts (
   likes            integer DEFAULT 0,
   dislikes         integer DEFAULT 0,
   images           jsonb DEFAULT '[]'::jsonb,
+  parent_id        text REFERENCES community_comments(id) ON DELETE CASCADE,
   created_at       timestamptz DEFAULT now()
 );
 

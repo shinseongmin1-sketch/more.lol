@@ -26,6 +26,7 @@ export interface Post {
 export interface Comment {
   id:              string
   postId:          string
+  parentId:        string | null
   authorId:        string
   authorNickname:  string
   content:         string
@@ -49,6 +50,7 @@ interface DbPost {
 interface DbComment {
   id:               string
   post_id:          string
+  parent_id:        string | null
   author_id:        string
   author_nickname:  string
   content:          string
@@ -75,6 +77,7 @@ function toComment(r: DbComment): Comment {
   return {
     id:             r.id,
     postId:         r.post_id,
+    parentId:       r.parent_id ?? null,
     authorId:       r.author_id,
     authorNickname: r.author_nickname,
     content:        r.content,
@@ -295,6 +298,7 @@ export async function addComment(
   const row = {
     id:               Date.now().toString(),
     post_id:          comment.postId,
+    parent_id:        comment.parentId ?? null,
     author_id:        comment.authorId,
     author_nickname:  comment.authorNickname,
     content:          comment.content,

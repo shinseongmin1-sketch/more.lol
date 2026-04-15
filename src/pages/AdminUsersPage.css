@@ -1,0 +1,278 @@
+/* ── 검색창 ── */
+.aum-search-wrap {
+  position: relative;
+  padding: 0 24px 16px;
+  max-width: 860px;
+  margin: 0 auto;
+}
+.aum-search-icon {
+  position: absolute;
+  left: 38px;
+  top: 50%;
+  transform: translateY(-60%);
+  width: 15px;
+  height: 15px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.aum-search {
+  width: 100%;
+  padding: 10px 14px 10px 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.aum-search:focus { border-color: var(--accent-primary); }
+
+/* ── 목록 행 아바타 ── */
+.aum-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.aum-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.aum-nickname {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.aum-id {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.aum-stats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.aum-stat-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+.aum-stat-badge.post {
+  background: rgba(99,102,241,0.1);
+  color: #818cf8;
+  border-color: rgba(99,102,241,0.2);
+}
+.aum-stat-badge.comment {
+  background: rgba(16,185,129,0.1);
+  color: #34d399;
+  border-color: rgba(16,185,129,0.2);
+}
+
+/* ── 상세 카드 ── */
+.aum-detail {
+  padding: 20px 24px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 프로필 헤더 */
+.aum-detail-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, rgba(139,92,246,0.06) 100%);
+  border: 1px solid rgba(99,102,241,0.15);
+  border-radius: 14px;
+  position: relative;
+}
+.aum-detail-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.aum-detail-hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+}
+.aum-detail-name {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.aum-detail-uid {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.aum-detail-join {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+.aum-detail-rank {
+  font-size: 22px;
+  font-weight: 900;
+  color: rgba(99,102,241,0.25);
+  position: absolute;
+  right: 18px;
+  top: 16px;
+  line-height: 1;
+}
+
+/* 통계 카드 3개 */
+.aum-stat-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.aum-stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 10px;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  transition: transform 0.15s;
+}
+.aum-stat-card:hover { transform: translateY(-2px); }
+.aum-stat-card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+.aum-stat-card-val {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text-primary);
+  line-height: 1;
+}
+.aum-stat-card-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+/* ── 신고 현황 박스 ── */
+.aum-report-box {
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.aum-report-box.has-reports {
+  border-color: rgba(239,68,68,0.3);
+  background: rgba(239,68,68,0.04);
+}
+.aum-report-box-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.aum-report-box.has-reports .aum-report-box-title {
+  color: #ef4444;
+}
+.aum-report-loading {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+.aum-report-clean {
+  font-size: 13px;
+  font-weight: 700;
+  color: #10b981;
+}
+.aum-report-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.aum-report-total {
+  font-size: 26px;
+  font-weight: 900;
+  color: #ef4444;
+  line-height: 1;
+}
+.aum-report-breakdown {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.aum-report-chip {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+}
+.aum-report-chip.post {
+  background: rgba(59,130,246,0.1);
+  color: #3b82f6;
+  border-color: rgba(59,130,246,0.25);
+}
+.aum-report-chip.comment {
+  background: rgba(168,85,247,0.1);
+  color: #9333ea;
+  border-color: rgba(168,85,247,0.25);
+}
+
+/* 하단 버튼 */
+.aum-detail-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+.aum-view-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.aum-view-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: rgba(99,102,241,0.06);
+}
