@@ -21,6 +21,8 @@ export default function CommunityPage() {
   const [loading, setLoading]       = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
+  const [page, setPage] = useState(1)
+  const PAGE_SIZE = 15
 
   useEffect(() => {
     getPosts().then(posts => {
@@ -41,7 +43,14 @@ export default function CommunityPage() {
   const normal   = allPosts.filter(p => p.authorId !== ADMIN_ID)
   const pinnedFiltered = pinned.filter(p => matchesSearch(p))
   const normalFiltered = normal.filter(p => (activeTab === '전체' || p.category === activeTab) && matchesSearch(p))
-  const sortedFiltered = [...pinnedFiltered, ...normalFiltered]
+
+  const totalPages = Math.max(1, Math.ceil(normalFiltered.length / PAGE_SIZE))
+  const safePage   = Math.min(page, totalPages)
+  const pagedNormal = normalFiltered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
+  const sortedFiltered = [...pinnedFiltered, ...pagedNormal]
+
+  const handleTabChange = (tab: string) => { setActiveTab(tab); setPage(1) }
+  const handleSearch    = (v: string)   => { setSearchQuery(v); setPage(1) }
   // 인기글 기준: 좋아요×10 + 조회수×0.1 점수, 최근 7일 이내 게시글 우선
   // 최소 조건: 좋아요 1개 이상, 공지글 제외
   const now = Date.now()
@@ -78,7 +87,7 @@ export default function CommunityPage() {
                   <button
                     key={c}
                     className={`community-tab ${activeTab === c ? 'active' : ''}`}
-                    onClick={() => setActiveTab(c)}
+                    onClick={() => handleTabChange(c)}
                   >
                     {c}
                   </button>
@@ -94,12 +103,12 @@ export default function CommunityPage() {
                   type="text"
                   placeholder="제목, 내용, 작성자 검색"
                   value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
+                  onChange={e => handleSearch(e.target.value)}
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setSearchFocused(false)}
                 />
                 {searchQuery && (
-                  <button className="community-search-clear" onClick={() => setSearchQuery('')}>
+                  <button className="community-search-clear" onClick={() => handleSearch('')}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
                     </svg>
@@ -166,6 +175,38 @@ export default function CommunityPage() {
                 ))
               )}
             </div>
+            {/* 페이지네이션 */}
+            {!loading && totalPages > 1 && (
+              <div className="community-pagination">
+                <button
+                  className="cp-arrow"
+                  disabled={safePage === 1}
+                  onClick={() => setPage(safePage - 1)}
+                >‹</button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1)
+                  .filter(n => n === 1 || n === totalPages || Math.abs(n - safePage) <= 2)
+                  .reduce<(number | '...')[]>((acc, n, idx, arr) => {
+                    if (idx > 0 && n - (arr[idx - 1] as number) > 1) acc.push('...')
+                    acc.push(n)
+                    return acc
+                  }, [])
+                  .map((n, i) =>
+                    n === '...'
+                      ? <span key={`dots-${i}`} className="cp-dots">…</span>
+                      : <button
+                          key={n}
+                          className={`cp-page${safePage === n ? ' active' : ''}`}
+                          onClick={() => setPage(n as number)}
+                        >{n}</button>
+                  )
+                }
+                <button
+                  className="cp-arrow"
+                  disabled={safePage === totalPages}
+                  onClick={() => setPage(safePage + 1)}
+                >›</button>
+              </div>
+            )}
           </div>
           <div className="community-sidebar">
             <div className="sidebar-card">

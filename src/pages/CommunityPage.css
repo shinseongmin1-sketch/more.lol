@@ -1,3 +1,46 @@
+/* ── 페이지네이션 ── */
+.community-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 20px 0 8px;
+}
+.cp-page, .cp-arrow {
+  min-width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cp-page:hover, .cp-arrow:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background: rgba(99,102,241,0.06);
+}
+.cp-page.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+.cp-arrow { font-size: 18px; }
+.cp-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+.cp-dots {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 0 4px;
+  user-select: none;
+}
+
 /* 빈 상태 */
 .community-empty {
   display: flex;
