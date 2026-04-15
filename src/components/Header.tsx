@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation, Link } from 'react-router-dom'
 import type { User } from '../utils/auth'
 import { isAdmin } from '../utils/auth'
+import { getAvatar } from '../utils/avatarStore'
 import './Header.css'
 
 interface HeaderProps {
@@ -28,6 +29,7 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
   const [champMenuOpen, setChampMenuOpen] = useState(false)
   const [rankMenuOpen, setRankMenuOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(() => user ? getAvatar(user.id) : null)
   const champCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const rankCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()
@@ -52,6 +54,30 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
     document.addEventListener('mousedown', handler)
     return () => document.removeEventListener('mousedown', handler)
   }, [])
+
+  // 아바타 동기화: user 변경 또는 라우트 전환(프로필 설정 저장 후 복귀) 시
+  useEffect(() => {
+    setAvatarUrl(user ? getAvatar(user.id) : null)
+  }, [user, location.pathname])
+
+  useEffect(() => {
+    // 다른 탭에서의 변경 감지
+    const onStorage = (e: StorageEvent) => {
+      if (user && e.key === `avatar_${user.id}`) {
+        setAvatarUrl(e.newValue)
+      }
+    }
+    // 같은 탭에서 돌아올 때(프로필 설정 → 헤더) 갱신
+    const onFocus = () => {
+      if (user) setAvatarUrl(getAvatar(user.id))
+    }
+    window.addEventListener('storage', onStorage)
+    window.addEventListener('focus', onFocus)
+    return () => {
+      window.removeEventListener('storage', onStorage)
+      window.removeEventListener('focus', onFocus)
+    }
+  }, [user])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -207,6 +233,12 @@ export default function Header({ onSearch, user, onLoginClick, onLogout }: Heade
                   className="user-avatar-btn"
                   onClick={() => setDropdownOpen(v => !v)}
                 >
+                  <div className="user-avatar">
+                    {avatarUrl
+                      ? <img src={avatarUrl} alt="" className="user-avatar-img" />
+                      : <span className="user-avatar-initial">{user.nickname.slice(0, 1).toUpperCase()}</span>
+                    }
+                  </div>
                   <span className="user-nickname">{user.nickname}</span>
                   <svg className="user-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <path d="M6 9l6 6 6-6" />

@@ -17,7 +17,11 @@ const CAT_ICON: Record<string, string> = {
 
 const MAX_TITLE   = 100
 const MAX_CONTENT = 5000
-const MAX_IMAGES  = 5
+const MAX_MEDIA   = 5
+const MAX_VIDEO_MB = 30
+
+function isVideo(src: string)   { return src.startsWith('data:video/') }
+function isGif(src: string)     { return src.startsWith('data:image/gif') }
 
 function resizeImage(file: File): Promise<string> {
   return new Promise(resolve => {
@@ -40,6 +44,15 @@ function resizeImage(file: File): Promise<string> {
   })
 }
 
+function readAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload  = e => resolve(e.target!.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export default function WritePostPage() {
   const navigate = useNavigate()
   const user     = getSession()
@@ -47,23 +60,43 @@ export default function WritePostPage() {
   const [category,   setCategory]   = useState('')
   const [title,      setTitle]      = useState('')
   const [content,    setContent]    = useState('')
-  const [images,     setImages]     = useState<string[]>([])
+  const [media,      setMedia]      = useState<string[]>([])
+  const [mediaError, setMediaError] = useState('')
   const [error,      setError]      = useState('')
   const [submitting, setSubmitting] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleImageAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMediaAdd = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
     if (!files.length) return
-    const remaining = MAX_IMAGES - images.length
+    const remaining = MAX_MEDIA - media.length
     const toProcess = files.slice(0, remaining)
-    const resized   = await Promise.all(toProcess.map(resizeImage))
-    setImages(prev => [...prev, ...resized])
+    setMediaError('')
+
+    const results: string[] = []
+    for (const file of toProcess) {
+      if (file.type.startsWith('video/')) {
+        if (file.size > MAX_VIDEO_MB * 1024 * 1024) {
+          setMediaError(`영상은 ${MAX_VIDEO_MB}MB 이하만 첨부할 수 있습니다.`)
+          continue
+        }
+        const dataUrl = await readAsDataURL(file)
+        results.push(dataUrl)
+      } else if (file.type === 'image/gif') {
+        // GIF는 리사이즈 없이 그대로 (애니메이션 유지)
+        const dataUrl = await readAsDataURL(file)
+        results.push(dataUrl)
+      } else {
+        const dataUrl = await resizeImage(file)
+        results.push(dataUrl)
+      }
+    }
+    setMedia(prev => [...prev, ...results])
     e.target.value = ''
   }
 
-  const removeImage = (idx: number) => {
-    setImages(prev => prev.filter((_, i) => i !== idx))
+  const removeMedia = (idx: number) => {
+    setMedia(prev => prev.filter((_, i) => i !== idx))
   }
 
   if (!user) {
@@ -90,7 +123,7 @@ export default function WritePostPage() {
       category,
       authorId:        user.id,
       authorNickname:  user.nickname,
-      images,
+      images:          media,
     })
 
     if ('error' in result) {
@@ -181,37 +214,62 @@ export default function WritePostPage() {
 
           <div className="write-section">
             <div className="write-label">
-              사진 첨부
-              <span className="write-counter">{images.length} / {MAX_IMAGES}</span>
+              미디어 첨부
+              <span className="write-media-hint">사진 · GIF · 영상</span>
+              <span className="write-counter">{media.length} / {MAX_MEDIA}</span>
             </div>
             <div className="write-img-area">
-              {images.map((src, idx) => (
-                <div key={idx} className="write-img-thumb">
-                  <img src={src} alt={`첨부 ${idx + 1}`} />
-                  <button type="button" className="write-img-remove" onClick={() => removeImage(idx)}>
+              {media.map((src, idx) => (
+                <div key={idx} className={`write-img-thumb ${isVideo(src) ? 'write-media-video' : ''}`}>
+                  {isVideo(src) ? (
+                    <>
+                      <video src={src} muted playsInline className="write-video-preview" />
+                      <span className="write-media-badge write-media-badge-video">
+                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        영상
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <img src={src} alt={`첨부 ${idx + 1}`} />
+                      {isGif(src) && <span className="write-media-badge write-media-badge-gif">GIF</span>}
+                    </>
+                  )}
+                  <button type="button" className="write-img-remove" onClick={() => removeMedia(idx)}>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                      <path d="M18 6L6 18M6 6l12 12" />
+                      <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
                     </svg>
                   </button>
                 </div>
               ))}
-              {images.length < MAX_IMAGES && (
+              {media.length < MAX_MEDIA && (
                 <button type="button" className="write-img-add" onClick={() => fileInputRef.current?.click()}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
                     <rect x="3" y="3" width="18" height="18" rx="3"/>
-                    <path d="M12 8v8M8 12h8"/>
+                    <circle cx="8.5" cy="8.5" r="1.5" fill="currentColor" stroke="none"/>
+                    <path d="M21 15l-5-5L5 21"/>
+                    <path d="M14 3v4h4" strokeLinecap="round"/>
+                    <path d="M17 3l4 4" strokeLinecap="round"/>
                   </svg>
-                  <span>사진 추가</span>
+                  <span>미디어 추가</span>
                 </button>
               )}
             </div>
+            {mediaError && (
+              <div className="write-media-error">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+                </svg>
+                {mediaError}
+              </div>
+            )}
             <input
               ref={fileInputRef}
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               multiple
               style={{ display: 'none' }}
-              onChange={handleImageAdd}
+              onChange={handleMediaAdd}
             />
           </div>
 

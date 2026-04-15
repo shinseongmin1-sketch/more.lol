@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { getSession, updateNickname, updatePassword, deleteAccount } from '../utils/auth'
 import { getPostsByUser, getCommentCountByUser } from '../utils/postsStore'
 import { calcCount, getLevelData } from '../utils/levelSystem'
-import { getAvatar, saveAvatar, removeAvatar, resizeToSquare } from '../utils/avatarStore'
+import { getAvatar, saveAvatar, removeAvatar, resizeToSquare, SITE_MASCOT_AVATAR, isSiteMascotAvatar } from '../utils/avatarStore'
 import { checkNickname } from '../utils/nicknameFilter'
 import './ProfileSettingsPage.css'
 
@@ -210,14 +210,27 @@ export default function ProfileSettingsPage() {
                   }}
                 />
               </label>
+              {!isSiteMascotAvatar(avatarUrl) && (
+                <button
+                  className="settings-avatar-mascot-btn"
+                  onClick={() => {
+                    saveAvatar(user.id, SITE_MASCOT_AVATAR)
+                    setAvatarUrl(SITE_MASCOT_AVATAR)
+                    setAvatarMsg('more.lol 기본 아이콘으로 설정됐습니다!')
+                    setTimeout(() => setAvatarMsg(''), 2500)
+                  }}
+                >
+                  ✦ 기본 설정
+                </button>
+              )}
               {avatarUrl && (
                 <button className="settings-avatar-remove-btn" onClick={() => {
                   removeAvatar(user.id)
                   setAvatarUrl(null)
-                  setAvatarMsg('기본 아이콘으로 변경됐습니다.')
+                  setAvatarMsg('이니셜 아이콘으로 변경됐습니다.')
                   setTimeout(() => setAvatarMsg(''), 2500)
                 }}>
-                  기본으로
+                  이니셜로
                 </button>
               )}
             </div>

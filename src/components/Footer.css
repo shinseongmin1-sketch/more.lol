@@ -35,6 +35,110 @@
   line-height: 1.8;
 }
 
+/* ── 중간 카드 3개 ── */
+.footer-cards {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  flex-shrink: 0;
+  align-items: stretch;
+}
+
+.footer-card {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 13px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-card);
+  text-decoration: none;
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  cursor: pointer;
+  flex: 1;
+}
+
+.footer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.footer-card-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.footer-card-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.footer-card-notice .footer-card-icon {
+  background: rgba(59, 130, 246, 0.12);
+  color: #60a5fa;
+}
+.footer-card-notice:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.1);
+}
+
+.footer-card-contact .footer-card-icon {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+}
+.footer-card-contact:hover {
+  border-color: rgba(168, 85, 247, 0.4);
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.1);
+}
+
+.footer-card-patch .footer-card-icon {
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+}
+.footer-card-patch:hover {
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.1);
+}
+
+.footer-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.footer-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 2px;
+}
+
+.footer-card-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.footer-card-arrow {
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+  transition: transform 0.18s, color 0.18s;
+}
+.footer-card:hover .footer-card-arrow {
+  transform: translateX(3px);
+}
+.footer-card-notice:hover  .footer-card-arrow { color: #60a5fa; }
+.footer-card-contact:hover .footer-card-arrow { color: #c084fc; }
+.footer-card-patch:hover   .footer-card-arrow { color: #4ade80; }
+
 .footer-links {
   display: flex;
   gap: 48px;
@@ -79,8 +183,10 @@
 
 @media (max-width: 768px) {
   .footer { padding: 28px 16px 16px; }
-  .footer-inner { flex-direction: column; gap: 20px; }
+  .footer-inner { flex-direction: column; gap: 24px; }
   .footer-left { max-width: 100%; }
+  .footer-cards { flex-wrap: wrap; }
+  .footer-card { flex: 1; min-width: 120px; }
   .footer-links { flex-wrap: wrap; gap: 20px; }
   .footer-bottom { flex-direction: column; gap: 6px; }
 }

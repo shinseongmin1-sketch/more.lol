@@ -7,6 +7,7 @@ import {
   getComments, addComment, deletePost, deleteComment, updateComment, formatDate,
 } from '../utils/postsStore'
 import { addReport, hasReportedLocally } from '../utils/reportStore'
+import { getAvatar } from '../utils/avatarStore'
 import type { Post, Comment } from '../utils/postsStore'
 import './PostDetailPage.css'
 import './SubPage.css'
@@ -239,6 +240,12 @@ export default function PostDetailPage() {
           <h1 className="post-card-title">{post.title}</h1>
 
           <div className="post-card-author">
+            <div className="post-author-avatar">
+              {getAvatar(post.authorId)
+                ? <img src={getAvatar(post.authorId)!} alt="" className="author-avatar-img" />
+                : post.authorNickname.slice(0, 1).toUpperCase()
+              }
+            </div>
             <div className="post-author-info">
               <span className="post-author-nick">{post.authorNickname}</span>
               <span className="post-author-sub">조회 {post.views.toLocaleString()}</span>
@@ -252,15 +259,26 @@ export default function PostDetailPage() {
             <>
               <div className="post-card-divider" />
               <div className="post-images">
-                {post.images.map((src, idx) => (
-                  <img
-                    key={idx}
-                    src={src}
-                    alt={`첨부 이미지 ${idx + 1}`}
-                    className="post-img"
-                    onClick={() => window.open(src, '_blank')}
-                  />
-                ))}
+                {post.images.map((src, idx) =>
+                  src.startsWith('data:video/') ? (
+                    <video
+                      key={idx}
+                      src={src}
+                      className="post-video"
+                      controls
+                      playsInline
+                      preload="metadata"
+                    />
+                  ) : (
+                    <img
+                      key={idx}
+                      src={src}
+                      alt={`첨부 미디어 ${idx + 1}`}
+                      className="post-img"
+                      onClick={() => window.open(src, '_blank')}
+                    />
+                  )
+                )}
               </div>
             </>
           )}
@@ -387,6 +405,12 @@ export default function PostDetailPage() {
                 const confirmDel  = confirmDeleteComment === c.id
                 return (
                   <div key={c.id} className="comment-item">
+                    <div className="comment-avatar">
+                      {getAvatar(c.authorId)
+                        ? <img src={getAvatar(c.authorId)!} alt="" className="author-avatar-img" />
+                        : c.authorNickname.slice(0, 1).toUpperCase()
+                      }
+                    </div>
                     <div className="comment-body">
                       <div className="comment-header">
                         <span className="comment-nick">{c.authorNickname}</span>
