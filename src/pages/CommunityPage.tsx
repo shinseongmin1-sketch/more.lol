@@ -36,16 +36,17 @@ export default function CommunityPage() {
     p.content.toLowerCase().includes(q) ||
     p.authorNickname.toLowerCase().includes(q)
 
-  const pinned   = allPosts.filter(p => p.authorId === 'admin')
-  const normal   = allPosts.filter(p => p.authorId !== 'admin')
-  const pinnedFiltered = pinned.filter(p => (activeTab === '전체' || p.category === activeTab) && matchesSearch(p))
+  const ADMIN_ID = 'ssm1909'
+  const pinned   = allPosts.filter(p => p.authorId === ADMIN_ID)
+  const normal   = allPosts.filter(p => p.authorId !== ADMIN_ID)
+  const pinnedFiltered = pinned.filter(p => matchesSearch(p))
   const normalFiltered = normal.filter(p => (activeTab === '전체' || p.category === activeTab) && matchesSearch(p))
   const sortedFiltered = [...pinnedFiltered, ...normalFiltered]
   // 인기글 기준: 좋아요×10 + 조회수×0.1 점수, 최근 7일 이내 게시글 우선
   // 최소 조건: 좋아요 1개 이상, 공지글 제외
   const now = Date.now()
   const hotPosts = allPosts
-    .filter(p => p.authorId !== 'admin' && p.likes >= 1)
+    .filter(p => p.authorId !== ADMIN_ID && p.likes >= 1)
     .map(p => {
       const ageDays = (now - new Date(p.createdAt).getTime()) / 86400000
       const timeBonus = Math.max(0, (7 - ageDays) / 7) * 15  // 7일 이내 최대 +15점
@@ -134,17 +135,17 @@ export default function CommunityPage() {
                 sortedFiltered.map((post: Post) => (
                   <div
                     key={post.id}
-                    className={`post-row${post.authorId === 'admin' ? ' post-row-notice' : ''}`}
+                    className={`post-row${post.authorId === ADMIN_ID ? ' post-row-notice' : ''}`}
                     onClick={() => navigate(`/post/${post.id}`)}
                   >
                     <span
                       className="post-cat"
                       style={{
-                        color:      post.authorId === 'admin' ? '#1d4ed8' : (catColors[post.category] || 'var(--text-muted)'),
-                        background: post.authorId === 'admin' ? 'rgba(59,130,246,0.12)' : ((catColors[post.category] || '#888') + '15'),
+                        color:      post.authorId === ADMIN_ID ? '#1d4ed8' : (catColors[post.category] || 'var(--text-muted)'),
+                        background: post.authorId === ADMIN_ID ? 'rgba(59,130,246,0.12)' : ((catColors[post.category] || '#888') + '15'),
                       }}
                     >
-                      {post.authorId === 'admin' ? '📌 공지' : post.category}
+                      {post.authorId === ADMIN_ID ? '📌 공지' : post.category}
                     </span>
                     <div className="post-title-wrap">
                       <span className="post-title">{post.title}</span>
