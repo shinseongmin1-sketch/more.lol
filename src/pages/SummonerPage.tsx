@@ -1098,6 +1098,27 @@ export default function SummonerPage() {
                       >▼</button>
                     </div>
 
+                    {/* ── AI 피드백 패널 ── */}
+                    {(aiFeedbackLoading[match.matchId] || aiFeedback[match.matchId]) && (
+                      <div className="mc-ai-panel">
+                        {aiFeedbackLoading[match.matchId] ? (
+                          <div className="mc-ai-loading">
+                            <div className="mc-ai-spinner" />
+                            <span>AI가 게임을 분석하고 있습니다...</span>
+                          </div>
+                        ) : (
+                          <div className="mc-ai-content">
+                            <div className="mc-ai-header">
+                              <span className="mc-ai-icon">🤖</span>
+                              <span className="mc-ai-title">AI 게임 분석</span>
+                              <span className="mc-ai-badge">Claude AI</span>
+                            </div>
+                            <div className="mc-ai-text">{aiFeedback[match.matchId]}</div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* ── 확장 상세 뷰 ── */}
                     {isExpanded && match.allParticipants.length > 0 && (() => {
                       const teams = [
