@@ -38,10 +38,12 @@ export default async function handler(req: Request): Promise<Response> {
   const teamfights: { timeSec: number; size: number; withMe: boolean }[] = []
   let hasTimeline = false
 
+  const tlController = new AbortController()
+  const tlTimeout = setTimeout(() => tlController.abort(), 4000)
   const tlRes = await fetch(
     `https://asia.api.riotgames.com/lol/match/v5/matches/${matchId}/timeline`,
-    { headers: { 'X-Riot-Token': RIOT_API_KEY } }
-  ).catch(() => null)
+    { headers: { 'X-Riot-Token': RIOT_API_KEY }, signal: tlController.signal }
+  ).catch(() => null).finally(() => clearTimeout(tlTimeout))
 
   if (tlRes?.ok) {
     const tl = await tlRes.json().catch(() => null)
