@@ -900,12 +900,10 @@
   border-radius: 3px;
   object-fit: cover;
   flex-shrink: 0;
-  opacity: 0.9;
 }
 
 .mc-part-enemy {
-  opacity: 0.45;
-  filter: saturate(0.4);
+  opacity: 0.75;
 }
 
 .mc-part-me {
@@ -920,8 +918,8 @@
 
 .mc-part-name {
   font-size: 11px;
-  color: var(--text-secondary);
-  font-weight: 500;
+  color: var(--text-primary);
+  font-weight: 600;
   width: 92px;
   overflow: hidden;
   text-overflow: ellipsis;
