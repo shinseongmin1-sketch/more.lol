@@ -9,9 +9,28 @@ export default async function handler(req: Request): Promise<Response> {
   const { matchId, puuid, championName, kills, deaths, assists, cs, visionScore, duration, win, queueLabel } = body
   if (!matchId || !puuid) return new Response('Missing params', { status: 400 })
 
-  const RIOT_API_KEY  = process.env.RIOT_API_KEY
+  const RIOT_API_KEY   = process.env.RIOT_API_KEY
   const GEMINI_API_KEY = process.env.GEMINI_API_KEY
+  const SB_URL         = process.env.VITE_SUPABASE_URL
+  const SB_KEY         = process.env.VITE_SUPABASE_ANON_KEY
   if (!RIOT_API_KEY || !GEMINI_API_KEY) return new Response('Server misconfigured', { status: 500 })
+
+  // 1. 캐시 확인
+  if (SB_URL && SB_KEY) {
+    const cached = await fetch(
+      `${SB_URL}/rest/v1/ai_match_feedback?match_id=eq.${encodeURIComponent(matchId)}&limit=1`,
+      { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+    ).catch(() => null)
+    if (cached?.ok) {
+      const [row] = await cached.json().catch(() => [])
+      if (row?.feedback) {
+        return new Response(JSON.stringify({ feedback: row.feedback, cached: true }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      }
+    }
+  }
 
   // 1. Riot 타임라인 fetch
   const tlRes = await fetch(
