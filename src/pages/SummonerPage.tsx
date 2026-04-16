@@ -509,6 +509,38 @@ export default function SummonerPage() {
     }
   }
 
+  const fetchAiFeedback = async (match: MatchData) => {
+    if (aiFeedback[match.matchId] || aiFeedbackLoading[match.matchId]) return
+    setAiFeedbackLoading(prev => ({ ...prev, [match.matchId]: true }))
+    try {
+      const res = await fetch('/api/ai-feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          matchId: match.matchId,
+          puuid: account?.puuid,
+          championName: match.championName,
+          kills: match.kills,
+          deaths: match.deaths,
+          assists: match.assists,
+          cs: match.cs,
+          visionScore: match.visionScore,
+          duration: match.duration,
+          win: match.win,
+          queueLabel: match.queueLabel,
+        }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        setAiFeedback(prev => ({ ...prev, [match.matchId]: data.feedback }))
+      }
+    } catch {
+      // 조용히 실패
+    } finally {
+      setAiFeedbackLoading(prev => ({ ...prev, [match.matchId]: false }))
+    }
+  }
+
   const filteredMatches = matches.filter(m => {
     if (activeFilter === '전체')   return true
     if (activeFilter === 'ARAM')   return m.queueId === 450
