@@ -110,26 +110,26 @@ ${timelineSection}
 💡 총평: (1문장)`
 
   // 3. Gemini API 호출
-  const aiRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${GEMINI_API_KEY}`,
-    {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: prompt }] }],
-        generationConfig: { maxOutputTokens: 600, temperature: 0.7 },
-      }),
-    }
-  ).catch((e) => { console.error('Gemini fetch error:', e); return null })
+  const aiRes = await fetch('https://api.cohere.com/v2/chat', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${COHERE_API_KEY}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      model: 'command-r-08-2024',
+      messages: [{ role: 'user', content: prompt }],
+    }),
+  }).catch((e) => { console.error('Cohere fetch error:', e); return null })
 
   if (!aiRes?.ok) {
     const errText = await aiRes?.text().catch(() => 'no body')
-    console.error('Gemini error:', aiRes?.status, errText)
-    return new Response(JSON.stringify({ error: `Gemini ${aiRes?.status}: ${errText}` }), { status: 502, headers: { 'Content-Type': 'application/json' } })
+    console.error('Cohere error:', aiRes?.status, errText)
+    return new Response(JSON.stringify({ error: `Cohere ${aiRes?.status}` }), { status: 502, headers: { 'Content-Type': 'application/json' } })
   }
 
   const aiData = await aiRes.json()
-  const feedback = aiData.candidates?.[0]?.content?.parts?.[0]?.text ?? '피드백을 생성할 수 없습니다.'
+  const feedback = aiData.message?.content?.[0]?.text ?? '피드백을 생성할 수 없습니다.'
 
   // 캐시 저장 (fire and forget)
   if (SB_URL && SB_KEY) {
