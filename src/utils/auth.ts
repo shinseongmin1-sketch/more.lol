@@ -16,8 +16,7 @@ export interface User {
 }
 
 const SESSION_KEY  = 'morelol_session'
-const ADMIN_ID     = 'ssm1909'
-const ADMIN_PW     = '@tlstjdals12'
+const ADMIN_NICKNAME = '관리자'
 const TWO_MONTHS   = 60 * 24 * 60 * 60 * 1000
 
 // ── Session (localStorage 캐시) ───────────────────────
