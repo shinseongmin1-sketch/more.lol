@@ -111,7 +111,7 @@ ${timelineSection}
 
   // 3. Gemini API 호출
   const aiRes = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
     {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -120,10 +120,11 @@ ${timelineSection}
         generationConfig: { maxOutputTokens: 600, temperature: 0.7 },
       }),
     }
-  ).catch(() => null)
+  ).catch((e) => { console.error('Gemini fetch error:', e); return null })
 
   if (!aiRes?.ok) {
     const errText = await aiRes?.text().catch(() => 'no body')
+    console.error('Gemini error:', aiRes?.status, errText)
     return new Response(JSON.stringify({ error: `Gemini ${aiRes?.status}: ${errText}` }), { status: 502, headers: { 'Content-Type': 'application/json' } })
   }
 
