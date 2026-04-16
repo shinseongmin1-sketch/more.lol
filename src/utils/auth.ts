@@ -31,7 +31,7 @@ export function logout() {
 }
 
 export function isAdmin(user: User | null): boolean {
-  return user?.id === ADMIN_ID
+  return user?.nickname === ADMIN_NICKNAME
 }
 
 // ── Supabase ──────────────────────────────────────────
