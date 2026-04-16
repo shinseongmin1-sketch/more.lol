@@ -9,11 +9,11 @@ export default async function handler(req: Request): Promise<Response> {
   const { matchId, puuid, championName, kills, deaths, assists, cs, visionScore, duration, win, queueLabel } = body
   if (!matchId || !puuid) return new Response('Missing params', { status: 400 })
 
-  const RIOT_API_KEY   = process.env.RIOT_API_KEY
-  const GEMINI_API_KEY = process.env.GEMINI_API_KEY
-  const SB_URL         = process.env.VITE_SUPABASE_URL
-  const SB_KEY         = process.env.VITE_SUPABASE_ANON_KEY
-  if (!RIOT_API_KEY || !GEMINI_API_KEY) return new Response('Server misconfigured', { status: 500 })
+  const RIOT_API_KEY    = process.env.RIOT_API_KEY
+  const COHERE_API_KEY  = process.env.COHERE_API_KEY
+  const SB_URL          = process.env.VITE_SUPABASE_URL
+  const SB_KEY          = process.env.VITE_SUPABASE_ANON_KEY
+  if (!RIOT_API_KEY || !COHERE_API_KEY) return new Response('Server misconfigured', { status: 500 })
 
   // 1. 캐시 확인
   if (SB_URL && SB_KEY) {
