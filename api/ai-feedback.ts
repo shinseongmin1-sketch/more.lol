@@ -122,7 +122,10 @@ ${timelineSection}
     }
   ).catch(() => null)
 
-  if (!aiRes?.ok) return new Response('AI error', { status: 502 })
+  if (!aiRes?.ok) {
+    const errText = await aiRes?.text().catch(() => 'no body')
+    return new Response(JSON.stringify({ error: `Gemini ${aiRes?.status}: ${errText}` }), { status: 502, headers: { 'Content-Type': 'application/json' } })
+  }
 
   const aiData = await aiRes.json()
   const feedback = aiData.candidates?.[0]?.content?.parts?.[0]?.text ?? '피드백을 생성할 수 없습니다.'
