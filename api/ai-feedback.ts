@@ -112,6 +112,8 @@ ${timelineSection}
 💡 총평: (1문장)`
 
   // 3. Gemini API 호출
+  const aiController = new AbortController()
+  const aiTimeout = setTimeout(() => aiController.abort(), 8000)
   const aiRes = await fetch('https://api.cohere.com/v2/chat', {
     method: 'POST',
     headers: {
@@ -122,7 +124,8 @@ ${timelineSection}
       model: 'command-r-08-2024',
       messages: [{ role: 'user', content: prompt }],
     }),
-  }).catch((e) => { console.error('Cohere fetch error:', e); return null })
+    signal: aiController.signal,
+  }).catch((e) => { console.error('Cohere fetch error:', e); return null }).finally(() => clearTimeout(aiTimeout))
 
   if (!aiRes?.ok) {
     const errText = await aiRes?.text().catch(() => 'no body')
