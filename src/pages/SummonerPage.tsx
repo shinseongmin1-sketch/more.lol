@@ -1054,6 +1054,12 @@ export default function SummonerPage() {
                           }
                         </div>
                         <div className="mc-champ-name-label">{match.championName}</div>
+                        <button
+                          className={`mc-ai-btn ${aiFeedbackLoading[match.matchId] ? 'loading' : ''} ${aiFeedback[match.matchId] ? 'done' : ''}`}
+                          onClick={e => { e.stopPropagation(); fetchAiFeedback(match) }}
+                        >
+                          {aiFeedbackLoading[match.matchId] ? '분석 중...' : aiFeedback[match.matchId] ? '✓ AI 분석 완료' : '🤖 AI 분석'}
+                        </button>
                       </div>
 
                       {/* 참가자 */}
