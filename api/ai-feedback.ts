@@ -87,25 +87,23 @@ ${tfLines || '  (없음)'}
 🔥 한타: (2문장)
 💡 총평: (1문장)`
 
-  // 3. Claude API 호출
-  const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'x-api-key': ANTHROPIC_API_KEY,
-      'anthropic-version': '2023-06-01',
-      'content-type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 600,
-      messages: [{ role: 'user', content: prompt }],
-    }),
-  }).catch(() => null)
+  // 3. Gemini API 호출
+  const aiRes = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
+    {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 600, temperature: 0.7 },
+      }),
+    }
+  ).catch(() => null)
 
   if (!aiRes?.ok) return new Response('AI error', { status: 502 })
 
   const aiData = await aiRes.json()
-  const feedback = aiData.content?.[0]?.text ?? '피드백을 생성할 수 없습니다.'
+  const feedback = aiData.candidates?.[0]?.content?.parts?.[0]?.text ?? '피드백을 생성할 수 없습니다.'
 
   return new Response(JSON.stringify({ feedback }), {
     status: 200,
