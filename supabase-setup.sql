@@ -70,6 +70,17 @@ ALTER TABLE community_post_reactions ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "anon_all" ON community_post_reactions;
 CREATE POLICY "anon_all" ON community_post_reactions FOR ALL TO anon USING (true) WITH CHECK (true);
 
+-- AI 피드백 캐시
+CREATE TABLE IF NOT EXISTS ai_match_feedback (
+  match_id   text PRIMARY KEY,
+  feedback   text NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE ai_match_feedback ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "anon_all" ON ai_match_feedback;
+CREATE POLICY "anon_all" ON ai_match_feedback FOR ALL TO anon USING (true) WITH CHECK (true);
+
 -- 조회수 원자적 증가 함수
 CREATE OR REPLACE FUNCTION increment_post_views(post_id text)
 RETURNS void LANGUAGE sql SECURITY DEFINER AS $$
