@@ -1111,7 +1111,7 @@ export default function SummonerPage() {
                             <div className="mc-ai-header">
                               <span className="mc-ai-icon">🤖</span>
                               <span className="mc-ai-title">AI 게임 분석</span>
-                              <span className="mc-ai-badge">Gemini AI</span>
+                              <span className="mc-ai-badge">AI 분석</span>
                             </div>
                             <div className="mc-ai-text">{aiFeedback[match.matchId]}</div>
                           </div>
