@@ -151,6 +151,8 @@ export default function SummonerPage() {
   const [liveError, setLiveError] = useState<string | null>(null)
   const [liveRanks, setLiveRanks] = useState<Record<string, any[]>>({})
   const [liveTimer, setLiveTimer] = useState(0)
+  const [aiFeedback, setAiFeedback] = useState<Record<string, string>>({})
+  const [aiFeedbackLoading, setAiFeedbackLoading] = useState<Record<string, boolean>>({})
 
 
   useEffect(() => {
