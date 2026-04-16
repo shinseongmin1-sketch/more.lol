@@ -82,12 +82,21 @@ export async function signup(
 export async function login(
   id: string, password: string
 ): Promise<{ ok: boolean; error?: string; user?: User }> {
-  // 관리자 계정 (DB 저장 안 함)
-  if (id === ADMIN_ID) {
-    if (password !== ADMIN_PW) return { ok: false, error: '아이디 또는 비밀번호가 올바르지 않습니다.' }
-    const user: User = { id: ADMIN_ID, nickname: '관리자', createdAt: '2026-03-31T00:00:00.000Z' }
-    localStorage.setItem(SESSION_KEY, JSON.stringify(user))
-    return { ok: true, user }
+  // 관리자 계정 — 서버에서 검증
+  const adminRes = await fetch('/api/admin-login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, password }),
+  }).catch(() => null)
+
+  if (adminRes?.ok) {
+    const data = await adminRes.json().catch(() => ({ ok: false }))
+    if (data.ok) {
+      const user: User = { id, nickname: ADMIN_NICKNAME, createdAt: '2026-03-31T00:00:00.000Z' }
+      localStorage.setItem(SESSION_KEY, JSON.stringify(user))
+      return { ok: true, user }
+    }
+    // 서버가 ok:false 반환했으면 → 일반 사용자 로그인으로 계속 진행
   }
 
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return { ok: false, error: '서버 연결 오류' }
