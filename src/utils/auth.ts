@@ -52,7 +52,7 @@ export async function getReactivationDate(id: string): Promise<Date | null> {
 export async function signup(
   id: string, password: string, nickname: string
 ): Promise<{ ok: boolean; error?: string; user?: User }> {
-  if (id === ADMIN_ID) return { ok: false, error: '이미 사용 중인 아이디입니다.' }
+  if (nickname === ADMIN_NICKNAME) return { ok: false, error: '사용할 수 없는 닉네임입니다.' }
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return { ok: false, error: '서버 연결 오류' }
 
   const reactivation = await getReactivationDate(id)
