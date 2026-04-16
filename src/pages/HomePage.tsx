@@ -10,6 +10,7 @@ import { getRecentSearches, addRecentSearch, removeRecentSearch } from '../utils
 import { getDDVersion, champIconUrl, getChampMap } from '../utils/riotApi'
 import { searchSummoners } from '../utils/supabase'
 import { findCelebrity, searchCelebrities, type Celebrity } from '../data/celebrities'
+import { getPatchChange } from '../data/patchChanges'
 import './HomePage.css'
 
 const quickLinks = [
@@ -19,6 +20,9 @@ const quickLinks = [
   { path: '/champion',  label: '챔피언 분석',     desc: '챔피언별 심층 데이터',       color: '#6366f1' },
   { path: '/ranking',   label: '랭킹',           desc: '소환사 랭킹 순위',           color: '#e879f9' },
   { path: '/community', label: '커뮤니티',        desc: '공략, 팁, 자유게시판',       color: '#f97316' },
+  { path: '/notice',    label: 'Morelol 공지사항', desc: '서비스 업데이트 및 점검 안내', color: '#14b8a6' },
+  { path: '/contact',   label: '문의하기',         desc: '버그 신고 및 서비스 문의',   color: '#8b5cf6' },
+  { path: 'https://www.leagueoflegends.com/ko-kr/news/game-updates/', label: 'Riot 패치노트', desc: '최신 밸런스 패치 내역 확인', color: '#f43f5e', external: true },
 ]
 
 interface HotChamp {
@@ -53,6 +57,7 @@ export default function HomePage() {
   const [suggestions, setSuggestions] = useState<Array<{gameName: string, tagLine: string}>>([])
   const [isSuggesting, setIsSuggesting] = useState(false)
   const [celebSuggestions, setCelebSuggestions] = useState<Celebrity[]>([])
+  const [champSuggestions, setChampSuggestions] = useState<Array<{id: string, name: string}>>([])
   const [ddVersion, setDdVersion] = useState('')
   const [hotChamps, setHotChamps] = useState<HotChamp[]>(fallbackChamps)
   const [champNameMap, setChampNameMap] = useState<Record<string, string>>({})
@@ -82,15 +87,30 @@ export default function HomePage() {
     })
   }, [])
 
-  // 소환사 자동완성 — Supabase DB 검색 (디바운스 300ms)
+  // 소환사 + 챔피언 자동완성
   useEffect(() => {
     const query = inputValue.trim()
     if (!query) {
       setSuggestions([])
       setCelebSuggestions([])
+      setChampSuggestions([])
       setIsSuggesting(false)
       return
     }
+
+    // 챔피언 검색: 한글명(띄어쓰기 무시) 또는 영문ID 부분 일치
+    const q = query.toLowerCase()
+    const qNoSpace = query.replace(/\s/g, '').toLowerCase()
+    const matched = Object.entries(champNameMap)
+      .filter(([id, name]) =>
+        name.includes(query) ||
+        name.replace(/\s/g, '').toLowerCase().includes(qNoSpace) ||
+        id.toLowerCase().includes(q)
+      )
+      .map(([id, name]) => ({ id, name }))
+      .slice(0, 5)
+    setChampSuggestions(matched)
+
     setCelebSuggestions(searchCelebrities(query))
     setIsSuggesting(true)
     const timer = setTimeout(async () => {
@@ -99,7 +119,7 @@ export default function HomePage() {
       setIsSuggesting(false)
     }, 300)
     return () => clearTimeout(timer)
-  }, [inputValue])
+  }, [inputValue, champNameMap])
 
   const handleSearch = (name: string) => {
     if (name.trim()) {
@@ -139,7 +159,7 @@ export default function HomePage() {
 
         <div className="home-hero-content">
           <h1 className="home-title">
-            <span className="home-title-main">more</span>
+            <span className="home-title-main">More</span>
             <span className="home-title-dot">lol</span>
           </h1>
           <p className="home-subtitle">더 깊은 전적 분석 · 더 정확한 티어 정보</p>
@@ -201,6 +221,45 @@ export default function HomePage() {
                           </button>
                         </div>
                       ))}
+                    </>
+                  )}
+
+                  {q && champSuggestions.length > 0 && (
+                    <>
+                      <div className="dropdown-section-title">챔피언</div>
+                      {champSuggestions.map(c => {
+                        const patch = getPatchChange(c.id)
+                        return (
+                          <div
+                            key={c.id}
+                            className="dropdown-item"
+                            onMouseDown={() => navigate(`/champion/${c.id}`)}
+                          >
+                            {ddVersion ? (
+                              <img
+                                src={champIconUrl(ddVersion, c.id)}
+                                alt={c.name}
+                                style={{ width: 24, height: 24, borderRadius: 6, objectFit: 'cover', flexShrink: 0 }}
+                              />
+                            ) : (
+                              <svg className="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="12" cy="12" r="10" />
+                              </svg>
+                            )}
+                            <span style={{ flex: 1 }}>{c.name}</span>
+                            {patch && (
+                              <span style={{
+                                fontSize: 10, fontWeight: 800, color: '#fff',
+                                background: patch.color, padding: '2px 7px',
+                                borderRadius: 20, marginRight: 4, whiteSpace: 'nowrap',
+                              }}>
+                                {patch.type === 'buff' ? '▲ 상향' : patch.type === 'nerf' ? '▼ 하향' : '● 조정'}
+                              </span>
+                            )}
+                            <span className="dropdown-server" style={{ color: '#6366f1' }}>{c.id}</span>
+                          </div>
+                        )
+                      })}
                     </>
                   )}
 
@@ -279,7 +338,12 @@ export default function HomePage() {
           {/* 빠른 이동 */}
           <div className="quick-links">
             {quickLinks.map(item => (
-              <div key={item.path} className="quick-card" onClick={() => navigate(item.path)} style={{ '--card-color': item.color } as React.CSSProperties}>
+              <div
+                key={item.path}
+                className="quick-card"
+                onClick={() => item.external ? window.open(item.path, '_blank', 'noopener noreferrer') : navigate(item.path)}
+                style={{ '--card-color': item.color } as React.CSSProperties}
+              >
                 <div className="quick-label">{item.label}</div>
                 <div className="quick-desc">{item.desc}</div>
               </div>

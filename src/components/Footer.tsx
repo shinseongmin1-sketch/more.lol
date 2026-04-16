@@ -16,60 +16,7 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* 중간 카드 3개 */}
-        <div className="footer-cards">
-          <Link to="/notice" className="footer-card footer-card-notice">
-            <div className="footer-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-              </svg>
-            </div>
-            <div className="footer-card-body">
-              <div className="footer-card-title">공지사항</div>
-              <div className="footer-card-desc">서비스 업데이트 및 점검 안내</div>
-            </div>
-            <svg className="footer-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
-
-          <Link to="/contact" className="footer-card footer-card-contact">
-            <div className="footer-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-              </svg>
-            </div>
-            <div className="footer-card-body">
-              <div className="footer-card-title">문의하기</div>
-              <div className="footer-card-desc">버그 신고 및 서비스 문의</div>
-            </div>
-            <svg className="footer-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </Link>
-
-          <a href="https://www.leagueoflegends.com/ko-kr/news/game-updates/" target="_blank" rel="noopener noreferrer" className="footer-card footer-card-patch">
-            <div className="footer-card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14 2 14 8 20 8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-                <polyline points="10 9 9 9 8 9"/>
-              </svg>
-            </div>
-            <div className="footer-card-body">
-              <div className="footer-card-title">패치노트</div>
-              <div className="footer-card-desc">최신 밸런스 패치 내역 확인</div>
-            </div>
-            <svg className="footer-card-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </a>
-        </div>
-
-        <div className="footer-links">
+<div className="footer-links">
           <div className="footer-col">
             <div className="footer-col-title">서비스</div>
             <Link to="/">전적 검색</Link>

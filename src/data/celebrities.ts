@@ -8,48 +8,103 @@ export interface Celebrity {
 }
 
 const CELEBRITY_MAP: Record<string, Celebrity> = {
-  // T1
+  // ══════════════════════════════════════════════
+  // 2026 LCK Spring 로스터 (2026.04 기준)
+  // ══════════════════════════════════════════════
+
+  // T1 — 도란 오너 페이커 페이즈 케리아
   '페이커':     { account: 'Hide on bush#KR1',  displayName: '페이커',   type: 'pro', team: 'T1' },
   'faker':      { account: 'Hide on bush#KR1',  displayName: '페이커',   type: 'pro', team: 'T1' },
   '이상혁':     { account: 'Hide on bush#KR1',  displayName: '페이커',   type: 'pro', team: 'T1' },
-  '구마유시':   { account: 'T1 Gumayusi#KR1',  displayName: '구마유시', type: 'pro', team: 'T1' },
-  'gumayusi':   { account: 'T1 Gumayusi#KR1',  displayName: '구마유시', type: 'pro', team: 'T1' },
-  '케리아':     { account: 'T1 Keria#KR1',      displayName: '케리아',   type: 'pro', team: 'T1' },
-  'keria':      { account: 'T1 Keria#KR1',      displayName: '케리아',   type: 'pro', team: 'T1' },
   '오너':       { account: 'T1 Oner#KR1',       displayName: '오너',     type: 'pro', team: 'T1' },
   'oner':       { account: 'T1 Oner#KR1',       displayName: '오너',     type: 'pro', team: 'T1' },
-  '제우스':     { account: 'T1 Zeus#KR1',       displayName: '제우스',   type: 'pro', team: 'T1' },
-  'zeus':       { account: 'T1 Zeus#KR1',       displayName: '제우스',   type: 'pro', team: 'T1' },
-  // Gen.G
-  '초비':       { account: 'Gen G Chovy#KR1',  displayName: '초비',     type: 'pro', team: 'Gen.G' },
-  'chovy':      { account: 'Gen G Chovy#KR1',  displayName: '초비',     type: 'pro', team: 'Gen.G' },
-  '룰러':       { account: 'Gen G Ruler#KR1',  displayName: '룰러',     type: 'pro', team: 'Gen.G' },
-  'ruler':      { account: 'Gen G Ruler#KR1',  displayName: '룰러',     type: 'pro', team: 'Gen.G' },
-  '캐니언':     { account: 'Gen G Canyon#KR1', displayName: '캐니언',   type: 'pro', team: 'Gen.G' },
-  'canyon':     { account: 'Gen G Canyon#KR1', displayName: '캐니언',   type: 'pro', team: 'Gen.G' },
-  '피즈':       { account: 'Gen G Peyz#KR1',   displayName: '피즈',     type: 'pro', team: 'Gen.G' },
-  'peyz':       { account: 'Gen G Peyz#KR1',   displayName: '피즈',     type: 'pro', team: 'Gen.G' },
-  '도란':       { account: 'Gen G Doran#KR1',  displayName: '도란',     type: 'pro', team: 'Gen.G' },
-  'doran':      { account: 'Gen G Doran#KR1',  displayName: '도란',     type: 'pro', team: 'Gen.G' },
-  '레헨즈':     { account: 'Gen G Lehends#KR1', displayName: '레헨즈',  type: 'pro', team: 'Gen.G' },
-  'lehends':    { account: 'Gen G Lehends#KR1', displayName: '레헨즈',  type: 'pro', team: 'Gen.G' },
-  '피넛':       { account: 'Gen G Peanut#KR1', displayName: '피넛',     type: 'pro', team: 'Gen.G' },
-  'peanut':     { account: 'Gen G Peanut#KR1', displayName: '피넛',     type: 'pro', team: 'Gen.G' },
-  // Dplus Kia
-  '쇼메이커':   { account: 'DK ShowMaker#KR1', displayName: '쇼메이커', type: 'pro', team: 'Dplus Kia' },
-  'showmaker':  { account: 'DK ShowMaker#KR1', displayName: '쇼메이커', type: 'pro', team: 'Dplus Kia' },
-  '베릴':       { account: 'Beryl#KR1',         displayName: '베릴',     type: 'pro', team: 'Dplus Kia' },
-  'beryl':      { account: 'Beryl#KR1',         displayName: '베릴',     type: 'pro', team: 'Dplus Kia' },
-  // KT Rolster
+  '케리아':     { account: 'T1 Keria#KR1',      displayName: '케리아',   type: 'pro', team: 'T1' },
+  'keria':      { account: 'T1 Keria#KR1',      displayName: '케리아',   type: 'pro', team: 'T1' },
+  '도란':       { account: 'T1 Doran#KR1',      displayName: '도란',     type: 'pro', team: 'T1' },
+  'doran':      { account: 'T1 Doran#KR1',      displayName: '도란',     type: 'pro', team: 'T1' },
+  '페이즈':     { account: 'T1 Peyz#KR1',       displayName: '페이즈',   type: 'pro', team: 'T1' },
+  'peyz':       { account: 'T1 Peyz#KR1',       displayName: '페이즈',   type: 'pro', team: 'T1' },
+
+  // Gen.G — 키인 캐니언 초비 룰러 두로
+  '초비':       { account: 'Gen G Chovy#KR1',   displayName: '초비',     type: 'pro', team: 'Gen.G' },
+  'chovy':      { account: 'Gen G Chovy#KR1',   displayName: '초비',     type: 'pro', team: 'Gen.G' },
+  '캐니언':     { account: 'Gen G Canyon#KR1',  displayName: '캐니언',   type: 'pro', team: 'Gen.G' },
+  'canyon':     { account: 'Gen G Canyon#KR1',  displayName: '캐니언',   type: 'pro', team: 'Gen.G' },
+  '룰러':       { account: 'Gen G Ruler#KR1',   displayName: '룰러',     type: 'pro', team: 'Gen.G' },
+  'ruler':      { account: 'Gen G Ruler#KR1',   displayName: '룰러',     type: 'pro', team: 'Gen.G' },
+  '키인':       { account: 'Gen G Kiin#KR1',    displayName: '키인',     type: 'pro', team: 'Gen.G' },
+  'kiin':       { account: 'Gen G Kiin#KR1',    displayName: '키인',     type: 'pro', team: 'Gen.G' },
+  '두로':       { account: 'Gen G Duro#KR1',    displayName: '두로',     type: 'pro', team: 'Gen.G' },
+  'duro':       { account: 'Gen G Duro#KR1',    displayName: '두로',     type: 'pro', team: 'Gen.G' },
+
+  // Hanwha Life Esports — 제우스 카나비 제카 구마유시 딜라이트
+  '제우스':     { account: 'HLE Zeus#KR1',      displayName: '제우스',   type: 'pro', team: 'HLE' },
+  'zeus':       { account: 'HLE Zeus#KR1',      displayName: '제우스',   type: 'pro', team: 'HLE' },
+  '구마유시':   { account: 'HLE Gumayusi#KR1',  displayName: '구마유시', type: 'pro', team: 'HLE' },
+  'gumayusi':   { account: 'HLE Gumayusi#KR1',  displayName: '구마유시', type: 'pro', team: 'HLE' },
+  '카나비':     { account: 'HLE Kanavi#KR1',    displayName: '카나비',   type: 'pro', team: 'HLE' },
+  'kanavi':     { account: 'HLE Kanavi#KR1',    displayName: '카나비',   type: 'pro', team: 'HLE' },
+  '제카':       { account: 'HLE Zeka#KR1',      displayName: '제카',     type: 'pro', team: 'HLE' },
+  'zeka':       { account: 'HLE Zeka#KR1',      displayName: '제카',     type: 'pro', team: 'HLE' },
+  '딜라이트':   { account: 'HLE Delight#KR1',   displayName: '딜라이트', type: 'pro', team: 'HLE' },
+  'delight':    { account: 'HLE Delight#KR1',   displayName: '딜라이트', type: 'pro', team: 'HLE' },
+
+  // Dplus KIA — 시우 루시드 쇼메이커 스매시 커리어
+  '쇼메이커':   { account: 'DK ShowMaker#KR1',  displayName: '쇼메이커', type: 'pro', team: 'Dplus KIA' },
+  'showmaker':  { account: 'DK ShowMaker#KR1',  displayName: '쇼메이커', type: 'pro', team: 'Dplus KIA' },
+  '루시드':     { account: 'DK Lucid#KR1',      displayName: '루시드',   type: 'pro', team: 'Dplus KIA' },
+  'lucid':      { account: 'DK Lucid#KR1',      displayName: '루시드',   type: 'pro', team: 'Dplus KIA' },
+  '스매시':     { account: 'DK Smash#KR1',      displayName: '스매시',   type: 'pro', team: 'Dplus KIA' },
+  'smash':      { account: 'DK Smash#KR1',      displayName: '스매시',   type: 'pro', team: 'Dplus KIA' },
+
+  // KT Rolster — 퍼펙트 커즈 비디디 에이밍 고스트
   '비디디':     { account: 'KT Bdd#KR1',        displayName: '비디디',   type: 'pro', team: 'KT' },
   'bdd':        { account: 'KT Bdd#KR1',        displayName: '비디디',   type: 'pro', team: 'KT' },
-  // FA / retired
+  '에이밍':     { account: 'KT Aiming#KR1',     displayName: '에이밍',   type: 'pro', team: 'KT' },
+  'aiming':     { account: 'KT Aiming#KR1',     displayName: '에이밍',   type: 'pro', team: 'KT' },
+  '퍼펙트':     { account: 'KT PerfecT#KR1',    displayName: '퍼펙트',   type: 'pro', team: 'KT' },
+  'perfect':    { account: 'KT PerfecT#KR1',    displayName: '퍼펙트',   type: 'pro', team: 'KT' },
+  '커즈':       { account: 'KT Cuzz#KR1',       displayName: '커즈',     type: 'pro', team: 'KT' },
+  'cuzz':       { account: 'KT Cuzz#KR1',       displayName: '커즈',     type: 'pro', team: 'KT' },
+  '고스트':     { account: 'KT Ghost#KR1',      displayName: '고스트',   type: 'pro', team: 'KT' },
+  'ghost':      { account: 'KT Ghost#KR1',      displayName: '고스트',   type: 'pro', team: 'KT' },
+
+  // Nongshim RedForce — 킹겐 스펀지 스카우트 태윤 레헨즈
+  '레헨즈':     { account: 'NS Lehends#KR1',    displayName: '레헨즈',   type: 'pro', team: 'Nongshim' },
+  'lehends':    { account: 'NS Lehends#KR1',    displayName: '레헨즈',   type: 'pro', team: 'Nongshim' },
+  '스카우트':   { account: 'NS Scout#KR1',      displayName: '스카우트', type: 'pro', team: 'Nongshim' },
+  'scout':      { account: 'NS Scout#KR1',      displayName: '스카우트', type: 'pro', team: 'Nongshim' },
+  '킹겐':       { account: 'NS Kingen#KR1',     displayName: '킹겐',     type: 'pro', team: 'Nongshim' },
+  'kingen':     { account: 'NS Kingen#KR1',     displayName: '킹겐',     type: 'pro', team: 'Nongshim' },
+
+  // SOOPers — 두두 표식 클로저 덕담 피터
+  '표식':       { account: 'SOOPers Pyosik#KR1', displayName: '표식',    type: 'pro', team: 'SOOPers' },
+  'pyosik':     { account: 'SOOPers Pyosik#KR1', displayName: '표식',    type: 'pro', team: 'SOOPers' },
+  '클로저':     { account: 'SOOPers Clozer#KR1', displayName: '클로저',  type: 'pro', team: 'SOOPers' },
+  'clozer':     { account: 'SOOPers Clozer#KR1', displayName: '클로저',  type: 'pro', team: 'SOOPers' },
+  '덕담':       { account: 'SOOPers deokdam#KR1', displayName: '덕담',   type: 'pro', team: 'SOOPers' },
+  'deokdam':    { account: 'SOOPers deokdam#KR1', displayName: '덕담',   type: 'pro', team: 'SOOPers' },
+
+  // DRX — 리치 윌러 유칼 지우 안딜
+  '유칼':       { account: 'DRX Ucal#KR1',      displayName: '유칼',     type: 'pro', team: 'DRX' },
+  'ucal':       { account: 'DRX Ucal#KR1',      displayName: '유칼',     type: 'pro', team: 'DRX' },
+
+  // FEARX — 클리어 랩터 빅라 디아블 켈린
+  '켈린':       { account: 'FEARX Kellin#KR1',  displayName: '켈린',     type: 'pro', team: 'FEARX' },
+  'kellin':     { account: 'FEARX Kellin#KR1',  displayName: '켈린',     type: 'pro', team: 'FEARX' },
+
+  // ── FA / 은퇴 선수 ──
   '데프트':     { account: 'DRX Deft#KR1',      displayName: '데프트',   type: 'pro' },
   'deft':       { account: 'DRX Deft#KR1',      displayName: '데프트',   type: 'pro' },
+  '피넛':       { account: 'Peanut#KR1',         displayName: '피넛',     type: 'pro' },
+  'peanut':     { account: 'Peanut#KR1',         displayName: '피넛',     type: 'pro' },
   '너구리':     { account: 'Nuguri#KR1',         displayName: '너구리',   type: 'pro' },
   'nuguri':     { account: 'Nuguri#KR1',         displayName: '너구리',   type: 'pro' },
+  '베릴':       { account: 'Beryl#KR1',          displayName: '베릴',     type: 'pro' },
+  'beryl':      { account: 'Beryl#KR1',          displayName: '베릴',     type: 'pro' },
   '클리드':     { account: 'Clid#KR1',           displayName: '클리드',   type: 'pro' },
   'clid':       { account: 'Clid#KR1',           displayName: '클리드',   type: 'pro' },
+  '피즈':       { account: 'Peyz#KR1',           displayName: '피즈(구닉)', type: 'pro' },
   // ===== SOOP 스트리머 =====
   '풍월량':     { account: '김영태#KR1',        displayName: '풍월량',   type: 'streamer' },
   '감스트':     { account: '감동스타#KR1',      displayName: '감스트',   type: 'streamer' },

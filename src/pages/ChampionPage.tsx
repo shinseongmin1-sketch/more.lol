@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getDDVersion, getChampMap, champIconUrl } from '../utils/riotApi'
 import { incrementChampionAnalysis } from '../utils/searchStats'
+import { getPatchChange, PATCH_META } from '../data/patchChanges'
 import './ChampionPage.css'
 import './SubPage.css'
 
@@ -75,27 +76,48 @@ export default function ChampionPage() {
         {loading ? (
           <div className="champ-loading">챔피언 정보를 불러오는 중...</div>
         ) : (
+          <>
           <div className="champ-analysis-grid">
-            {filtered.map(champ => (
-              <div
-                key={champ.id}
-                className="champ-analysis-card"
-                onClick={() => { incrementChampionAnalysis(champ.name); navigate(`/champion/${champ.id}`) }}
-              >
-                <div className="ca-header">
-                  <img
-                    src={champIconUrl(ddVersion, champ.id)}
-                    alt={champ.name}
-                    className="ca-icon ca-icon-img"
-                  />
-                  <div className="ca-info">
-                    <div className="ca-name">{champ.name}</div>
-                    <div className="ca-en">{champ.id}</div>
+            {filtered.map(champ => {
+              const patch = getPatchChange(champ.id)
+              return (
+                <div
+                  key={champ.id}
+                  className={`champ-analysis-card${patch ? ` ca-patch-${patch.type}` : ''}`}
+                  onClick={() => { incrementChampionAnalysis(champ.name); navigate(`/champion/${champ.id}`) }}
+                  style={patch ? { background: patch.bg, borderColor: patch.border } as React.CSSProperties : undefined}
+                >
+                  {patch && (
+                    <span className="ca-patch-badge" style={{ background: patch.color }}>
+                      {patch.type === 'buff' ? '▲ 상향' : patch.type === 'nerf' ? '▼ 하향' : '● 조정'}
+                    </span>
+                  )}
+                  <div className="ca-header">
+                    <img
+                      src={champIconUrl(ddVersion, champ.id)}
+                      alt={champ.name}
+                      className="ca-icon ca-icon-img"
+                      style={patch ? { boxShadow: `0 0 10px ${patch.color}55` } : undefined}
+                    />
+                    <div className="ca-info">
+                      <div className="ca-name">{champ.name}</div>
+                      <div className="ca-en">{champ.id}</div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )
+            })}
+          </div>
+          {/* 패치 범례 */}
+          <div className="patch-legend">
+            <span className="patch-legend-label">26.8 패치</span>
+            {(['buff', 'nerf', 'adjust'] as const).map(type => (
+              <span key={type} className="patch-legend-item" style={{ color: PATCH_META[type].color, borderColor: PATCH_META[type].border, background: PATCH_META[type].bg }}>
+                {type === 'buff' ? '▲ 상향' : type === 'nerf' ? '▼ 하향' : '● 조정'}
+              </span>
             ))}
           </div>
+          </>
         )}
       </div>
     </div>

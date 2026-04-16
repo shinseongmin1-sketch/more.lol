@@ -4,11 +4,20 @@ import { getDDVersion, champIconUrl } from '../utils/riotApi'
 import { statShards } from '../data/garenBuild'
 import { ROLE_PRESETS, ROLE_SUMMONERS, ROLE_POSITION } from '../data/champRunePresets'
 import { TEMPLATES, getRoleFromTags, makeSkillOrder } from '../data/buildTemplates'
+import { getMainPosition } from '../data/champPositionOverrides'
 import { CHAMP_BUILDS } from '../data/champBuilds'
 import type { RoleName } from '../data/buildTemplates'
 import './ChampionDetailPage.css'
 
 const POSITIONS = ['탑', '정글', '미드', '원딜', '서포터'] as const
+
+const POSITION_ICONS: Record<string, string> = {
+  '탑':    'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png',
+  '정글':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png',
+  '미드':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png',
+  '원딜':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png',
+  '서포터':'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png',
+}
 const SPELL_KEYS = ['Q', 'W', 'E', 'R'] as const
 const SPELL_COLORS: Record<string, string> = { Q: '#3b82f6', W: '#10b981', E: '#8b5cf6', R: '#f59e0b' }
 const TAG_KO: Record<string, string> = {
@@ -53,8 +62,13 @@ export default function ChampionDetailPage() {
   const [activeTab, setActiveTab] = useState<'build' | 'skills' | 'stats'>('build')
   const [activePos, setActivePos] = useState('탑')
   const [activePreset, setActivePreset] = useState(0)
+  const [liveBuild, setLiveBuild] = useState<any>(null)
+  const [liveLoading, setLiveLoading] = useState(false)
 
-  useEffect(() => { setActivePreset(0) }, [champId])
+  useEffect(() => {
+    setActivePreset(0)
+    window.scrollTo({ top: 0, behavior: 'instant' })
+  }, [champId])
 
   useEffect(() => {
     if (!champId) return
@@ -71,9 +85,10 @@ export default function ChampionDetailPage() {
         const champJson = await champRes.json()
         const data = champJson.data[champId]
         setChampData(data)
-        // 챔피언의 주 포지션으로 자동 이동
+        // 챔피언의 주 포지션으로 자동 이동 (오버라이드 맵 우선 적용)
         const initRole = getRoleFromTags(data.tags ?? [])
-        setActivePos(ROLE_POSITION[initRole])
+        const initPos = getMainPosition(champId, ROLE_POSITION[initRole])
+        setActivePos(initPos)
         setActivePreset(0)
         if (runeRes.ok) {
           const runeJson = await runeRes.json()
@@ -88,6 +103,18 @@ export default function ChampionDetailPage() {
       .finally(() => setLoading(false))
   }, [champId])
 
+  // 라이브 빌드 조회 (챔피언 or 포지션 바뀔 때마다)
+  useEffect(() => {
+    if (!champId) return
+    setLiveBuild(null)
+    setLiveLoading(true)
+    fetch(`/api/champ-builds?champId=${encodeURIComponent(champId)}&position=${encodeURIComponent(activePos)}`)
+      .then(r => r.ok ? r.json() : null)
+      .then(data => { if (data && !data.insufficient && !data.error) setLiveBuild(data) })
+      .catch(() => {})
+      .finally(() => setLiveLoading(false))
+  }, [champId, activePos])
+
   if (loading) return (
     <div className="cd-loading"><div className="cd-spinner" /><span>불러오는 중...</span></div>
   )
@@ -96,7 +123,7 @@ export default function ChampionDetailPage() {
   )
 
   const mainRole = getRoleFromTags(champData.tags ?? [])
-  const mainPosition = ROLE_POSITION[mainRole]
+  const mainPosition = getMainPosition(champId ?? '', ROLE_POSITION[mainRole])
   const role = getRoleForPosition(activePos, champData.tags ?? [])
   const template = TEMPLATES[role]
   const presets = ROLE_PRESETS[role]
@@ -123,14 +150,24 @@ export default function ChampionDetailPage() {
   return (
     <div className="cd-page">
 
+      {/* ══ 상단 고정 내비게이션 바 (position: fixed 스페이서 포함) ══ */}
+      <div className="cd-topnav-spacer" />
+      <div className="cd-topnav">
+        <div className="cd-topnav-inner">
+          <button className="cd-topnav-back" onClick={() => navigate('/champion')}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M19 12H5M12 5l-7 7 7 7"/>
+            </svg>
+            챔피언 목록
+          </button>
+          <span className="cd-topnav-champ">{champData.name}</span>
+        </div>
+      </div>
+
       {/* ══ 히어로 배너 ══ */}
       <div className="cd-banner" style={{ '--splash': `url(${splashUrl})` } as React.CSSProperties}>
         <div className="cd-banner-overlay" />
-        <div className="cd-banner-inner">
-          <button className="cd-back" onClick={() => navigate('/champion')}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-            목록으로
-          </button>
+        <div className="cd-banner-inner" style={{ justifyContent: 'flex-end' }}>
           <div className="cd-banner-body">
             <img src={champIconUrl(ddVersion, champId!)} alt={champData.name} className="cd-banner-icon" />
             <div>
@@ -149,8 +186,13 @@ export default function ChampionDetailPage() {
         <div className="cd-header-inner">
           <div className="cd-pos-tabs">
             {POSITIONS.map(p => (
-              <button key={p} className={`cd-pos-tab${activePos === p ? ' active' : ''}`} onClick={() => { setActivePos(p); setActivePreset(0) }}>
-                {p}
+              <button
+                key={p}
+                className={`cd-pos-tab${activePos === p ? ' active' : ''}${p === mainPosition ? ' main-pos' : ''}`}
+                onClick={() => { setActivePos(p); setActivePreset(0) }}
+              >
+                <img src={POSITION_ICONS[p]} alt={p} className="cd-pos-icon" />
+                <span className="cd-pos-label">{p}</span>
                 {p === mainPosition && <span className="cd-pos-main-dot" />}
               </button>
             ))}
@@ -188,6 +230,109 @@ export default function ChampionDetailPage() {
           return (
             <div className="build-cards">
 
+              {/* ── 라이브 빌드 카드 (챌린저 실시간) ── */}
+              {(liveLoading || liveBuild) && (() => {
+                const RUNE_CDN = 'https://ddragon.leagueoflegends.com/cdn/img/'
+                if (liveLoading) return (
+                  <div className="live-build-card live-build-loading">
+                    <div className="live-build-badge">
+                      <span className="live-dot" />챌린저 실시간 데이터 수집 중...
+                    </div>
+                  </div>
+                )
+                if (!liveBuild) return null
+                const primTree = runeTreeData.find((t: any) => t.id === liveBuild.primaryTree?.id)
+                const secTree  = runeTreeData.find((t: any) => t.id === liveBuild.secondaryTree?.id)
+                const findRuneImg = (runeId: number): string => {
+                  for (const tree of runeTreeData)
+                    for (const slot of tree.slots)
+                      for (const r of slot.runes)
+                        if (r.id === runeId) return RUNE_CDN + r.icon
+                  return ''
+                }
+                return (
+                  <div className="live-build-card">
+                    <div className="live-build-head">
+                      <div className="live-build-badge">
+                        <span className="live-dot" />챌린저 실시간 빌드
+                      </div>
+                      <span className="live-build-sample">{liveBuild.sampleSize}게임 기준</span>
+                    </div>
+                    <div className="live-build-body">
+
+                      {/* 소환사 주문 */}
+                      {liveBuild.summonerSpells?.length > 0 && (
+                        <div className="live-section">
+                          <span className="live-section-label">소환사 주문</span>
+                          <div className="live-row">
+                            {liveBuild.summonerSpells.map((sp: any) => sp.key && (
+                              <div key={sp.id} className="live-spell-wrap">
+                                <img
+                                  src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${sp.key}.png`}
+                                  alt={sp.key}
+                                  className="live-spell-img"
+                                />
+                                <span className="live-freq">{Math.round(sp.freq * 100)}%</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 아이템 */}
+                      {(liveBuild.boots?.length > 0 || liveBuild.items?.length > 0) && (
+                        <div className="live-section">
+                          <span className="live-section-label">코어 아이템</span>
+                          <div className="live-row live-items-row">
+                            {liveBuild.boots?.slice(0,1).map((it: any) => (
+                              <div key={it.id} className="live-item-wrap live-boot">
+                                <img src={itemIcon(it.id)} alt={it.id} className="live-item-img" />
+                                <span className="live-freq">{Math.round(it.freq * 100)}%</span>
+                              </div>
+                            ))}
+                            {liveBuild.items?.slice(0, 6).map((it: any, idx: number) => (
+                              <div key={it.id} className="live-item-wrap">
+                                {idx > 0 && <span className="live-arrow">›</span>}
+                                <img src={itemIcon(it.id)} alt={it.id} className="live-item-img" />
+                                <span className="live-freq">{Math.round(it.freq * 100)}%</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* 룬 */}
+                      {(primTree || secTree) && (
+                        <div className="live-section">
+                          <span className="live-section-label">메인 룬</span>
+                          <div className="live-row live-rune-row">
+                            {primTree && (
+                              <div className="live-rune-tree">
+                                <img src={RUNE_CDN + primTree.icon} className="live-tree-icon" alt={primTree.name} />
+                                <span className="live-tree-name">{primTree.name}</span>
+                              </div>
+                            )}
+                            {liveBuild.keystone && findRuneImg(liveBuild.keystone.id) && (
+                              <div className="live-rune-ks">
+                                <img src={findRuneImg(liveBuild.keystone.id)} className="live-ks-icon" alt="" />
+                                <span className="live-freq">{Math.round(liveBuild.keystone.freq * 100)}%</span>
+                              </div>
+                            )}
+                            {secTree && (
+                              <div className="live-rune-tree live-rune-sec">
+                                <img src={RUNE_CDN + secTree.icon} className="live-tree-icon live-tree-icon-sm" alt={secTree.name} />
+                                <span className="live-tree-name">{secTree.name}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                    </div>
+                  </div>
+                )
+              })()}
+
               {/* ── 카드 1: 룬 ── */}
               <div className="build-card rune-card">
                 <div className="build-card-head">
@@ -201,6 +346,14 @@ export default function ChampionDetailPage() {
                   {presets.map((p, i) => {
                     const tree = runeTreeData.find((t: any) => t.id === p.primaryTreeId)
                     const ksIcon = findRuneIcon(p.primaryTreeId, p.keystoneId)
+                    // Data Dragon에서 실제 키스톤 이름 조회 (없으면 하드코딩 name 폴백)
+                    const ksName = (() => {
+                      if (!tree) return p.name
+                      for (const slot of tree.slots)
+                        for (const r of slot.runes)
+                          if (r.id === p.keystoneId) return r.name
+                      return p.name
+                    })()
                     return (
                       <button
                         key={i}
@@ -209,9 +362,9 @@ export default function ChampionDetailPage() {
                       >
                         <div className="rune-preset-icons">
                           {tree && <img src={RUNE_CDN + tree.icon} className="rune-preset-tree-icon" alt="" />}
-                          {ksIcon && <img src={ksIcon} className="rune-preset-ks-icon" alt={p.name} />}
+                          {ksIcon && <img src={ksIcon} className="rune-preset-ks-icon" alt={ksName} />}
                         </div>
-                        <span className="rune-preset-name">{p.name}</span>
+                        <span className="rune-preset-name">{ksName}</span>
                         {activePreset === i && <span className="rune-preset-check">✓</span>}
                       </button>
                     )

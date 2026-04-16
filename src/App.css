@@ -6,12 +6,12 @@
 
 :root {
   /* 배경 */
-  --bg-primary: #f2f4fb;
-  --bg-secondary: #ffffff;
-  --bg-card: #ffffff;
-  --bg-card-hover: #f5f7ff;
-  --bg-input: #eef0f8;
-  --border-color: #dde0f0;
+  --bg-primary: #eef0fa;
+  --bg-secondary: #f5f6ff;
+  --bg-card: #f7f8ff;
+  --bg-card-hover: #eff1ff;
+  --bg-input: #eaecf7;
+  --border-color: #d8dbee;
   --border-hover: #3b82f6;
 
   /* 메인 액센트: 블루 */

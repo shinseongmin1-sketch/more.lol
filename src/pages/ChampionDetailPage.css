@@ -818,6 +818,66 @@
 .cd-spinner { width:32px; height:32px; border:3px solid var(--border-color); border-top-color:#6366f1; border-radius:50%; animation:spin .7s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
 
+/* ── 상단 고정 내비게이션 바 ── */
+.cd-topnav-spacer {
+  height: 48px; /* cd-topnav 높이만큼 공간 확보 (fixed 레이아웃 겹침 방지) */
+}
+
+.cd-topnav {
+  position: fixed;
+  top: 76px; /* 헤더 높이 */
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-color);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.cd-topnav-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 32px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+@media (max-width: 768px) {
+  .cd-topnav { top: 56px; } /* 모바일 헤더 높이 */
+}
+
+.cd-topnav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--accent-primary);
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 16px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, transform 0.12s, box-shadow 0.15s;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.35);
+  flex-shrink: 0;
+}
+.cd-topnav-back:hover {
+  background: #4f46e5;
+  transform: translateX(-2px);
+  box-shadow: 0 4px 14px rgba(99,102,241,0.5);
+}
+.cd-topnav-back:active { transform: translateX(0); }
+
+.cd-topnav-champ {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
 /* ── 히어로 배너 ── */
 .cd-banner {
   height: 200px; position:relative; overflow:hidden;
@@ -850,16 +910,80 @@
 /* ── 헤더 바 (포지션 + 스탯) ── */
 .cd-header-bar { background:var(--bg-card); border-bottom:1px solid var(--border-color); }
 .cd-header-inner { max-width:1100px; margin:0 auto; padding:0 32px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
-.cd-pos-tabs { display:flex; }
+.cd-pos-tabs { display:flex; gap:4px; padding:6px 8px; }
+
 .cd-pos-tab {
-  position:relative; background:none; border:none;
-  color:var(--text-muted); font-size:13px; font-weight:600;
-  padding:13px 16px; cursor:pointer; font-family:inherit;
-  border-bottom:2px solid transparent; transition:all .15s; margin-bottom:-1px;
+  position: relative;
+  background: none;
+  border: 1.5px solid transparent;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 18px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all .18s;
+  margin-bottom: 0;
 }
-.cd-pos-tab:hover { color:var(--text-primary); }
-.cd-pos-tab.active { color:#a5b4fc; border-bottom-color:#6366f1; }
-.cd-pos-main-dot { position:absolute; top:9px; right:8px; width:5px; height:5px; background:#f59e0b; border-radius:50%; }
+
+.cd-pos-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  filter: grayscale(1) opacity(0.35);
+  transition: filter .18s, transform .18s;
+}
+
+.cd-pos-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color .18s;
+  letter-spacing: 0.3px;
+}
+
+/* 호버 */
+.cd-pos-tab:hover .cd-pos-icon  { filter: grayscale(0.3) opacity(0.75); transform: scale(1.08); }
+.cd-pos-tab:hover .cd-pos-label { color: var(--text-secondary); }
+
+/* 활성 탭 */
+.cd-pos-tab.active {
+  background: rgba(99, 102, 241, 0.1);
+  border-color: rgba(99, 102, 241, 0.35);
+}
+.cd-pos-tab.active .cd-pos-icon  { filter: grayscale(0) opacity(1) drop-shadow(0 0 6px rgba(99,102,241,0.7)); transform: scale(1.1); }
+.cd-pos-tab.active .cd-pos-label { color: #a5b4fc; font-weight: 700; }
+
+/* 주 포지션 탭 (비활성 상태) */
+.cd-pos-tab.main-pos {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: rgba(245, 158, 11, 0.05);
+}
+.cd-pos-tab.main-pos .cd-pos-icon  { filter: grayscale(0) opacity(0.85) drop-shadow(0 0 4px rgba(245,158,11,0.5)); }
+.cd-pos-tab.main-pos .cd-pos-label { color: #fbbf24; }
+
+/* 주 포지션 + 활성 */
+.cd-pos-tab.main-pos.active {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 0 0 0 1px rgba(245,158,11,0.2), 0 4px 12px rgba(245,158,11,0.15);
+}
+.cd-pos-tab.main-pos.active .cd-pos-icon  { filter: grayscale(0) opacity(1) drop-shadow(0 0 8px rgba(245,158,11,0.8)); }
+.cd-pos-tab.main-pos.active .cd-pos-label { color: #fbbf24; font-weight: 800; }
+
+/* 주 포지션 표시 점 */
+.cd-pos-main-dot {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  background: #f59e0b;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(245,158,11,0.8);
+}
 
 .cd-header-stats { display:flex; align-items:center; gap:20px; padding:10px 0; }
 .cd-hstat { display:flex; flex-direction:column; align-items:center; gap:2px; }
@@ -1097,3 +1221,200 @@
 .cd-tips { margin:0; padding-left:16px; display:flex; flex-direction:column; gap:6px; }
 .cd-tips li { font-size:13px; line-height:1.6; color:var(--text-secondary); }
 .cd-tips.enemy li { color:#fca5a5; }
+
+/* ════════════════════════════════════════════
+   라이브 빌드 카드 (챌린저 실시간 데이터)
+════════════════════════════════════════════ */
+.live-build-card {
+  background: linear-gradient(135deg, rgba(99,102,241,0.06) 0%, rgba(16,185,129,0.04) 100%);
+  border: 1px solid rgba(99,102,241,0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+}
+
+.live-build-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1, #10b981);
+}
+
+.live-build-loading {
+  padding: 16px 20px;
+}
+
+.live-build-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px 10px;
+  border-bottom: 1px solid rgba(99,102,241,0.15);
+}
+
+.live-build-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #818cf8;
+  letter-spacing: 0.3px;
+}
+
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: live-pulse 1.8s infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.live-build-sample {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: rgba(99,102,241,0.1);
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.live-build-body {
+  padding: 14px 20px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.live-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.live-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  min-width: 72px;
+  padding-top: 4px;
+  flex-shrink: 0;
+}
+
+.live-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.live-items-row {
+  gap: 2px;
+}
+
+/* 소환사 주문 */
+.live-spell-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.live-spell-img {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(99,102,241,0.4);
+}
+
+/* 아이템 */
+.live-item-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  position: relative;
+}
+
+.live-item-wrap.live-boot {
+  margin-right: 8px;
+  padding-right: 10px;
+  border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+.live-item-img {
+  width: 36px; height: 36px;
+  border-radius: 7px;
+  border: 1.5px solid rgba(99,102,241,0.3);
+  transition: transform 0.12s;
+}
+
+.live-item-img:hover { transform: scale(1.1); }
+
+.live-arrow {
+  font-size: 14px;
+  color: var(--text-muted);
+  padding: 0 2px;
+  align-self: center;
+  margin-top: -12px;
+}
+
+.live-freq {
+  font-size: 10px;
+  font-weight: 700;
+  color: #818cf8;
+}
+
+/* 룬 */
+.live-rune-row {
+  gap: 12px;
+}
+
+.live-rune-tree {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.05);
+  padding: 4px 10px 4px 6px;
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.live-rune-sec {
+  opacity: 0.75;
+}
+
+.live-tree-icon {
+  width: 24px; height: 24px;
+}
+
+.live-tree-icon-sm {
+  width: 18px; height: 18px;
+}
+
+.live-tree-name {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.live-rune-ks {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.live-ks-icon {
+  width: 36px; height: 36px;
+  filter: drop-shadow(0 0 6px rgba(99,102,241,0.6));
+}

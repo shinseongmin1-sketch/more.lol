@@ -42,12 +42,12 @@ export const ROLE_PRESETS: Record<RoleName, RunePreset[]> = {
   ],
 
   marksman: [
+    { name: '치명적 속도', keystoneId: 8005, primaryTreeId: 8000, secondaryTreeId: 8100,
+      selectedRunes: new Set([8005, 9111, 9104, 8014, 8126, 8135]), statShardSelected: [S.atkSpd, S.adaptive, S.health] },
     { name: '집중 공격', keystoneId: 8008, primaryTreeId: 8000, secondaryTreeId: 8200,
       selectedRunes: new Set([8008, 9101, 9104, 8014, 8233, 8236]), statShardSelected: [S.atkSpd, S.adaptive, S.health] },
     { name: '함대 발놀림', keystoneId: 8021, primaryTreeId: 8000, secondaryTreeId: 8100,
       selectedRunes: new Set([8021, 9101, 9103, 8014, 8139, 8135]), statShardSelected: [S.atkSpd, S.adaptive, S.health] },
-    { name: '격전',     keystoneId: 8005, primaryTreeId: 8000, secondaryTreeId: 8100,
-      selectedRunes: new Set([8005, 9111, 9104, 8014, 8126, 8135]), statShardSelected: [S.adaptive, S.adaptive, S.health] },
   ],
 
   supportEnchant: [
