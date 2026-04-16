@@ -124,6 +124,20 @@ ${tfLines || '  (없음)'}
   const aiData = await aiRes.json()
   const feedback = aiData.candidates?.[0]?.content?.parts?.[0]?.text ?? '피드백을 생성할 수 없습니다.'
 
+  // 캐시 저장 (fire and forget)
+  if (SB_URL && SB_KEY) {
+    fetch(`${SB_URL}/rest/v1/ai_match_feedback`, {
+      method: 'POST',
+      headers: {
+        apikey: SB_KEY,
+        Authorization: `Bearer ${SB_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates',
+      },
+      body: JSON.stringify({ match_id: matchId, feedback }),
+    }).catch(() => {})
+  }
+
   return new Response(JSON.stringify({ feedback }), {
     status: 200,
     headers: { 'Content-Type': 'application/json' },
