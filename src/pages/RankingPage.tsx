@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './SubPage.css'
 import './RankingPage.css'
 
@@ -123,6 +124,7 @@ function useFetch<T>(url: string) {
 function OverallRanking() {
   const { data, loading, lastUpdated } = useFetch<OverallEntry[]>('/api/ranking?type=overall')
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
+  const navigate = useNavigate()
 
   if (loading) return (
     <div className="ranking-loading">
@@ -163,7 +165,10 @@ function OverallRanking() {
                 </span>
               </td>
               <td className="col-r-name">
-                <div className="summoner-name-cell">
+                <div
+                  className="summoner-name-cell clickable"
+                  onClick={() => navigate(`/summoner/${encodeURIComponent(`${e.gameName}#${e.tagLine}`)}`)}
+                >
                   <span className="summoner-game-name">{e.gameName}</span>
                   <span className="summoner-tag">#{e.tagLine}</span>
                 </div>
@@ -214,6 +219,7 @@ function ProRanking() {
   const { data, loading, lastUpdated } = useFetch<ProEntry[]>('/api/ranking?type=pro')
   const [teamFilter, setTeamFilter] = useState('전체')
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
+  const navigate = useNavigate()
 
   if (loading) return (
     <div className="ranking-loading">
@@ -289,7 +295,10 @@ function ProRanking() {
                 </td>
                 <td className="col-r-name">
                   {e.found
-                    ? <div className="summoner-name-cell">
+                    ? <div
+                        className="summoner-name-cell clickable"
+                        onClick={() => navigate(`/summoner/${encodeURIComponent(`${e.gameName}#${e.tagLine}`)}`)}
+                      >
                         <span className="summoner-game-name">{e.gameName}</span>
                         <span className="summoner-tag">#{e.tagLine}</span>
                       </div>

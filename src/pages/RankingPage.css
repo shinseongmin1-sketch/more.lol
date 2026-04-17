@@ -188,7 +188,9 @@
 
 /* ── 소환사명 ──────────────────────────────────────────────────────────────── */
 .summoner-name-cell { display: flex; align-items: baseline; gap: 3px; flex-wrap: wrap; }
-.summoner-game-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+.summoner-name-cell.clickable { cursor: pointer; }
+.summoner-name-cell.clickable:hover .summoner-game-name { color: var(--accent-primary); text-decoration: underline; }
+.summoner-game-name { font-size: 14px; font-weight: 600; color: var(--text-primary); transition: color 0.15s; }
 .summoner-tag       { font-size: 11px; color: var(--text-muted); }
 
 /* ── 승/패 ────────────────────────────────────────────────────────────────── */
