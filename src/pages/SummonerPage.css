@@ -1088,7 +1088,7 @@
 
 .mc-dr-tag {
   font-size: 10px;
-  color: rgba(0,0,0,0.4);
+  color: var(--text-muted);
 }
 
 /* 스타일 유형 셀 */
@@ -1137,13 +1137,13 @@
   display: flex;
   align-items: center;
 }
-.mc-dr-k, .mc-dr-a { color: #111827; }
+.mc-dr-k, .mc-dr-a { color: var(--text-primary); }
 .mc-dr-d  { color: #dc2626; }
-.mc-dr-slash { color: rgba(0,0,0,0.3); font-size: 11px; margin: 0 1px; }
+.mc-dr-slash { color: var(--text-muted); font-size: 11px; margin: 0 1px; }
 
 .mc-dr-kda-ratio {
   font-size: 10px;
-  color: rgba(0,0,0,0.45);
+  color: var(--text-muted);
   font-weight: 500;
 }
 
@@ -1158,13 +1158,13 @@
 .mc-dr-dmg-num {
   font-size: 11px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   text-align: right;
 }
 
 .mc-dr-dmg-bar-wrap {
   height: 4px;
-  background: rgba(255,255,255,0.08);
+  background: var(--border-color);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -1184,14 +1184,14 @@
   gap: 1px;
   font-size: 12px;
   font-weight: 600;
-  color: #111827;
+  color: var(--text-primary);
   text-align: center;
 }
 
 .mc-dr-cs-per-min {
   font-size: 10px;
   font-weight: 500;
-  color: rgba(0,0,0,0.45);
+  color: var(--text-muted);
 }
 
 /* 아이템 셀 */
@@ -1218,8 +1218,8 @@
   width: 24px;
   height: 24px;
   border-radius: 4px;
-  background: rgba(0,0,0,0.25);
-  border: 1px solid rgba(255,255,255,0.06);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   flex-shrink: 0;
 }
 

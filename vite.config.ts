@@ -401,7 +401,7 @@ function isStale(file: string, maxAge = CACHE_MAX_AGE): boolean {
 // ════════════════════════════════════════════════════════════════════════════
 const OVERALL_CACHE    = path.resolve('public/data/overall-ranking.json')
 const PRO_CACHE        = path.resolve('public/data/pro-ranking.json')
-const RANKING_MAX_AGE  = 6 * 60 * 60 * 1000 // 6시간
+const RANKING_MAX_AGE  = 60 * 60 * 1000 // 1시간
 
 // ── LCK 주요 프로게이머 목록 ──────────────────────────────────────────────
 const PRO_LIST = [

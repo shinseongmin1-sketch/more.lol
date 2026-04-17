@@ -203,7 +203,7 @@ export default async function handler(req: Request): Promise<Response> {
     return new Response(JSON.stringify(data), {
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=86400',
+        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
         'X-Last-Updated': new Date().toISOString(),
       },
     })

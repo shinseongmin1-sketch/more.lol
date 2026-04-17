@@ -196,7 +196,7 @@ function OverallRanking() {
     <div className="ranking-loading">
       <div className="loading-spinner" />
       <p>챌린저 · 그랜드마스터 · 마스터 리그 순위 불러오는 중...</p>
-      <p className="loading-hint">최초 조회 시 약 20~30분 소요 (500명 데이터 수집), 6시간 캐시</p>
+      <p className="loading-hint">최초 조회 시 약 20~30분 소요 (500명 데이터 수집), 1시간마다 자동 갱신</p>
     </div>
   )
 
@@ -493,7 +493,7 @@ export default function RankingPage() {
           </div>
           <div className="subpage-meta">
             <span className="patch-badge">솔로랭크</span>
-            <span className="update-info"><span className="update-dot" />6시간 자동 갱신</span>
+            <span className="update-info"><span className="update-dot" />1시간 자동 갱신</span>
           </div>
         </div>
       </div>
