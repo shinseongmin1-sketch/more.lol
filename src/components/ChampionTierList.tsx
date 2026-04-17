@@ -186,7 +186,7 @@ export default function ChampionTierList({
                   ? 'Riot API에서 일반게임 데이터를 수집합니다. (queue=430)'
                   : 'Riot API에서 전 티어 실전 데이터를 수집합니다.'
                 }<br />
-                100명 × 2경기 분석 — 서버 터미널에서 진행 상황 확인 가능
+                실전 데이터를 수집하고 있습니다. 잠시 기다려주세요.
               </p>
             )}
           </div>
@@ -219,7 +219,6 @@ export default function ChampionTierList({
               {playerTierLabel}
             </span>
           )}
-          <span className="champ-count">{champions.length}명</span>
         </h2>
         {lastUpdated && <span className="last-updated-badge">{lastUpdated}</span>}
       </div>
@@ -286,7 +285,6 @@ export default function ChampionTierList({
                 <th className="col-banrate">밴률</th>
                 <th className="col-kda">KDA</th>
                 <th className="col-dmg">딜량</th>
-                <th className="col-games">게임 수</th>
               </tr>
             </thead>
             <tbody>
@@ -343,9 +341,6 @@ export default function ChampionTierList({
                           <div className="dmg-bar-fill" style={{ width: `${(champ.avgDamage / maxDmg) * 100}%` }} />
                         </div>
                       </div>
-                    </td>
-                    <td className="col-games">
-                      <span className="stat-val">{champ.games.toLocaleString()}</span>
                     </td>
                   </tr>
                 )
