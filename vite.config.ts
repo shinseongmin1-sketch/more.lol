@@ -579,7 +579,8 @@ function tierListPlugin(): Plugin {
                 { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
               ).catch(() => null)
               if (cached?.ok) {
-                const [row] = await cached.json().catch(() => [])
+                const rows: any[] = await (cached as any).json().catch(() => [])
+                const row = rows[0]
                 if (row?.feedback) {
                   res.writeHead(200, { 'Content-Type': 'application/json' })
                   return res.end(JSON.stringify({ feedback: row.feedback, cached: true }))

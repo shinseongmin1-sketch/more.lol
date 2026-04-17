@@ -80,8 +80,6 @@ more.lol 운영팀 드림`,
   isNew: true,
 }
 
-const INJECTED_IDS = [NOTICE_DARKMODE.id]
-
 function init() {
   if (!localStorage.getItem(KEY)) {
     localStorage.setItem(KEY, JSON.stringify([NOTICE_DARKMODE, SEED]))
