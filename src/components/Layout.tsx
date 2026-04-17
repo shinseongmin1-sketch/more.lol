@@ -6,6 +6,7 @@ import AuthModal from './AuthModal'
 import { getSession, logout } from '../utils/auth'
 import type { User } from '../utils/auth'
 import { incrementSummonerSearch } from '../utils/searchStats'
+import { useTheme } from '../utils/theme'
 
 interface LayoutProps {
   children: React.ReactNode
@@ -15,6 +16,7 @@ export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate()
   const [showAuth, setShowAuth] = useState(false)
   const [user, setUser] = useState<User | null>(getSession)
+  const { theme, toggleTheme } = useTheme()
 
   const handleSearch = (name: string) => {
     incrementSummonerSearch()
@@ -35,6 +37,8 @@ export default function Layout({ children }: LayoutProps) {
         user={user}
         onLoginClick={() => setShowAuth(true)}
         onLogout={handleLogout}
+        theme={theme}
+        onToggleTheme={toggleTheme}
       />
       <main style={{ flex: 1 }}>
         {children}

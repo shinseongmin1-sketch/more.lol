@@ -5,7 +5,10 @@ import path from 'path'
 
 // vite.config.ts는 클라이언트 env를 자동 로드하지 않으므로 직접 로드
 const _env = loadEnv('development', process.cwd(), '')
-const RIOT_API_KEY = _env.RIOT_API_KEY ?? _env.VITE_RIOT_API_KEY ?? process.env.RIOT_API_KEY ?? ''
+const RIOT_API_KEY  = _env.RIOT_API_KEY  ?? _env.VITE_RIOT_API_KEY  ?? process.env.RIOT_API_KEY  ?? ''
+const COHERE_API_KEY = _env.COHERE_API_KEY ?? process.env.COHERE_API_KEY ?? ''
+const SB_URL        = _env.VITE_SUPABASE_URL       ?? process.env.VITE_SUPABASE_URL       ?? ''
+const SB_KEY        = _env.VITE_SUPABASE_ANON_KEY  ?? process.env.VITE_SUPABASE_ANON_KEY  ?? ''
 
 // ─── 상수 ────────────────────────────────────────────────────────────────────
 const RANKED_CACHE  = path.resolve('public/data/ranked-tier-list.json')
@@ -553,6 +556,112 @@ function tierListPlugin(): Plugin {
             res.writeHead(500, { 'Content-Type': 'application/json' })
             return res.end(JSON.stringify({ error: e.message }))
           }
+        }
+
+        // ── AI 피드백 API ─────────────────────────────────────────────────────
+        if (req.url?.startsWith('/api/ai-feedback')) {
+          if (req.method !== 'POST') {
+            res.writeHead(405); return res.end('Method Not Allowed')
+          }
+          const chunks: Buffer[] = []
+          req.on('data', (c: Buffer) => chunks.push(c))
+          req.on('end', async () => {
+            let body: any
+            try { body = JSON.parse(Buffer.concat(chunks).toString()) } catch { res.writeHead(400); return res.end('Bad Request') }
+            const { matchId, puuid, championName, kills, deaths, assists, cs, visionScore, duration, win, queueLabel } = body
+            if (!matchId || !puuid) { res.writeHead(400); return res.end('Missing params') }
+            if (!RIOT_API_KEY || !COHERE_API_KEY) { res.writeHead(500); return res.end(JSON.stringify({ error: 'Server misconfigured: missing API keys' })) }
+
+            // 캐시 확인
+            if (SB_URL && SB_KEY) {
+              const cached = await fetch(
+                `${SB_URL}/rest/v1/ai_match_feedback?match_id=eq.${encodeURIComponent(matchId)}&limit=1`,
+                { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
+              ).catch(() => null)
+              if (cached?.ok) {
+                const [row] = await cached.json().catch(() => [])
+                if (row?.feedback) {
+                  res.writeHead(200, { 'Content-Type': 'application/json' })
+                  return res.end(JSON.stringify({ feedback: row.feedback, cached: true }))
+                }
+              }
+            }
+
+            // 타임라인 fetch
+            let earlyKills = 0, earlyDeaths = 0, dragonCount = 0, baronCount = 0, heraldCount = 0, grubCount = 0, towerCount = 0
+            const teamfights: { timeSec: number; size: number; withMe: boolean }[] = []
+            let hasTimeline = false
+            const tlController = new AbortController()
+            const tlTimeout = setTimeout(() => tlController.abort(), 4000)
+            const tlRes = await fetch(
+              `https://asia.api.riotgames.com/lol/match/v5/matches/${matchId}/timeline`,
+              { headers: { 'X-Riot-Token': RIOT_API_KEY }, signal: tlController.signal }
+            ).catch(() => null).finally(() => clearTimeout(tlTimeout))
+            if (tlRes && (tlRes as any).ok) {
+              const tl = await (tlRes as any).json().catch(() => null)
+              if (tl) {
+                hasTimeline = true
+                const participants: any[] = tl.info?.participants ?? []
+                const myId = participants.find((p: any) => p.puuid === puuid)?.participantId ?? -1
+                const allEvents: any[] = (tl.info?.frames ?? []).flatMap((f: any) => f.events ?? [])
+                const EARLY = 900_000
+                earlyKills  = allEvents.filter((e: any) => e.type === 'CHAMPION_KILL' && e.timestamp < EARLY && e.killerId === myId).length
+                earlyDeaths = allEvents.filter((e: any) => e.type === 'CHAMPION_KILL' && e.timestamp < EARLY && e.victimId === myId).length
+                dragonCount = allEvents.filter((e: any) => e.type === 'ELITE_MONSTER_KILL' && e.monsterType === 'DRAGON').length
+                baronCount  = allEvents.filter((e: any) => e.type === 'ELITE_MONSTER_KILL' && e.monsterType === 'BARON_NASHOR').length
+                heraldCount = allEvents.filter((e: any) => e.type === 'ELITE_MONSTER_KILL' && e.monsterType === 'RIFTHERALD').length
+                grubCount   = allEvents.filter((e: any) => e.type === 'ELITE_MONSTER_KILL' && e.monsterType === 'HORDE').length
+                towerCount  = allEvents.filter((e: any) => e.type === 'BUILDING_KILL' && e.buildingType === 'TOWER_BUILDING').length
+                const killEvts = allEvents.filter((e: any) => e.type === 'CHAMPION_KILL')
+                let skip = 0
+                for (let i = 0; i < killEvts.length; i++) {
+                  if (skip > 0) { skip--; continue }
+                  const w = killEvts[i].timestamp + 30_000
+                  const cluster = killEvts.filter((e: any) => e.timestamp >= killEvts[i].timestamp && e.timestamp <= w)
+                  if (cluster.length >= 3) {
+                    teamfights.push({ timeSec: Math.floor(killEvts[i].timestamp / 1000), size: cluster.length, withMe: cluster.some((e: any) => e.killerId === myId || e.victimId === myId) })
+                    skip = cluster.length - 1
+                  }
+                }
+              }
+            }
+
+            const durMin   = Math.floor(duration / 60)
+            const kda      = deaths === 0 ? (kills + assists).toFixed(1) : ((kills + assists) / deaths).toFixed(1)
+            const csPerMin = (cs / Math.max(duration / 60, 1)).toFixed(1)
+            const tfLines  = teamfights.slice(0, 5).map(tf => `  • ${Math.floor(tf.timeSec / 60)}분 ${tf.timeSec % 60}초 (${tf.size}킬 규모${tf.withMe ? ', 플레이어 참여' : ''})`).join('\n')
+            const timelineSection = hasTimeline ? `\n[초반 15분]\n킬 ${earlyKills}회 / 데스 ${earlyDeaths}회\n\n[오브젝트]\n드래곤 ${dragonCount}마리 / 바론 ${baronCount}회 / 전령 ${heraldCount}회 / 공허쐐기벌레 ${grubCount}마리 / 포탑 ${towerCount}개\n\n[한타 발생 ${teamfights.length}회]\n${tfLines || '  (없음)'}` : ''
+            const prompt = `당신은 리그 오브 레전드 전문 코치입니다. 아래 데이터를 분석해 한국어로 피드백을 주세요.\n\n[게임 정보]\n챔피언: ${championName} / 모드: ${queueLabel} / 결과: ${win ? '승리' : '패배'} / 시간: ${durMin}분\nKDA: ${kills}/${deaths}/${assists} (${kda} 평점) / CS: ${cs} (${csPerMin}/분) / 시야: ${visionScore}\n${timelineSection}\n\n위 데이터를 바탕으로 다음 형식으로 간결하게 분석해주세요. 총 300자 이내, 이모지 적극 사용:\n⚔️ 초반 운영: (2문장)\n🏯 오브젝트: (2문장)\n🔥 한타: (2문장)\n💡 총평: (1문장)`
+
+            const aiController = new AbortController()
+            const aiTimeout = setTimeout(() => aiController.abort(), 8000)
+            const aiRes = await fetch('https://api.cohere.com/v2/chat', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${COHERE_API_KEY}`, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ model: 'command-r-08-2024', messages: [{ role: 'user', content: prompt }] }),
+              signal: aiController.signal,
+            }).catch((e: any) => { console.error('Cohere fetch error:', e); return null }).finally(() => clearTimeout(aiTimeout))
+
+            if (!aiRes || !(aiRes as any).ok) {
+              const errText = await (aiRes as any)?.text().catch(() => 'no body')
+              console.error('Cohere error status:', (aiRes as any)?.status, 'body:', errText)
+              res.writeHead(502, { 'Content-Type': 'application/json' })
+              return res.end(JSON.stringify({ error: `Cohere ${(aiRes as any)?.status}: ${errText}` }))
+            }
+            const aiData = await (aiRes as any).json()
+            const feedback = aiData.message?.content?.[0]?.text ?? '피드백을 생성할 수 없습니다.'
+
+            if (SB_URL && SB_KEY) {
+              fetch(`${SB_URL}/rest/v1/ai_match_feedback`, {
+                method: 'POST',
+                headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}`, 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates' },
+                body: JSON.stringify({ match_id: matchId, feedback }),
+              }).catch(() => {})
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' })
+            return res.end(JSON.stringify({ feedback }))
+          })
+          return
         }
 
         if (!req.url?.startsWith('/api/tier-list')) return next()
