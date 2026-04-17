@@ -44,11 +44,62 @@ async function riotFetch(url: string, apiKey: string, retry = 3): Promise<any> {
 
 // ─── DDragon 한국어 챔피언 이름 맵 ─────────────────────────────────────────
 async function getKorNameMap(): Promise<Record<string, string>> {
+  const dd = await getDDData()
+  return dd.korNames
+}
+
+interface DDData {
+  korNames: Record<string, string>   // champId(string) → 한국어 이름
+  keyToId:  Record<string, string>   // key(number string) → champId
+  tags:     Record<string, string[]> // champId → tags
+}
+
+async function getDDData(): Promise<DDData> {
   const versions = await fetch('https://ddragon.leagueoflegends.com/api/versions.json').then(r => r.json()) as string[]
   const data = await fetch(`https://ddragon.leagueoflegends.com/cdn/${versions[0]}/data/ko_KR/champion.json`).then(r => r.json()) as any
-  const map: Record<string, string> = {}
-  for (const champ of Object.values(data.data) as any[]) map[champ.id] = champ.name
-  return map
+  const korNames: Record<string, string>   = {}
+  const keyToId:  Record<string, string>   = {}
+  const tags:     Record<string, string[]> = {}
+  for (const champ of Object.values(data.data) as any[]) {
+    korNames[champ.id] = champ.name
+    keyToId[String(champ.key)] = champ.id
+    tags[champ.id] = champ.tags ?? []
+  }
+  return { korNames, keyToId, tags }
+}
+
+// ─── 챔피언 포지션 추론 ──────────────────────────────────────────────────────
+const CHAMP_POS_OVERRIDE: Record<string, string> = {
+  Graves:'정글', Kindred:'정글', LeeSin:'정글', Kayn:'정글', Hecarim:'정글',
+  Vi:'정글', JarvanIV:'정글', Warwick:'정글', Udyr:'정글', RekSai:'정글',
+  Nocturne:'정글', Belveth:'정글', Briar:'정글', Viego:'정글', XinZhao:'정글',
+  MasterYi:'정글', MonkeyKing:'정글', Volibear:'정글', Skarner:'정글',
+  Trundle:'정글', Naafiri:'정글', Ekko:'정글', Diana:'정글', Elise:'정글',
+  Gragas:'정글', Lillia:'정글', Khazix:'정글', Rengar:'정글', Shaco:'정글',
+  Evelynn:'정글', Nidalee:'정글', Amumu:'정글', Sejuani:'정글', Rammus:'정글',
+  Nunu:'정글', Zac:'정글', Fiddlesticks:'정글', Karthus:'정글', Taliyah:'정글',
+  Ivern:'정글',
+  Galio:'미드', Zed:'미드', Talon:'미드', Qiyana:'미드', Akali:'미드',
+  Yasuo:'미드', Yone:'미드', Fizz:'미드', Sylas:'미드', Ryze:'미드', Corki:'미드',
+  Teemo:'탑', Quinn:'탑',
+  Nami:'서포터', Soraka:'서포터', Janna:'서포터', Lulu:'서포터', Sona:'서포터',
+  Karma:'서포터', Morgana:'서포터', Zilean:'서포터', Lux:'서포터',
+  Nautilus:'서포터', Blitzcrank:'서포터', Leona:'서포터', Alistar:'서포터',
+  Rell:'서포터', Braum:'서포터', TahmKench:'서포터', Pyke:'서포터',
+  Taric:'서포터', Brand:'서포터', Zyra:'서포터', VelKoz:'서포터',
+  Swain:'서포터', Hwei:'서포터', Xerath:'서포터', Seraphine:'서포터', Senna:'서포터',
+}
+
+function getChampPosition(champId: string, tagMap: Record<string, string[]>): string {
+  if (CHAMP_POS_OVERRIDE[champId]) return CHAMP_POS_OVERRIDE[champId]
+  const t = tagMap[champId] ?? []
+  if (t.includes('Support'))   return '서포터'
+  if (t.includes('Marksman'))  return '원딜'
+  if (t.includes('Assassin'))  return '미드'
+  if (t.includes('Mage'))      return '미드'
+  if (t.includes('Fighter'))   return '탑'
+  if (t.includes('Tank'))      return '탑'
+  return '탑'
 }
 
 // ─── 티어별 PUUID 샘플링 ─────────────────────────────────────────────────────
@@ -418,15 +469,36 @@ async function fetchOverallRanking(apiKey: string): Promise<any[]> {
       ...(master.entries ?? []).map((e: any) => ({ ...e, tierLabel: 'MASTER' })),
     ]
     taggedEntries.sort((a, b) => b.leaguePoints - a.leaguePoints)
-    const top100 = taggedEntries.slice(0, 100)
+    const top500 = taggedEntries.slice(0, 500)
 
-    // PUUID → gameName#tag
+    // DDragon 챔피언 데이터 (position 추론용)
+    const ddData = await getDDData()
+
+    // PUUID → gameName#tag + profileIcon + mostChampions + mainPosition
     const withNames: any[] = []
-    for (const entry of top100) {
+    for (const entry of top500) {
+      // 계정명
       const acc = await riotFetch(
         `https://asia.api.riotgames.com/riot/account/v1/accounts/by-puuid/${entry.puuid}`,
         apiKey
       ).catch(() => null)
+      // 프로필 아이콘 (summoner API)
+      const summ = await riotFetch(
+        `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${entry.puuid}`,
+        apiKey
+      ).catch(() => null)
+      // 모스트 챔피언 top3
+      const masteries: any[] = await riotFetch(
+        `https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/${entry.puuid}/top?count=3`,
+        apiKey
+      ).catch(() => [])
+      const mostChampions: string[] = (masteries as any[])
+        .slice(0, 3)
+        .map(m => ddData.keyToId[String(m.championId)] ?? '')
+        .filter(Boolean)
+      const mainPosition = mostChampions.length > 0
+        ? getChampPosition(mostChampions[0], ddData.tags)
+        : '알 수 없음'
       withNames.push({
         rank:          0,
         puuid:         entry.puuid,
@@ -439,6 +511,10 @@ async function fetchOverallRanking(apiKey: string): Promise<any[]> {
         winRate:       Math.round((entry.wins / (entry.wins + entry.losses)) * 1000) / 10,
         veteran:       entry.veteran,
         hotStreak:     entry.hotStreak,
+        profileIconId: summ?.profileIconId ?? 1,
+        region:        'KR',
+        mainPosition,
+        mostChampions,
       })
     }
     withNames.forEach((e, i) => { e.rank = i + 1 })
@@ -461,6 +537,7 @@ async function fetchProRanking(apiKey: string): Promise<any[]> {
   _proFetching = true
   console.log('[ranking] 프로게이머 랭킹 수집 시작...')
   try {
+    const ddData = await getDDData()
     const result: any[] = []
     for (const pro of PRO_LIST) {
       try {
@@ -479,6 +556,20 @@ async function fetchProRanking(apiKey: string): Promise<any[]> {
           apiKey
         ).catch(() => [])
         const solo = entries.find((e: any) => e.queueType === 'RANKED_SOLO_5x5')
+        // 프로필 아이콘
+        const summ = await riotFetch(
+          `https://kr.api.riotgames.com/lol/summoner/v4/summoners/by-puuid/${acc.puuid}`,
+          apiKey
+        ).catch(() => null)
+        // 모스트 챔피언 top3
+        const masteries: any[] = await riotFetch(
+          `https://kr.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-puuid/${acc.puuid}/top?count=3`,
+          apiKey
+        ).catch(() => [])
+        const mostChampions: string[] = masteries
+          .slice(0, 3)
+          .map(m => ddData.keyToId[String(m.championId)] ?? '')
+          .filter(Boolean)
         result.push({
           team:         pro.team,
           pos:          pro.pos,
@@ -494,6 +585,9 @@ async function fetchProRanking(apiKey: string): Promise<any[]> {
           winRate:      solo ? Math.round((solo.wins / (solo.wins + solo.losses)) * 1000) / 10 : 0,
           hotStreak:    solo?.hotStreak ?? false,
           veteran:      solo?.veteran  ?? false,
+          profileIconId: summ?.profileIconId ?? 1,
+          region:        'KR',
+          mostChampions,
         })
       } catch {
         result.push({ ...pro, found: false })

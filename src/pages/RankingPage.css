@@ -105,16 +105,18 @@
 .ranking-table td { padding: 10px 16px; vertical-align: middle; }
 
 /* ── 컬럼 너비 ────────────────────────────────────────────────────────────── */
-.col-r-rank  { width: 52px; text-align: center; }
-.col-r-name  { min-width: 160px; }
-.col-r-tier  { width: 160px; }
-.col-r-lp    { width: 90px; text-align: right; }
-.col-r-wr    { width: 130px; }
-.col-r-wl    { width: 110px; }
-.col-r-badge { width: 120px; }
-.col-pro-team { width: 80px; }
-.col-pro-pos  { width: 65px; text-align: center; }
-.col-pro-name { width: 110px; }
+.col-r-rank  { width: 48px; text-align: center; }
+.col-r-name  { min-width: 150px; }
+.col-r-pos   { width: 52px; text-align: center; }
+.col-r-most  { width: 96px; }
+.col-r-tier  { width: 150px; }
+.col-r-lp    { width: 80px; text-align: right; }
+.col-r-wr    { width: 120px; }
+.col-r-wl    { width: 100px; }
+.col-r-badge { width: 110px; }
+.col-pro-team { width: 70px; }
+.col-pro-pos  { width: 52px; text-align: center; }
+.col-pro-name { width: 100px; }
 
 /* ── 순위 번호 ───────────────────────────────────────────────────────────── */
 .r-rank-num {
@@ -186,12 +188,53 @@
   transition: width 0.3s;
 }
 
+/* ── 소환사 프로필 아이콘 ────────────────────────────────────────────────────── */
+.summoner-profile-icon {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.profile-icon-placeholder {
+  width: 34px; height: 34px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  flex-shrink: 0;
+}
+
 /* ── 소환사명 ──────────────────────────────────────────────────────────────── */
-.summoner-name-cell { display: flex; align-items: baseline; gap: 3px; flex-wrap: wrap; }
+.summoner-name-cell { display: flex; align-items: center; gap: 8px; flex-wrap: nowrap; }
 .summoner-name-cell.clickable { cursor: pointer; }
 .summoner-name-cell.clickable:hover .summoner-game-name { color: var(--accent-primary); text-decoration: underline; }
-.summoner-game-name { font-size: 14px; font-weight: 600; color: var(--text-primary); transition: color 0.15s; }
+.summoner-name-info { display: flex; flex-direction: column; gap: 2px; }
+.summoner-name-row  { display: flex; align-items: baseline; gap: 3px; flex-wrap: wrap; }
+.summoner-game-name { font-size: 13px; font-weight: 600; color: var(--text-primary); transition: color 0.15s; }
 .summoner-tag       { font-size: 11px; color: var(--text-muted); }
+.summoner-region    { font-size: 10px; color: var(--text-muted); opacity: 0.7; }
+
+/* ── 포지션 셀 ───────────────────────────────────────────────────────────────── */
+.pos-cell {
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.pos-icon {
+  width: 22px; height: 22px;
+  opacity: 0.75;
+  filter: brightness(1.2);
+}
+.pos-label { font-size: 10px; color: var(--text-muted); }
+
+/* ── 모스트 챔피언 ──────────────────────────────────────────────────────────── */
+.most-champs {
+  display: flex; gap: 3px; align-items: center;
+}
+.most-champ-icon {
+  width: 26px; height: 26px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  object-fit: cover;
+  flex-shrink: 0;
+}
 
 /* ── 승/패 ────────────────────────────────────────────────────────────────── */
 .wl-text { font-size: 12px; }
@@ -292,7 +335,49 @@
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading-hint { font-size: 12px; opacity: 0.6; }
 
+/* ── 페이지네이션 ───────────────────────────────────────────────────────────── */
+.ranking-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 16px 0;
+}
+
+.page-btn {
+  min-width: 32px; height: 32px;
+  padding: 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex; align-items: center; justify-content: center;
+}
+.page-btn:hover:not(:disabled) {
+  border-color: rgba(212,175,55,0.4);
+  color: #d4af37;
+  background: var(--bg-card-hover);
+}
+.page-btn.active {
+  background: rgba(212,175,55,0.15);
+  border-color: rgba(212,175,55,0.5);
+  color: #d4af37;
+}
+.page-btn:disabled { opacity: 0.3; cursor: default; }
+.page-ellipsis {
+  color: var(--text-muted);
+  padding: 0 4px;
+  font-size: 13px;
+}
+
 @media (max-width: 768px) {
   .ranking-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .ranking-header { padding: 16px; flex-direction: column; gap: 8px; }
+  .col-r-most { display: none; }
+  .col-r-badge { display: none; }
 }

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { getDDVersion, champIconUrl, profileIconUrl } from '../utils/riotApi'
 import './SubPage.css'
 import './RankingPage.css'
 
@@ -30,6 +31,16 @@ const TEAM_COLOR: Record<string, string> = {
 const POS_KOR: Record<string, string> = {
   탑: 'TOP', 정글: 'JGL', 미드: 'MID', 원딜: 'ADC', 서포터: 'SUP',
 }
+const POS_ICON_URL: Record<string, string> = {
+  '탑':    'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-champ-select-v2/global/default/svg/position-top.svg',
+  '정글':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-champ-select-v2/global/default/svg/position-jungle.svg',
+  '미드':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-champ-select-v2/global/default/svg/position-middle.svg',
+  '원딜':  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-champ-select-v2/global/default/svg/position-bottom.svg',
+  '서포터':'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-champ-select-v2/global/default/svg/position-utility.svg',
+}
+const REGION_FLAG: Record<string, string> = { KR: '🇰🇷', NA: '🇺🇸', EUW: '🇪🇺', EUNE: '🇪🇺', JP: '🇯🇵', CN: '🇨🇳' }
+
+const PAGE_SIZE = 50
 
 interface OverallEntry {
   rank: number
@@ -42,6 +53,10 @@ interface OverallEntry {
   winRate: number
   veteran: boolean
   hotStreak: boolean
+  profileIconId?: number
+  region?: string
+  mainPosition?: string
+  mostChampions?: string[]
 }
 
 interface ProEntry {
@@ -60,6 +75,9 @@ interface ProEntry {
   winRate: number
   hotStreak: boolean
   veteran: boolean
+  profileIconId?: number
+  region?: string
+  mostChampions?: string[]
 }
 
 function TierBadge({ tier, lp, showLP = true }: { tier: string; lp?: number; showLP?: boolean }) {
@@ -90,6 +108,50 @@ function WinRateBar({ wr }: { wr: number }) {
         }} />
       </div>
     </div>
+  )
+}
+
+function MostChampions({ champs, ddVersion }: { champs?: string[]; ddVersion: string }) {
+  if (!champs || champs.length === 0) return <span className="not-found">-</span>
+  return (
+    <div className="most-champs">
+      {champs.slice(0, 3).map(cid => (
+        <img
+          key={cid}
+          src={champIconUrl(ddVersion, cid)}
+          alt={cid}
+          className="most-champ-icon"
+          title={cid}
+          onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function PositionCell({ pos, showLabel = false }: { pos?: string; showLabel?: boolean }) {
+  if (!pos || pos === '알 수 없음') return <span className="not-found">-</span>
+  const iconUrl = POS_ICON_URL[pos]
+  return (
+    <div className="pos-cell">
+      {iconUrl
+        ? <img src={iconUrl} alt={pos} className="pos-icon" />
+        : <span className="pos-badge">{POS_KOR[pos] ?? pos}</span>
+      }
+      {showLabel && <span className="pos-label">{pos}</span>}
+    </div>
+  )
+}
+
+function ProfileIcon({ iconId, version }: { iconId?: number; version: string }) {
+  if (!version || !iconId) return <div className="profile-icon-placeholder" />
+  return (
+    <img
+      src={profileIconUrl(version, iconId)}
+      alt="icon"
+      className="summoner-profile-icon"
+      onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+    />
   )
 }
 
@@ -124,88 +186,137 @@ function useFetch<T>(url: string) {
 function OverallRanking() {
   const { data, loading, lastUpdated } = useFetch<OverallEntry[]>('/api/ranking?type=overall')
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
+  const [page, setPage]             = useState(1)
+  const [ddVersion, setDdVersion]   = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => { getDDVersion().then(setDdVersion).catch(() => {}) }, [])
 
   if (loading) return (
     <div className="ranking-loading">
       <div className="loading-spinner" />
       <p>챌린저 · 그랜드마스터 · 마스터 리그 순위 불러오는 중...</p>
-      <p className="loading-hint">최초 조회 시 약 2~3분 소요, 6시간 캐시</p>
+      <p className="loading-hint">최초 조회 시 약 20~30분 소요 (500명 데이터 수집), 6시간 캐시</p>
     </div>
   )
 
   const entries: OverallEntry[] = Array.isArray(data) ? data : []
+  const totalPages = Math.ceil(entries.length / PAGE_SIZE)
+  const pageEntries = entries.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 
   return (
-    <div className="ranking-table-wrap">
-      {lastUpdated && <div className="ranking-updated">{lastUpdated}</div>}
-      <table className="ranking-table">
-        <thead>
-          <tr>
-            <th className="col-r-rank">#</th>
-            <th className="col-r-name">소환사</th>
-            <th className="col-r-tier">티어</th>
-            <th className="col-r-lp">LP</th>
-            <th className="col-r-wr">승률</th>
-            <th className="col-r-wl">승/패</th>
-            <th className="col-r-badge">뱃지</th>
-          </tr>
-        </thead>
-        <tbody>
-          {entries.map(e => (
-            <tr
-              key={e.rank}
-              className={`ranking-row ${hoveredRow === e.rank ? 'hovered' : ''} ${e.rank <= 3 ? 'top3' : ''}`}
-              onMouseEnter={() => setHoveredRow(e.rank)}
-              onMouseLeave={() => setHoveredRow(null)}
-            >
-              <td className="col-r-rank">
-                <span className={`r-rank-num ${e.rank <= 3 ? 'gold' : e.rank <= 10 ? 'silver' : ''}`}>
-                  {e.rank}
-                </span>
-              </td>
-              <td className="col-r-name">
-                <div
-                  className="summoner-name-cell clickable"
-                  onClick={() => navigate(`/summoner/${encodeURIComponent(`${e.gameName}#${e.tagLine}`)}`)}
-                >
-                  <span className="summoner-game-name">{e.gameName}</span>
-                  <span className="summoner-tag">#{e.tagLine}</span>
-                </div>
-              </td>
-              <td className="col-r-tier">
-                <TierBadge tier={e.tierLabel} showLP={false} />
-              </td>
-              <td className="col-r-lp">
-                <span className="lp-value" style={{ color: TIER_COLOR[e.tierLabel] ?? '#aaa' }}>
-                  {e.leaguePoints.toLocaleString()}
-                </span>
-              </td>
-              <td className="col-r-wr">
-                <div className="wr-cell">
-                  <span className="wr-num" style={{ color: e.winRate >= 55 ? '#27ae60' : e.winRate >= 50 ? '#f1c40f' : '#e74c3c' }}>
-                    {e.winRate.toFixed(1)}%
-                  </span>
-                  <WinRateBar wr={e.winRate} />
-                </div>
-              </td>
-              <td className="col-r-wl">
-                <span className="wl-text">
-                  <span className="w-num">{e.wins}W</span>
-                  <span className="wl-sep"> / </span>
-                  <span className="l-num">{e.losses}L</span>
-                </span>
-              </td>
-              <td className="col-r-badge">
-                <div className="badge-chips">
-                  {e.hotStreak && <span className="badge-chip hot">🔥 연승</span>}
-                  {e.veteran   && <span className="badge-chip vet">🏆 베테랑</span>}
-                </div>
-              </td>
+    <div>
+      <div className="ranking-table-wrap">
+        {lastUpdated && <div className="ranking-updated">{lastUpdated} · 총 {entries.length}명</div>}
+        <table className="ranking-table">
+          <thead>
+            <tr>
+              <th className="col-r-rank">#</th>
+              <th className="col-r-name">소환사</th>
+              <th className="col-r-pos">포지션</th>
+              <th className="col-r-most">모스트</th>
+              <th className="col-r-tier">티어</th>
+              <th className="col-r-lp">LP</th>
+              <th className="col-r-wr">승률</th>
+              <th className="col-r-wl">승/패</th>
+              <th className="col-r-badge">뱃지</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {pageEntries.map(e => (
+              <tr
+                key={e.rank}
+                className={`ranking-row ${hoveredRow === e.rank ? 'hovered' : ''} ${e.rank <= 3 ? 'top3' : ''}`}
+                onMouseEnter={() => setHoveredRow(e.rank)}
+                onMouseLeave={() => setHoveredRow(null)}
+              >
+                <td className="col-r-rank">
+                  <span className={`r-rank-num ${e.rank <= 3 ? 'gold' : e.rank <= 10 ? 'silver' : ''}`}>
+                    {e.rank}
+                  </span>
+                </td>
+                <td className="col-r-name">
+                  <div
+                    className="summoner-name-cell clickable"
+                    onClick={() => navigate(`/summoner/${encodeURIComponent(`${e.gameName}#${e.tagLine}`)}`)}
+                  >
+                    <ProfileIcon iconId={e.profileIconId} version={ddVersion} />
+                    <div className="summoner-name-info">
+                      <div className="summoner-name-row">
+                        <span className="summoner-game-name">{e.gameName}</span>
+                        <span className="summoner-tag">#{e.tagLine}</span>
+                      </div>
+                      {e.region && (
+                        <span className="summoner-region">{REGION_FLAG[e.region] ?? e.region} {e.region}</span>
+                      )}
+                    </div>
+                  </div>
+                </td>
+                <td className="col-r-pos">
+                  <PositionCell pos={e.mainPosition} />
+                </td>
+                <td className="col-r-most">
+                  <MostChampions champs={e.mostChampions} ddVersion={ddVersion} />
+                </td>
+                <td className="col-r-tier">
+                  <TierBadge tier={e.tierLabel} showLP={false} />
+                </td>
+                <td className="col-r-lp">
+                  <span className="lp-value" style={{ color: TIER_COLOR[e.tierLabel] ?? '#aaa' }}>
+                    {e.leaguePoints.toLocaleString()}
+                  </span>
+                </td>
+                <td className="col-r-wr">
+                  <div className="wr-cell">
+                    <span className="wr-num" style={{ color: e.winRate >= 55 ? '#27ae60' : e.winRate >= 50 ? '#f1c40f' : '#e74c3c' }}>
+                      {e.winRate.toFixed(1)}%
+                    </span>
+                    <WinRateBar wr={e.winRate} />
+                  </div>
+                </td>
+                <td className="col-r-wl">
+                  <span className="wl-text">
+                    <span className="w-num">{e.wins}W</span>
+                    <span className="wl-sep"> / </span>
+                    <span className="l-num">{e.losses}L</span>
+                  </span>
+                </td>
+                <td className="col-r-badge">
+                  <div className="badge-chips">
+                    {e.hotStreak && <span className="badge-chip hot">🔥 연승</span>}
+                    {e.veteran   && <span className="badge-chip vet">🏆 베테랑</span>}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* 페이지네이션 */}
+      {totalPages > 1 && (
+        <div className="ranking-pagination">
+          <button className="page-btn" onClick={() => setPage(1)} disabled={page === 1}>«</button>
+          <button className="page-btn" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}>‹</button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1)
+            .filter(p => p === 1 || p === totalPages || Math.abs(p - page) <= 2)
+            .reduce<(number | '...')[]>((acc, p, i, arr) => {
+              if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push('...')
+              acc.push(p)
+              return acc
+            }, [])
+            .map((p, i) => p === '...'
+              ? <span key={`e${i}`} className="page-ellipsis">…</span>
+              : <button
+                  key={p}
+                  className={'page-btn ' + (page === p ? 'active' : '')}
+                  onClick={() => setPage(p as number)}
+                >{p}</button>
+            )}
+          <button className="page-btn" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}>›</button>
+          <button className="page-btn" onClick={() => setPage(totalPages)} disabled={page === totalPages}>»</button>
+        </div>
+      )}
     </div>
   )
 }
@@ -219,7 +330,10 @@ function ProRanking() {
   const { data, loading, lastUpdated } = useFetch<ProEntry[]>('/api/ranking?type=pro')
   const [teamFilter, setTeamFilter] = useState('전체')
   const [hoveredRow, setHoveredRow] = useState<number | null>(null)
+  const [ddVersion, setDdVersion]   = useState('')
   const navigate = useNavigate()
+
+  useEffect(() => { getDDVersion().then(setDdVersion).catch(() => {}) }, [])
 
   if (loading) return (
     <div className="ranking-loading">
@@ -260,6 +374,7 @@ function ProRanking() {
               <th className="col-pro-pos">포지션</th>
               <th className="col-pro-name">선수</th>
               <th className="col-r-name">인게임 ID</th>
+              <th className="col-r-most">모스트</th>
               <th className="col-r-tier">티어</th>
               <th className="col-r-lp">LP</th>
               <th className="col-r-wr">승률</th>
@@ -288,7 +403,7 @@ function ProRanking() {
                   </span>
                 </td>
                 <td className="col-pro-pos">
-                  <span className="pos-badge">{POS_KOR[e.pos] ?? e.pos}</span>
+                  <PositionCell pos={e.pos} />
                 </td>
                 <td className="col-pro-name">
                   <span className="pro-display-name">{e.proName}</span>
@@ -299,11 +414,22 @@ function ProRanking() {
                         className="summoner-name-cell clickable"
                         onClick={() => navigate(`/summoner/${encodeURIComponent(`${e.gameName}#${e.tagLine}`)}`)}
                       >
-                        <span className="summoner-game-name">{e.gameName}</span>
-                        <span className="summoner-tag">#{e.tagLine}</span>
+                        <ProfileIcon iconId={e.profileIconId} version={ddVersion} />
+                        <div className="summoner-name-info">
+                          <div className="summoner-name-row">
+                            <span className="summoner-game-name">{e.gameName}</span>
+                            <span className="summoner-tag">#{e.tagLine}</span>
+                          </div>
+                          {e.region && (
+                            <span className="summoner-region">{REGION_FLAG[e.region] ?? e.region} {e.region}</span>
+                          )}
+                        </div>
                       </div>
                     : <span className="not-found">계정 미확인</span>
                   }
+                </td>
+                <td className="col-r-most">
+                  <MostChampions champs={e.mostChampions} ddVersion={ddVersion} />
                 </td>
                 <td className="col-r-tier">
                   {e.tierLabel
