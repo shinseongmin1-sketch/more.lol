@@ -3,6 +3,8 @@ import { useNavigate, useLocation, Link } from 'react-router-dom'
 import type { User } from '../utils/auth'
 import { isAdmin } from '../utils/auth'
 import { getAvatar } from '../utils/avatarStore'
+import { searchCelebrities } from '../data/celebrities'
+import { mockChampions } from '../data/mockChampions'
 import './Header.css'
 
 import type { Theme } from '../utils/theme'
@@ -29,6 +31,7 @@ const rankSubItems = [
 
 export default function Header({ onSearch, user, onLoginClick, onLogout, theme, onToggleTheme }: HeaderProps) {
   const [inputValue, setInputValue] = useState('')
+  const [searchFocused, setSearchFocused] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [champMenuOpen, setChampMenuOpen] = useState(false)
   const [rankMenuOpen, setRankMenuOpen] = useState(false)
@@ -42,6 +45,18 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
   const dropdownRef = useRef<HTMLDivElement>(null)
   const champMenuRef = useRef<HTMLDivElement>(null)
   const rankMenuRef = useRef<HTMLDivElement>(null)
+  const searchContainerRef = useRef<HTMLDivElement>(null)
+
+  const suggestedCelebs = searchFocused && inputValue.trim()
+    ? searchCelebrities(inputValue)
+    : []
+  const suggestedChamps = searchFocused && inputValue.trim()
+    ? mockChampions.filter(c =>
+        c.name.toLowerCase().startsWith(inputValue.toLowerCase()) ||
+        c.korName.startsWith(inputValue)
+      ).slice(0, 4)
+    : []
+  const showSearchDropdown = searchFocused && inputValue.trim().length > 0 && (suggestedCelebs.length > 0 || suggestedChamps.length > 0)
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -53,6 +68,9 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
       }
       if (rankMenuRef.current && !rankMenuRef.current.contains(e.target as Node)) {
         setRankMenuOpen(false)
+      }
+      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
+        setSearchFocused(false)
       }
     }
     document.addEventListener('mousedown', handler)
@@ -201,26 +219,80 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
 
         <div className="header-right">
           {!isHome && (
-            <form className="header-search-form" onSubmit={handleSubmit}>
-              <div className="header-search-wrap">
-                <svg className="search-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="8" />
-                  <path d="M21 21l-4.35-4.35" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="소환사명 검색"
-                  value={inputValue}
-                  onChange={e => setInputValue(e.target.value)}
-                  className="header-search-input"
-                />
-                <select className="server-select-sm">
-                  <option>KR</option>
-                  <option>NA</option>
-                  <option>EUW</option>
-                </select>
-              </div>
-            </form>
+            <div className="header-search-container" ref={searchContainerRef}>
+              <form className="header-search-form" onSubmit={handleSubmit}>
+                <div className="header-search-wrap">
+                  <svg className="search-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <path d="M21 21l-4.35-4.35" />
+                  </svg>
+                  <input
+                    type="text"
+                    placeholder="소환사명 검색"
+                    value={inputValue}
+                    onChange={e => setInputValue(e.target.value)}
+                    onFocus={() => setSearchFocused(true)}
+                    className="header-search-input"
+                  />
+                  <select className="server-select-sm">
+                    <option>KR</option>
+                    <option>NA</option>
+                    <option>EUW</option>
+                  </select>
+                </div>
+              </form>
+              {showSearchDropdown && (
+                <div className="header-search-dropdown">
+                  {suggestedChamps.length > 0 && (
+                    <>
+                      <div className="hsd-section-title">챔피언</div>
+                      {suggestedChamps.map(champ => (
+                        <div
+                          key={champ.id}
+                          className="hsd-item"
+                          onMouseDown={() => { setSearchFocused(false); setInputValue(''); navigate(`/champion/${champ.name}`) }}
+                        >
+                          <span className="hsd-badge hsd-badge-champ">챔피언</span>
+                          <span className="hsd-name">{champ.korName}</span>
+                          <span className="hsd-sub">{champ.name}</span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                  {suggestedCelebs.filter(c => c.type === 'pro').length > 0 && (
+                    <>
+                      <div className="hsd-section-title">프로게이머</div>
+                      {suggestedCelebs.filter(c => c.type === 'pro').slice(0, 4).map(celeb => (
+                        <div
+                          key={celeb.account}
+                          className="hsd-item"
+                          onMouseDown={() => { setSearchFocused(false); setInputValue(''); onSearch(celeb.account) }}
+                        >
+                          <span className="hsd-badge hsd-badge-pro">PRO</span>
+                          <span className="hsd-name">{celeb.displayName}</span>
+                          {celeb.team && <span className="hsd-sub">{celeb.team}</span>}
+                        </div>
+                      ))}
+                    </>
+                  )}
+                  {suggestedCelebs.filter(c => c.type === 'streamer').length > 0 && (
+                    <>
+                      <div className="hsd-section-title">스트리머</div>
+                      {suggestedCelebs.filter(c => c.type === 'streamer').slice(0, 4).map(celeb => (
+                        <div
+                          key={celeb.account}
+                          className="hsd-item"
+                          onMouseDown={() => { setSearchFocused(false); setInputValue(''); onSearch(celeb.account) }}
+                        >
+                          <span className="hsd-badge hsd-badge-streamer">스트리머</span>
+                          <span className="hsd-name">{celeb.displayName}</span>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           )}
 
           <button

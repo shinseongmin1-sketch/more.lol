@@ -87,3 +87,38 @@ RETURNS void LANGUAGE sql SECURITY DEFINER AS $$
   UPDATE community_posts SET views = views + 1 WHERE id = post_id;
 $$;
 GRANT EXECUTE ON FUNCTION increment_post_views TO anon;
+
+-- ══════════════════════════════════════
+-- 캐시 테이블
+-- ══════════════════════════════════════
+
+-- Riot API 응답 캐시 (개별 엔드포인트)
+CREATE TABLE IF NOT EXISTS riot_api_cache (
+  cache_key  text PRIMARY KEY,
+  data       jsonb NOT NULL,
+  expires_at timestamptz NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS idx_riot_api_cache_expires ON riot_api_cache (expires_at);
+
+ALTER TABLE riot_api_cache ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "anon_all" ON riot_api_cache;
+CREATE POLICY "anon_all" ON riot_api_cache FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- 랭킹 사전적재 캐시 (overall / pro)
+CREATE TABLE IF NOT EXISTS ranking_cache (
+  type       text PRIMARY KEY,
+  data       jsonb NOT NULL,
+  updated_at timestamptz DEFAULT now()
+);
+
+ALTER TABLE ranking_cache ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "anon_all" ON ranking_cache;
+CREATE POLICY "anon_all" ON ranking_cache FOR ALL TO anon USING (true) WITH CHECK (true);
+
+-- 만료된 캐시 자동 정리 함수 (필요 시 pg_cron으로 주기적 실행)
+CREATE OR REPLACE FUNCTION cleanup_expired_cache()
+RETURNS void LANGUAGE sql SECURITY DEFINER AS $$
+  DELETE FROM riot_api_cache WHERE expires_at < now();
+$$;
+GRANT EXECUTE ON FUNCTION cleanup_expired_cache TO anon;

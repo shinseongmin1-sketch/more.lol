@@ -391,11 +391,13 @@
 }
 
 .match-card.win {
-  border-left: 3px solid var(--win-color);
+  border-left: 3px solid var(--win-border, var(--win-color));
+  background: var(--win-card-bg, var(--bg-card));
 }
 
 .match-card.lose {
-  border-left: 3px solid var(--lose-color);
+  border-left: 3px solid var(--lose-border, var(--lose-color));
+  background: var(--lose-card-bg, var(--bg-card));
 }
 
 .match-result-bar {

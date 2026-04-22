@@ -1,5 +1,9 @@
 export const config = { runtime: 'edge' }
 
+import { getRankingCache, setRankingCache } from './_supabase'
+
+const CACHE_TTL_MS = 30 * 60 * 1000 // 30분
+
 const CHAMP_POS_OVERRIDE: Record<string, string> = {
   Graves:'정글', Kindred:'정글', LeeSin:'정글', Kayn:'정글', Hecarim:'정글',
   Vi:'정글', JarvanIV:'정글', Warwick:'정글', Udyr:'정글', RekSai:'정글',
@@ -190,8 +194,26 @@ export default async function handler(req: Request): Promise<Response> {
   const apiKey = process.env.RIOT_API_KEY
   if (!apiKey) return new Response('API key missing', { status: 500 })
 
-  const url  = new URL(req.url)
-  const type = url.searchParams.get('type') ?? 'overall'
+  const url   = new URL(req.url)
+  const type  = url.searchParams.get('type') ?? 'overall'
+  const force = url.searchParams.get('force') === '1'
+
+  // DB 캐시 확인 (force=1 이면 건너뜀)
+  if (!force) {
+    const cached = await getRankingCache(type)
+    if (cached) {
+      const age = Date.now() - new Date(cached.updatedAt).getTime()
+      if (age < CACHE_TTL_MS) {
+        return new Response(JSON.stringify(cached.data), {
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Cache': 'HIT-DB',
+            'X-Last-Updated': cached.updatedAt,
+          },
+        })
+      }
+    }
+  }
 
   try {
     let data: any[]
@@ -200,10 +222,14 @@ export default async function handler(req: Request): Promise<Response> {
     } else {
       data = await fetchOverall(apiKey, 100)
     }
+
+    // DB에 저장 (다음 요청부터 캐시 사용)
+    setRankingCache(type, data)
+
     return new Response(JSON.stringify(data), {
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200',
+        'X-Cache': 'MISS',
         'X-Last-Updated': new Date().toISOString(),
       },
     })

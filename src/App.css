@@ -56,17 +56,17 @@
 
 /* ── 다크 모드 ── */
 [data-theme="dark"] {
-  --bg-primary: #0d0f1a;
-  --bg-secondary: #12152b;
-  --bg-card: #151829;
-  --bg-card-hover: #1c2038;
-  --bg-input: #1a1d30;
-  --border-color: #252840;
-  --border-hover: #3b82f6;
+  --bg-primary: #13151c;
+  --bg-secondary: #1a1c26;
+  --bg-card: #1e2130;
+  --bg-card-hover: #262940;
+  --bg-input: #181a26;
+  --border-color: #2d3050;
+  --border-hover: #4f83cc;
 
-  --accent-primary: #3b82f6;
-  --accent-primary-light: #60a5fa;
-  --accent-primary-glow: rgba(59, 130, 246, 0.22);
+  --accent-primary: #4f83cc;
+  --accent-primary-light: #6fa3e8;
+  --accent-primary-glow: rgba(79, 131, 204, 0.2);
 
   --accent-amber: #f59e0b;
   --accent-amber-light: #fbbf24;
@@ -75,9 +75,9 @@
   --accent-cyan: #22d3ee;
   --accent-cyan-light: #67e8f9;
 
-  --text-primary: #e8ecff;
-  --text-secondary: #9096b8;
-  --text-muted: #555a7a;
+  --text-primary: #c8cfe8;
+  --text-secondary: #7a80a0;
+  --text-muted: #4e5270;
 
   --tier-s-plus: #f87171;
   --tier-s: #fbbf24;
@@ -86,20 +86,24 @@
   --tier-c: #60a5fa;
   --tier-d: #9ca3af;
 
-  --win-color: #60a5fa;
-  --lose-color: #f87171;
+  --win-color: #5b9cf6;
+  --lose-color: #e05c5c;
+  --win-card-bg: rgba(59, 100, 210, 0.12);
+  --lose-card-bg: rgba(200, 50, 50, 0.12);
+  --win-border: rgba(91, 156, 246, 0.6);
+  --lose-border: rgba(224, 92, 92, 0.6);
 
-  --accent-gold: #f59e0b;
-  --accent-gold-light: #fbbf24;
-  --accent-blue: #3b82f6;
-  --accent-blue-light: #60a5fa;
+  --accent-gold: #d4a843;
+  --accent-gold-light: #e8bf5a;
+  --accent-blue: #4f83cc;
+  --accent-blue-light: #6fa3e8;
   --accent-purple: #a78bfa;
 
-  --header-bg: rgba(13, 15, 26, 0.94);
-  --scrollbar-track: #12152b;
-  --scrollbar-thumb: #252840;
-  --select-option-bg: #151829;
-  --select-option-color: #e8ecff;
+  --header-bg: rgba(19, 21, 28, 0.96);
+  --scrollbar-track: #1a1c26;
+  --scrollbar-thumb: #2d3050;
+  --select-option-bg: #1e2130;
+  --select-option-color: #c8cfe8;
 
   color-scheme: dark;
 }
