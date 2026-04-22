@@ -1,6 +1,6 @@
 export const config = { runtime: 'edge' }
 
-import { getRiotCache, setRiotCache } from './_supabase'
+import { getRiotCache, setRiotCache } from './_supabase.js'
 
 // 인스턴스 내 인메모리 캐시 (빠른 1차 캐시)
 const memCache = new Map<string, { data: string; expiresAt: number }>()

@@ -2,7 +2,7 @@
 // vercel.json의 crons 설정 참고
 export const config = { runtime: 'edge' }
 
-import { setRankingCache } from './_supabase'
+import { setRankingCache } from './_supabase.js'
 
 const CRON_SECRET = process.env.CRON_SECRET ?? ''
 

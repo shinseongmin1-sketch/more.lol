@@ -1,6 +1,6 @@
 export const config = { runtime: 'edge' }
 
-import { getRankingCache, setRankingCache } from './_supabase'
+import { getRankingCache, setRankingCache } from './_supabase.js'
 
 const CACHE_TTL_MS = 30 * 60 * 1000 // 30분
 
