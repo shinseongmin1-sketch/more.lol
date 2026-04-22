@@ -29,6 +29,8 @@ const doranBlade:     Item = { id:'1055', name:'도란의 검' }
 const doranRing:      Item = { id:'1056', name:'도란의 반지' }
 const hpPot:          Item = { id:'2003', name:'체력 물약' }
 const longSword:      Item = { id:'1036', name:'긴 검' }
+const spellthiefs:    Item = { id:'3850', name:'요술사의 칼날' }
+const relicShield:    Item = { id:'3858', name:'성물 방패' }
 // 신발
 const steelcaps:      Item = { id:'3047', name:'강철 발목 보호대' }
 // const mercTreads:  Item = { id:'3111', name:'마법 저항력 신발' }
@@ -599,12 +601,12 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Karma: {
-    summoners: [IG, FL],
-    startItems: [doranRing, hpPot],
+    summoners: [EX, FL],
+    startItems: [spellthiefs, hpPot],
     boots: ionianBoots,
-    coreItems: [moonstone, shadowflame, rabadons],
-    fullBuild: [ionianBoots, moonstone, shadowflame, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','E','W'],
+    coreItems: [moonstone, ardentCenser, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, shurelyas],
+    skillMaxOrder: ['Q','E','W'], // Q(카르마의 속박+만트라 가속) 주딜·유틸, E(비보호·쉴드) 쿨감, W 마지막
   },
 
   Pyke: {
@@ -623,6 +625,96 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     coreItems: [ludens, liandrys, shadowflame],
     fullBuild: [sorcShoes, ludens, liandrys, shadowflame, rabadons, voidStaff],
     skillMaxOrder: ['Q','E','W'],
+  },
+
+  Lulu: {
+    summoners: [EX, FL],
+    startItems: [spellthiefs, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, ardentCenser, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, shurelyas],
+    skillMaxOrder: ['E','Q','W'], // E(도움의 손길·속도+폴리모프) 주CC·버프, Q(요정의 불꽃) 2순위, W 마지막
+  },
+
+  Yuumi: {
+    summoners: [EX, FL],
+    startItems: [spellthiefs, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, ardentCenser, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, shurelyas],
+    skillMaxOrder: ['E','Q','W'], // E(자장가·힐) 주힐 먼저, Q(프로울링 미사일) 쿨감, W 마지막
+  },
+
+  Braum: {
+    summoners: [EX, FL],
+    startItems: [relicShield, hpPot],
+    boots: ionianBoots,
+    coreItems: [locketSolari, frozenHeart, heartsteel],
+    fullBuild: [ionianBoots, locketSolari, frozenHeart, heartsteel, redemption, warmog],
+    skillMaxOrder: ['E','W','Q'], // E(강의 심장·방어막+돌진) 쿨감, W(아버지의 가르침·돌진강화) 2순위, Q 마지막
+  },
+
+  Alistar: {
+    summoners: [EX, FL],
+    startItems: [relicShield, hpPot],
+    boots: ionianBoots,
+    coreItems: [locketSolari, heartsteel, frozenHeart],
+    fullBuild: [ionianBoots, locketSolari, heartsteel, frozenHeart, warmog, redemption],
+    skillMaxOrder: ['W','Q','E'], // W(격분·밀치기) 주CC콤보, Q(폭발 두통·돌진) 쿨감, E 마지막
+  },
+
+  Morgana: {
+    summoners: [EX, FL],
+    startItems: [spellthiefs, hpPot],
+    boots: sorcShoes,
+    coreItems: [ludens, shadowflame, zhonyas],
+    fullBuild: [sorcShoes, ludens, shadowflame, zhonyas, rabadons, voidStaff],
+    skillMaxOrder: ['Q','E','W'], // Q(어두운 속박·스킬샷CC) 주CC, E(검은 방패·CC면역) 쿨감, W 마지막
+  },
+
+  Zilean: {
+    summoners: [EX, FL],
+    startItems: [spellthiefs, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, redemption, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, redemption, staffFlowing, ardentCenser, zhonyas],
+    skillMaxOrder: ['Q','E','W'], // Q(시간 폭탄) 주딜·CC, E(시간 가속·감속) 쿨감, W 마지막
+  },
+
+  Milio: {
+    summoners: [EX, FL],
+    startItems: [spellthiefs, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, ardentCenser, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, ardentCenser, staffFlowing, redemption, shurelyas],
+    skillMaxOrder: ['Q','W','E'], // Q(불꽃공) 포크, W(따뜻한 포옹·힐+쉴드) 2순위, E 마지막
+  },
+
+  Rell: {
+    summoners: [EX, FL],
+    startItems: [relicShield, hpPot],
+    boots: steelcaps,
+    coreItems: [locketSolari, frozenHeart, heartsteel],
+    fullBuild: [steelcaps, locketSolari, frozenHeart, heartsteel, redemption, warmog],
+    skillMaxOrder: ['W','Q','E'], // W(자기장·CC·돌진) 주CC, Q(자철석 충격) 쿨감, E 마지막
+  },
+
+  Renata: {
+    summoners: [EX, FL],
+    startItems: [spellthiefs, hpPot],
+    boots: ionianBoots,
+    coreItems: [moonstone, redemption, staffFlowing],
+    fullBuild: [ionianBoots, moonstone, redemption, staffFlowing, ardentCenser, shurelyas],
+    skillMaxOrder: ['W','Q','E'], // W(지원 강화·소생) 핵심유틸, Q(수류탄) 쿨감, E 마지막
+  },
+
+  Bard: {
+    summoners: [EX, FL],
+    startItems: [spellthiefs, hpPot],
+    boots: ionianBoots,
+    coreItems: [locketSolari, redemption, staffFlowing],
+    fullBuild: [ionianBoots, locketSolari, redemption, staffFlowing, frozenHeart, zhonyas],
+    skillMaxOrder: ['Q','E','W'], // Q(진동·스턴) 주CC, E(신비의 관문·로밍) 쿨감, W 마지막
   },
 
   // ══ 기타 인기 챔피언 ══════════════════════════════════
