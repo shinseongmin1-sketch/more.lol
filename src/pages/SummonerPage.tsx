@@ -154,6 +154,7 @@ export default function SummonerPage() {
   const [aiFeedback, setAiFeedback] = useState<Record<string, string>>({})
   const [aiFeedbackLoading, setAiFeedbackLoading] = useState<Record<string, boolean>>({})
   const [aiFeedbackError, setAiFeedbackError] = useState<Record<string, string>>({})
+  const [aiFeedbackOpen, setAiFeedbackOpen] = useState<Record<string, boolean>>({})
 
 
   useEffect(() => {
@@ -1061,9 +1062,17 @@ export default function SummonerPage() {
                         <div className="mc-champ-name-label">{match.championName}</div>
                         <button
                           className={`mc-ai-btn ${aiFeedbackLoading[match.matchId] ? 'loading' : ''} ${aiFeedback[match.matchId] ? 'done' : ''}`}
-                          onClick={e => { e.stopPropagation(); fetchAiFeedback(match) }}
+                          onClick={e => {
+                            e.stopPropagation()
+                            if (aiFeedback[match.matchId]) {
+                              setAiFeedbackOpen(prev => ({ ...prev, [match.matchId]: !prev[match.matchId] }))
+                            } else {
+                              setAiFeedbackOpen(prev => ({ ...prev, [match.matchId]: true }))
+                              fetchAiFeedback(match)
+                            }
+                          }}
                         >
-                          {aiFeedbackLoading[match.matchId] ? '분석 중...' : aiFeedback[match.matchId] ? '✓ AI 분석 완료' : '🤖 AI 분석'}
+                          {aiFeedbackLoading[match.matchId] ? '분석 중...' : aiFeedback[match.matchId] ? (aiFeedbackOpen[match.matchId] ? '✓ AI 분석 완료' : '🤖 AI 분석 보기') : '🤖 AI 분석'}
                         </button>
                       </div>
 
@@ -1104,7 +1113,7 @@ export default function SummonerPage() {
                     </div>
 
                     {/* ── AI 피드백 패널 ── */}
-                    {(aiFeedbackLoading[match.matchId] || aiFeedback[match.matchId] || aiFeedbackError[match.matchId]) && (
+                    {(aiFeedbackLoading[match.matchId] || ((aiFeedback[match.matchId] || aiFeedbackError[match.matchId]) && aiFeedbackOpen[match.matchId])) && (
                       <div className="mc-ai-panel">
                         {aiFeedbackLoading[match.matchId] ? (
                           <div className="mc-ai-loading">
@@ -1116,6 +1125,7 @@ export default function SummonerPage() {
                             <div className="mc-ai-header">
                               <span className="mc-ai-icon">⚠️</span>
                               <span className="mc-ai-title">AI 분석 실패</span>
+                              <button className="mc-ai-close" onClick={e => { e.stopPropagation(); setAiFeedbackOpen(prev => ({ ...prev, [match.matchId]: false })) }}>✕</button>
                             </div>
                             <div className="mc-ai-text" style={{ color: 'var(--lose-color)' }}>{aiFeedbackError[match.matchId]}</div>
                           </div>
@@ -1125,6 +1135,7 @@ export default function SummonerPage() {
                               <span className="mc-ai-icon">🤖</span>
                               <span className="mc-ai-title">AI 게임 분석</span>
                               <span className="mc-ai-badge">AI 분석</span>
+                              <button className="mc-ai-close" onClick={e => { e.stopPropagation(); setAiFeedbackOpen(prev => ({ ...prev, [match.matchId]: false })) }}>✕</button>
                             </div>
                             <div className="mc-ai-text">{aiFeedback[match.matchId]}</div>
                           </div>
