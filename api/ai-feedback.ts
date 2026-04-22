@@ -113,7 +113,7 @@ ${timelineSection}
 
   // 3. Gemini API 호출
   const aiController = new AbortController()
-  const aiTimeout = setTimeout(() => aiController.abort(), 8000)
+  const aiTimeout = setTimeout(() => aiController.abort(), 25000)
   const aiRes = await fetch('https://api.cohere.com/v2/chat', {
     method: 'POST',
     headers: {
@@ -125,12 +125,19 @@ ${timelineSection}
       messages: [{ role: 'user', content: prompt }],
     }),
     signal: aiController.signal,
-  }).catch((e) => { console.error('Cohere fetch error:', e); return null }).finally(() => clearTimeout(aiTimeout))
+  }).catch((e) => {
+    const isTimeout = e?.name === 'AbortError'
+    console.error('Cohere fetch error:', isTimeout ? 'timeout' : e)
+    return isTimeout ? 'timeout' : null
+  }).finally(() => clearTimeout(aiTimeout))
 
-  if (!aiRes?.ok) {
-    const errText = await aiRes?.text().catch(() => 'no body')
+  if (aiRes === 'timeout') {
+    return new Response(JSON.stringify({ error: 'AI 분석 시간 초과 — 다시 시도해주세요.' }), { status: 504, headers: { 'Content-Type': 'application/json' } })
+  }
+  if (!aiRes || !aiRes.ok) {
+    const errText = await aiRes?.text().catch(() => '')
     console.error('Cohere error:', aiRes?.status, errText)
-    return new Response(JSON.stringify({ error: `Cohere ${aiRes?.status}` }), { status: 502, headers: { 'Content-Type': 'application/json' } })
+    return new Response(JSON.stringify({ error: `AI 서버 오류 (${aiRes?.status ?? 'network'})` }), { status: 502, headers: { 'Content-Type': 'application/json' } })
   }
 
   const aiData = await aiRes.json()

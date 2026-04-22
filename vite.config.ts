@@ -403,47 +403,62 @@ const OVERALL_CACHE    = path.resolve('public/data/overall-ranking.json')
 const PRO_CACHE        = path.resolve('public/data/pro-ranking.json')
 const RANKING_MAX_AGE  = 60 * 60 * 1000 // 1시간
 
-// ── LCK 주요 프로게이머 목록 ──────────────────────────────────────────────
+// ── 프로게이머 목록 (2025년 기준, 로스터 변경은 직접 수정 필요) ───────────────
 const PRO_LIST = [
-  // T1
-  { team: 'T1',       pos: '탑',     proName: 'Zeus',     gameId: 'T1 Zeus',      tag: 'KR1' },
-  { team: 'T1',       pos: '정글',   proName: 'Oner',     gameId: 'T1 Oner',      tag: 'KR1' },
-  { team: 'T1',       pos: '미드',   proName: 'Faker',    gameId: 'Hide on bush', tag: 'KR1' },
-  { team: 'T1',       pos: '원딜',   proName: 'Gumayusi', gameId: 'T1 Gumayusi',  tag: 'KR1' },
-  { team: 'T1',       pos: '서포터', proName: 'Keria',    gameId: 'T1 Keria',     tag: 'KR1' },
-  // Gen.G
-  { team: 'Gen.G',    pos: '탑',     proName: 'Kiin',     gameId: 'Gen G Kiin',   tag: 'KR1' },
-  { team: 'Gen.G',    pos: '정글',   proName: 'Canyon',   gameId: 'Canyon',       tag: 'KR1' },
-  { team: 'Gen.G',    pos: '미드',   proName: 'Chovy',    gameId: 'Chovy',        tag: 'KR1' },
-  { team: 'Gen.G',    pos: '원딜',   proName: 'Ruler',    gameId: 'Ruler',        tag: 'KR1' },
-  { team: 'Gen.G',    pos: '서포터', proName: 'Delight',  gameId: 'Delight',      tag: 'KR1' },
-  // KT Rolster
-  { team: 'KT',       pos: '탑',     proName: 'Doran',    gameId: 'Doran',        tag: 'KR1' },
-  { team: 'KT',       pos: '정글',   proName: 'Cuzz',     gameId: 'Cuzz',         tag: 'KR1' },
-  { team: 'KT',       pos: '미드',   proName: 'Bdd',      gameId: 'Bdd',          tag: 'KR1' },
-  { team: 'KT',       pos: '원딜',   proName: 'Aiming',   gameId: 'Aiming',       tag: 'KR1' },
-  { team: 'KT',       pos: '서포터', proName: 'Life',     gameId: 'Life',         tag: 'KR1' },
-  // Hanwha Life
-  { team: 'HLE',      pos: '탑',     proName: 'Deft',     gameId: 'Deft',         tag: 'KR1' },
-  { team: 'HLE',      pos: '정글',   proName: 'Clid',     gameId: 'Clid',         tag: 'KR1' },
-  { team: 'HLE',      pos: '미드',   proName: 'Zeka',     gameId: 'Zeka',         tag: 'KR1' },
-  { team: 'HLE',      pos: '원딜',   proName: 'Viper',    gameId: 'Viper',        tag: 'KR1' },
-  { team: 'HLE',      pos: '서포터', proName: 'Lehends',  gameId: 'Lehends',      tag: 'KR1' },
-  // DRX
-  { team: 'DRX',      pos: '탑',     proName: 'Rascal',   gameId: 'Rascal',       tag: 'KR1' },
-  { team: 'DRX',      pos: '정글',   proName: 'Croco',    gameId: 'Croco',        tag: 'KR1' },
-  { team: 'DRX',      pos: '미드',   proName: 'Ucal',     gameId: 'Ucal',         tag: 'KR1' },
-  { team: 'DRX',      pos: '원딜',   proName: 'Teddy',    gameId: 'Teddy',        tag: 'KR1' },
-  { team: 'DRX',      pos: '서포터', proName: 'BeryL',    gameId: 'BeryL',        tag: 'KR1' },
-  // Nongshim RedForce
-  { team: 'NS',       pos: '탑',     proName: 'DnDn',     gameId: 'DnDn',         tag: 'KR1' },
-  { team: 'NS',       pos: '정글',   proName: 'Sylvie',   gameId: 'Sylvie',       tag: 'KR1' },
-  { team: 'NS',       pos: '미드',   proName: 'Callme',   gameId: 'Callme',       tag: 'KR1' },
-  // Kwangdong Freecs
-  { team: 'KDF',      pos: '미드',   proName: 'Fate',     gameId: 'Fate',         tag: 'KR1' },
-  // Fredit BRION
-  { team: 'BRO',      pos: '정글',   proName: 'Willer',   gameId: 'Willer',       tag: 'KR1' },
-  { team: 'BRO',      pos: '미드',   proName: 'Lava',     gameId: 'Lava',         tag: 'KR1' },
+  // ── T1 ─────────────────────────────────────────────────────────────────────
+  { team: 'T1',    nation: 'KR', pos: '탑',     proName: 'Zeus',     gameId: 'T1 Zeus',      tag: 'KR1' },
+  { team: 'T1',    nation: 'KR', pos: '정글',   proName: 'Oner',     gameId: 'T1 Oner',      tag: 'KR1' },
+  { team: 'T1',    nation: 'KR', pos: '미드',   proName: 'Faker',    gameId: 'Hide on bush', tag: 'KR1' },
+  { team: 'T1',    nation: 'KR', pos: '원딜',   proName: 'Gumayusi', gameId: 'T1 Gumayusi',  tag: 'KR1' },
+  { team: 'T1',    nation: 'KR', pos: '서포터', proName: 'Keria',    gameId: 'T1 Keria',     tag: 'KR1' },
+  // ── Gen.G ──────────────────────────────────────────────────────────────────
+  { team: 'Gen.G', nation: 'KR', pos: '탑',     proName: 'Kiin',     gameId: 'Gen G Kiin',   tag: 'KR1' },
+  { team: 'Gen.G', nation: 'KR', pos: '정글',   proName: 'Canyon',   gameId: 'Canyon',       tag: 'KR1' },
+  { team: 'Gen.G', nation: 'KR', pos: '미드',   proName: 'Chovy',    gameId: 'Chovy',        tag: 'KR1' },
+  { team: 'Gen.G', nation: 'KR', pos: '원딜',   proName: 'Peyz',     gameId: 'Peyz',         tag: 'KR1' },
+  { team: 'Gen.G', nation: 'KR', pos: '서포터', proName: 'Lehends',  gameId: 'Lehends',      tag: 'KR1' },
+  // ── KT Rolster ─────────────────────────────────────────────────────────────
+  { team: 'KT',    nation: 'KR', pos: '탑',     proName: 'Doran',    gameId: 'Doran',        tag: 'KR1' },
+  { team: 'KT',    nation: 'KR', pos: '정글',   proName: 'Cuzz',     gameId: 'Cuzz',         tag: 'KR1' },
+  { team: 'KT',    nation: 'KR', pos: '미드',   proName: 'Bdd',      gameId: 'Bdd',          tag: 'KR1' },
+  { team: 'KT',    nation: 'KR', pos: '원딜',   proName: 'Aiming',   gameId: 'Aiming',       tag: 'KR1' },
+  { team: 'KT',    nation: 'KR', pos: '서포터', proName: 'Life',     gameId: 'Life',         tag: 'KR1' },
+  // ── Hanwha Life Esports ────────────────────────────────────────────────────
+  { team: 'HLE',   nation: 'KR', pos: '탑',     proName: 'Kingen',   gameId: 'Kingen',       tag: 'KR1' },
+  { team: 'HLE',   nation: 'KR', pos: '정글',   proName: 'Clid',     gameId: 'Clid',         tag: 'KR1' },
+  { team: 'HLE',   nation: 'KR', pos: '미드',   proName: 'Zeka',     gameId: 'Zeka',         tag: 'KR1' },
+  { team: 'HLE',   nation: 'KR', pos: '원딜',   proName: 'Deft',     gameId: 'Deft',         tag: 'KR1' },
+  { team: 'HLE',   nation: 'KR', pos: '서포터', proName: 'Delight',  gameId: 'Delight',      tag: 'KR1' },
+  // ── DRX ────────────────────────────────────────────────────────────────────
+  { team: 'DRX',   nation: 'KR', pos: '탑',     proName: 'Rascal',   gameId: 'Rascal',       tag: 'KR1' },
+  { team: 'DRX',   nation: 'KR', pos: '정글',   proName: 'Croco',    gameId: 'Croco',        tag: 'KR1' },
+  { team: 'DRX',   nation: 'KR', pos: '미드',   proName: 'Ucal',     gameId: 'Ucal',         tag: 'KR1' },
+  { team: 'DRX',   nation: 'KR', pos: '원딜',   proName: 'Teddy',    gameId: 'Teddy',        tag: 'KR1' },
+  { team: 'DRX',   nation: 'KR', pos: '서포터', proName: 'BeryL',    gameId: 'BeryL',        tag: 'KR1' },
+  // ── Nongshim RedForce ──────────────────────────────────────────────────────
+  { team: 'NS',    nation: 'KR', pos: '탑',     proName: 'DnDn',     gameId: 'DnDn',         tag: 'KR1' },
+  { team: 'NS',    nation: 'KR', pos: '정글',   proName: 'Sylvie',   gameId: 'Sylvie',       tag: 'KR1' },
+  { team: 'NS',    nation: 'KR', pos: '미드',   proName: 'Callme',   gameId: 'Callme',       tag: 'KR1' },
+  { team: 'NS',    nation: 'KR', pos: '원딜',   proName: 'Vital',    gameId: 'Vital',        tag: 'KR1' },
+  { team: 'NS',    nation: 'KR', pos: '서포터', proName: 'Peter',    gameId: 'Peter',        tag: 'KR1' },
+  // ── Kwangdong Freecs ───────────────────────────────────────────────────────
+  { team: 'KDF',   nation: 'KR', pos: '탑',     proName: 'Dudu',     gameId: 'Dudu',         tag: 'KR1' },
+  { team: 'KDF',   nation: 'KR', pos: '정글',   proName: 'YoungJae', gameId: 'YoungJae',     tag: 'KR1' },
+  { team: 'KDF',   nation: 'KR', pos: '미드',   proName: 'Fate',     gameId: 'Fate',         tag: 'KR1' },
+  { team: 'KDF',   nation: 'KR', pos: '원딜',   proName: 'Taeyoon',  gameId: 'Taeyoon',      tag: 'KR1' },
+  { team: 'KDF',   nation: 'KR', pos: '서포터', proName: 'Hena',     gameId: 'Hena',         tag: 'KR1' },
+  // ── Fredit BRION ───────────────────────────────────────────────────────────
+  { team: 'BRO',   nation: 'KR', pos: '탑',     proName: 'Morgan',   gameId: 'Morgan',       tag: 'KR1' },
+  { team: 'BRO',   nation: 'KR', pos: '정글',   proName: 'Willer',   gameId: 'Willer',       tag: 'KR1' },
+  { team: 'BRO',   nation: 'KR', pos: '미드',   proName: 'Lava',     gameId: 'Lava',         tag: 'KR1' },
+  { team: 'BRO',   nation: 'KR', pos: '원딜',   proName: 'Hena',     gameId: 'Hena',         tag: 'KR1' },
+  { team: 'BRO',   nation: 'KR', pos: '서포터', proName: 'Effort',   gameId: 'Effort',       tag: 'KR1' },
+  // ── JDG (LPL) — KR 국적 ─────────────────────────────────────────────────
+  { team: 'JDG',   nation: 'KR', pos: '원딜',   proName: 'Ruler',    gameId: 'Ruler',        tag: 'KR1' },
+  { team: 'JDG',   nation: 'KR', pos: '정글',   proName: 'Kanavi',   gameId: 'Kanavi',       tag: 'KR1' },
+  // ── EDG (LPL) — KR 국적 ─────────────────────────────────────────────────
+  { team: 'EDG',   nation: 'KR', pos: '미드',   proName: 'Scout',    gameId: 'Scout',        tag: 'KR1' },
+  { team: 'EDG',   nation: 'KR', pos: '원딜',   proName: 'Viper',    gameId: 'Viper',        tag: 'KR1' },
 ]
 
 // ── 전체 랭킹 수집 (챌린저+GM+마스터 → LP 순 정렬) ─────────────────────────
@@ -729,19 +744,27 @@ function tierListPlugin(): Plugin {
             const prompt = `당신은 리그 오브 레전드 전문 코치입니다. 아래 데이터를 분석해 한국어로 피드백을 주세요.\n\n[게임 정보]\n챔피언: ${championName} / 모드: ${queueLabel} / 결과: ${win ? '승리' : '패배'} / 시간: ${durMin}분\nKDA: ${kills}/${deaths}/${assists} (${kda} 평점) / CS: ${cs} (${csPerMin}/분) / 시야: ${visionScore}\n${timelineSection}\n\n위 데이터를 바탕으로 다음 형식으로 간결하게 분석해주세요. 총 300자 이내, 이모지 적극 사용:\n⚔️ 초반 운영: (2문장)\n🏯 오브젝트: (2문장)\n🔥 한타: (2문장)\n💡 총평: (1문장)`
 
             const aiController = new AbortController()
-            const aiTimeout = setTimeout(() => aiController.abort(), 8000)
+            const aiTimeout = setTimeout(() => aiController.abort(), 25000)
             const aiRes = await fetch('https://api.cohere.com/v2/chat', {
               method: 'POST',
               headers: { 'Authorization': `Bearer ${COHERE_API_KEY}`, 'Content-Type': 'application/json' },
               body: JSON.stringify({ model: 'command-r-08-2024', messages: [{ role: 'user', content: prompt }] }),
               signal: aiController.signal,
-            }).catch((e: any) => { console.error('Cohere fetch error:', e); return null }).finally(() => clearTimeout(aiTimeout))
+            }).catch((e: any) => {
+              const isTimeout = e?.name === 'AbortError'
+              console.error('Cohere fetch error:', isTimeout ? 'timeout' : e)
+              return isTimeout ? 'timeout' : null
+            }).finally(() => clearTimeout(aiTimeout))
 
+            if (aiRes === 'timeout') {
+              res.writeHead(504, { 'Content-Type': 'application/json' })
+              return res.end(JSON.stringify({ error: 'AI 분석 시간 초과 — 다시 시도해주세요.' }))
+            }
             if (!aiRes || !(aiRes as any).ok) {
-              const errText = await (aiRes as any)?.text().catch(() => 'no body')
+              const errText = await (aiRes as any)?.text().catch(() => '')
               console.error('Cohere error status:', (aiRes as any)?.status, 'body:', errText)
               res.writeHead(502, { 'Content-Type': 'application/json' })
-              return res.end(JSON.stringify({ error: `Cohere ${(aiRes as any)?.status}: ${errText}` }))
+              return res.end(JSON.stringify({ error: `AI 서버 오류 (${(aiRes as any)?.status ?? 'network'})` }))
             }
             const aiData = await (aiRes as any).json()
             const feedback = aiData.message?.content?.[0]?.text ?? '피드백을 생성할 수 없습니다.'
