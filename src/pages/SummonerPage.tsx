@@ -153,6 +153,7 @@ export default function SummonerPage() {
   const [liveTimer, setLiveTimer] = useState(0)
   const [aiFeedback, setAiFeedback] = useState<Record<string, string>>({})
   const [aiFeedbackLoading, setAiFeedbackLoading] = useState<Record<string, boolean>>({})
+  const [aiFeedbackError, setAiFeedbackError] = useState<Record<string, string>>({})
 
 
   useEffect(() => {
@@ -437,7 +438,7 @@ export default function SummonerPage() {
 
     const poll = async () => {
       try {
-        const game = await getLiveGame(summoner.id)
+        const game = await getLiveGame(summoner.puuid)
         if (cancelled) return
         if (game && !game.status) {
           setLiveGame(game)
@@ -472,15 +473,15 @@ export default function SummonerPage() {
     poll() // 즉시 1회 실행
     const iv = setInterval(poll, 30000)
     return () => { cancelled = true; clearInterval(iv) }
-  }, [summoner?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [summoner?.puuid]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleLiveGame = async () => {
-    if (!summoner?.id) return
+    if (!summoner?.puuid) return
     setLiveLoading(true)
     setLiveError(null)
     // 패널이 이미 열려 있으면 닫지 않고 조용히 갱신
     try {
-      const game = await getLiveGame(summoner.id)
+      const game = await getLiveGame(summoner.puuid)
       if (!game || game.status) {
         setShowLiveGame(false)
         setLiveError('현재 게임 중이 아닙니다.')
@@ -512,6 +513,7 @@ export default function SummonerPage() {
   const fetchAiFeedback = async (match: MatchData) => {
     if (aiFeedback[match.matchId] || aiFeedbackLoading[match.matchId]) return
     setAiFeedbackLoading(prev => ({ ...prev, [match.matchId]: true }))
+    setAiFeedbackError(prev => ({ ...prev, [match.matchId]: '' }))
     try {
       const res = await fetch('/api/ai-feedback', {
         method: 'POST',
@@ -533,9 +535,12 @@ export default function SummonerPage() {
       if (res.ok) {
         const data = await res.json()
         setAiFeedback(prev => ({ ...prev, [match.matchId]: data.feedback }))
+      } else {
+        const errData = await res.json().catch(() => ({}))
+        setAiFeedbackError(prev => ({ ...prev, [match.matchId]: errData.error ?? `AI 분석 실패 (${res.status})` }))
       }
     } catch {
-      // 조용히 실패
+      setAiFeedbackError(prev => ({ ...prev, [match.matchId]: '네트워크 오류로 AI 분석에 실패했습니다.' }))
     } finally {
       setAiFeedbackLoading(prev => ({ ...prev, [match.matchId]: false }))
     }
@@ -1099,12 +1104,20 @@ export default function SummonerPage() {
                     </div>
 
                     {/* ── AI 피드백 패널 ── */}
-                    {(aiFeedbackLoading[match.matchId] || aiFeedback[match.matchId]) && (
+                    {(aiFeedbackLoading[match.matchId] || aiFeedback[match.matchId] || aiFeedbackError[match.matchId]) && (
                       <div className="mc-ai-panel">
                         {aiFeedbackLoading[match.matchId] ? (
                           <div className="mc-ai-loading">
                             <div className="mc-ai-spinner" />
                             <span>AI가 게임을 분석하고 있습니다...</span>
+                          </div>
+                        ) : aiFeedbackError[match.matchId] ? (
+                          <div className="mc-ai-content">
+                            <div className="mc-ai-header">
+                              <span className="mc-ai-icon">⚠️</span>
+                              <span className="mc-ai-title">AI 분석 실패</span>
+                            </div>
+                            <div className="mc-ai-text" style={{ color: 'var(--lose-color)' }}>{aiFeedbackError[match.matchId]}</div>
                           </div>
                         ) : (
                           <div className="mc-ai-content">

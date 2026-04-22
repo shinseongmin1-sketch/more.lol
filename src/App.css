@@ -56,17 +56,17 @@
 
 /* ── 다크 모드 ── */
 [data-theme="dark"] {
-  --bg-primary: #13151c;
-  --bg-secondary: #1a1c26;
-  --bg-card: #1e2130;
-  --bg-card-hover: #262940;
-  --bg-input: #181a26;
-  --border-color: #2d3050;
-  --border-hover: #4f83cc;
+  --bg-primary: #12131e;
+  --bg-secondary: #191a28;
+  --bg-card: #1e2033;
+  --bg-card-hover: #252740;
+  --bg-input: #16172a;
+  --border-color: #2a2d48;
+  --border-hover: #5b8ef0;
 
-  --accent-primary: #4f83cc;
-  --accent-primary-light: #6fa3e8;
-  --accent-primary-glow: rgba(79, 131, 204, 0.2);
+  --accent-primary: #5b8ef0;
+  --accent-primary-light: #7aaaf5;
+  --accent-primary-glow: rgba(91, 142, 240, 0.2);
 
   --accent-amber: #f59e0b;
   --accent-amber-light: #fbbf24;
@@ -75,9 +75,9 @@
   --accent-cyan: #22d3ee;
   --accent-cyan-light: #67e8f9;
 
-  --text-primary: #c8cfe8;
-  --text-secondary: #7a80a0;
-  --text-muted: #4e5270;
+  --text-primary: #e8e8f4;
+  --text-secondary: #8c90b4;
+  --text-muted: #525678;
 
   --tier-s-plus: #f87171;
   --tier-s: #fbbf24;
@@ -86,24 +86,24 @@
   --tier-c: #60a5fa;
   --tier-d: #9ca3af;
 
-  --win-color: #5b9cf6;
-  --lose-color: #e05c5c;
-  --win-card-bg: rgba(59, 100, 210, 0.12);
-  --lose-card-bg: rgba(200, 50, 50, 0.12);
-  --win-border: rgba(91, 156, 246, 0.6);
-  --lose-border: rgba(224, 92, 92, 0.6);
+  --win-color: #5b8ef0;
+  --lose-color: #e05555;
+  --win-card-bg: rgba(50, 90, 210, 0.18);
+  --lose-card-bg: rgba(190, 45, 45, 0.18);
+  --win-border: rgba(91, 142, 240, 0.9);
+  --lose-border: rgba(220, 80, 80, 0.9);
 
   --accent-gold: #d4a843;
   --accent-gold-light: #e8bf5a;
-  --accent-blue: #4f83cc;
-  --accent-blue-light: #6fa3e8;
+  --accent-blue: #5b8ef0;
+  --accent-blue-light: #7aaaf5;
   --accent-purple: #a78bfa;
 
-  --header-bg: rgba(19, 21, 28, 0.96);
-  --scrollbar-track: #1a1c26;
-  --scrollbar-thumb: #2d3050;
-  --select-option-bg: #1e2130;
-  --select-option-color: #c8cfe8;
+  --header-bg: rgba(18, 19, 30, 0.97);
+  --scrollbar-track: #191a28;
+  --scrollbar-thumb: #2a2d48;
+  --select-option-bg: #1e2033;
+  --select-option-color: #e8e8f4;
 
   color-scheme: dark;
 }
