@@ -747,68 +747,101 @@
 }
 
 /* 스킬 레벨 표 */
-.skill-table { overflow-x: auto; }
+/* ── 스킬 순서 테이블 ── */
+.skill-table {
+  overflow-x: auto;
+  background: var(--bg-secondary);
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid var(--border-color);
+}
 
 .skill-table-lvrow,
 .skill-table-row {
   display: flex;
   align-items: center;
+  gap: 3px;
 }
 
-.skill-table-lvrow { margin-bottom: 4px; }
+.skill-table-row { margin-top: 6px; }
 
 .skill-table-label-col {
-  width: 64px;
+  width: 72px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding-right: 8px;
+  gap: 7px;
+  padding-right: 10px;
 }
 
-.skill-table-label-col img {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-  border: 1px solid var(--border-color);
+.skill-label-icon-wrap {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1.5px solid;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.skill-label-icon-wrap img {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
-.skill-table-label-col span {
+.skill-key-badge {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 900;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .skill-table-lv {
-  width: 28px;
+  width: 26px;
   flex-shrink: 0;
   text-align: center;
   font-size: 10px;
   color: var(--text-muted);
   font-weight: 600;
+  padding-bottom: 4px;
 }
+.skill-table-lv.early { color: var(--text-secondary); }
 
 .skill-table-cell {
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.skill-dot {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
-  transition: all 0.1s;
+.skill-block {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0;
+  transition: transform 0.1s;
 }
+.skill-block:hover { transform: scale(1.15); }
 
-.skill-dot.active {
-  width: 18px;
-  height: 18px;
-  border: none;
+.skill-block.inactive {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--border-color);
+  box-shadow: none;
+  color: transparent;
 }
 
 .cd-page { min-height: 100vh; background: var(--bg-primary); }

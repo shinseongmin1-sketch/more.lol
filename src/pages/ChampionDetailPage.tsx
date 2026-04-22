@@ -533,21 +533,29 @@ export default function ChampionDetailPage() {
                     <div className="skill-table-lvrow">
                       <div className="skill-table-label-col" />
                       {Array.from({ length: 18 }, (_, i) => (
-                        <div key={i} className="skill-table-lv">{i + 1}</div>
+                        <div key={i} className={`skill-table-lv ${i < 9 ? 'early' : ''}`}>{i + 1}</div>
                       ))}
                     </div>
                     {SPELL_KEYS.map((key, ki) => (
                       <div key={key} className="skill-table-row">
                         <div className="skill-table-label-col">
-                          <img src={spellIcon(champData.spells[ki].image.full)} alt={key} />
-                          <span style={{ color: SPELL_COLORS[key] }}>{key}</span>
+                          <div className="skill-label-icon-wrap" style={{ borderColor: SPELL_COLORS[key] + '55' }}>
+                            <img src={spellIcon(champData.spells[ki].image.full)} alt={key} />
+                          </div>
+                          <span className="skill-key-badge" style={{ background: SPELL_COLORS[key] + '22', color: SPELL_COLORS[key] }}>{key}</span>
                         </div>
                         {skillRows[key].map((active, li) => (
                           <div key={li} className="skill-table-cell">
-                            <div
-                              className={`skill-dot ${active ? 'active' : ''}`}
-                              style={active ? { background: SPELL_COLORS[key], boxShadow: `0 0 6px ${SPELL_COLORS[key]}99` } : {}}
-                            />
+                            {active ? (
+                              <div
+                                className="skill-block active"
+                                style={{ background: SPELL_COLORS[key], boxShadow: `0 0 8px ${SPELL_COLORS[key]}66` }}
+                              >
+                                {key}
+                              </div>
+                            ) : (
+                              <div className="skill-block inactive" />
+                            )}
                           </div>
                         ))}
                       </div>
