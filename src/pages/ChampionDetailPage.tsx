@@ -279,24 +279,54 @@ export default function ChampionDetailPage() {
                         </div>
                       )}
 
-                      {/* 아이템 */}
+                      {/* 아이템 빌드 */}
                       {(liveBuild.boots?.length > 0 || liveBuild.items?.length > 0) && (
-                        <div className="live-section">
-                          <span className="live-section-label">코어 아이템</span>
-                          <div className="live-row live-items-row">
+                        <div className="live-item-build-section">
+                          <span className="live-item-build-title">아이템 빌드</span>
+                          <div className="live-item-phases">
                             {liveBuild.boots?.slice(0,1).map((it: any) => (
-                              <div key={it.id} className="live-item-wrap live-boot">
-                                <img src={itemIcon(it.id)} alt={it.id} className="live-item-img" />
-                                <span className="live-freq">{Math.round(it.freq * 100)}%</span>
+                              <div key={it.id} className="live-phase-row">
+                                <span className="live-phase-badge live-phase-badge-boot">신발</span>
+                                <div className="live-phase-items">
+                                  <div className="live-phase-item">
+                                    <img src={itemIcon(it.id)} alt={it.id} className="live-phase-img" />
+                                    <span className="live-freq">{Math.round(it.freq * 100)}%</span>
+                                  </div>
+                                </div>
                               </div>
                             ))}
-                            {liveBuild.items?.slice(0, 6).map((it: any, idx: number) => (
-                              <div key={it.id} className="live-item-wrap">
-                                {idx > 0 && <span className="live-arrow">›</span>}
-                                <img src={itemIcon(it.id)} alt={it.id} className="live-item-img" />
-                                <span className="live-freq">{Math.round(it.freq * 100)}%</span>
+                            {(liveBuild.items as any[])?.slice(0, 3).length > 0 && (
+                              <div className="live-phase-row">
+                                <span className="live-phase-badge live-phase-badge-core">코어</span>
+                                <div className="live-phase-items">
+                                  {(liveBuild.items as any[]).slice(0, 3).map((it, idx) => (
+                                    <div key={it.id} className="live-phase-item-wrap">
+                                      {idx > 0 && <span className="live-phase-arrow">›</span>}
+                                      <div className="live-phase-item">
+                                        <img src={itemIcon(it.id)} alt={it.id} className="live-phase-img" />
+                                        <span className="live-freq">{Math.round(it.freq * 100)}%</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
                               </div>
-                            ))}
+                            )}
+                            {(liveBuild.items as any[])?.slice(3, 6).length > 0 && (
+                              <div className="live-phase-row">
+                                <span className="live-phase-badge live-phase-badge-full">완성</span>
+                                <div className="live-phase-items">
+                                  {(liveBuild.items as any[]).slice(3, 6).map((it, idx) => (
+                                    <div key={it.id} className="live-phase-item-wrap">
+                                      {idx > 0 && <span className="live-phase-arrow">›</span>}
+                                      <div className="live-phase-item">
+                                        <img src={itemIcon(it.id)} alt={it.id} className="live-phase-img" />
+                                        <span className="live-freq">{Math.round(it.freq * 100)}%</span>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         </div>
                       )}
@@ -473,32 +503,77 @@ export default function ChampionDetailPage() {
                         </div>
                         <div className="rune-inline-section">
                           <span className="rune-inline-title">아이템 빌드</span>
-                          {(() => {
-                            const allItems = [
-                              ...startItems,
-                              buildBoots,
-                              ...coreItems,
-                              ...fullBuild,
-                            ].filter((item, idx, arr) => arr.findIndex(i => i.id === item.id) === idx)
-                            return (
-                              <div className="rune-inline-item-row">
-                                {allItems.map((item, i) => (
-                                  <div key={item.id} className="rune-inline-item-cell">
-                                    {i > 0 && <span className="rune-inline-item-arrow">›</span>}
-                                    <div className="rune-inline-item-box">
-                                      <img src={itemIcon(item.id)} alt={item.name} />
-                                      <div className="rune-item-tip">
-                                        <span className="rune-item-tip-name">{item.name}</span>
-                                        {itemData[item.id]?.plaintext && (
-                                          <span className="rune-item-tip-desc">{itemData[item.id].plaintext}</span>
-                                        )}
+                          <div className="rune-item-phases">
+                            {startItems.length > 0 && (
+                              <div className="rune-phase-row">
+                                <span className="rune-phase-sm rune-phase-sm-start">시작</span>
+                                <div className="rune-phase-items-sm">
+                                  {startItems.map((item, i) => (
+                                    <div key={item.id} className="rune-phase-item-sm">
+                                      {i > 0 && <span className="rune-inline-item-arrow">›</span>}
+                                      <div className="rune-inline-item-box">
+                                        <img src={itemIcon(item.id)} alt={item.name} />
+                                        <div className="rune-item-tip">
+                                          <span className="rune-item-tip-name">{item.name}</span>
+                                          {itemData[item.id]?.plaintext && <span className="rune-item-tip-desc">{itemData[item.id].plaintext}</span>}
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                ))}
+                                  ))}
+                                </div>
                               </div>
-                            )
-                          })()}
+                            )}
+                            <div className="rune-phase-row">
+                              <span className="rune-phase-sm rune-phase-sm-boot">신발</span>
+                              <div className="rune-phase-items-sm">
+                                <div className="rune-inline-item-box">
+                                  <img src={itemIcon(buildBoots.id)} alt={buildBoots.name} />
+                                  <div className="rune-item-tip">
+                                    <span className="rune-item-tip-name">{buildBoots.name}</span>
+                                    {itemData[buildBoots.id]?.plaintext && <span className="rune-item-tip-desc">{itemData[buildBoots.id].plaintext}</span>}
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            {coreItems.length > 0 && (
+                              <div className="rune-phase-row">
+                                <span className="rune-phase-sm rune-phase-sm-core">코어</span>
+                                <div className="rune-phase-items-sm">
+                                  {coreItems.map((item, i) => (
+                                    <div key={item.id} className="rune-phase-item-sm">
+                                      {i > 0 && <span className="rune-inline-item-arrow">›</span>}
+                                      <div className="rune-inline-item-box">
+                                        <img src={itemIcon(item.id)} alt={item.name} />
+                                        <div className="rune-item-tip">
+                                          <span className="rune-item-tip-name">{item.name}</span>
+                                          {itemData[item.id]?.plaintext && <span className="rune-item-tip-desc">{itemData[item.id].plaintext}</span>}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                            {fullBuild.length > 0 && (
+                              <div className="rune-phase-row">
+                                <span className="rune-phase-sm rune-phase-sm-full">완성</span>
+                                <div className="rune-phase-items-sm">
+                                  {fullBuild.map((item, i) => (
+                                    <div key={item.id} className="rune-phase-item-sm">
+                                      {i > 0 && <span className="rune-inline-item-arrow">›</span>}
+                                      <div className="rune-inline-item-box">
+                                        <img src={itemIcon(item.id)} alt={item.name} />
+                                        <div className="rune-item-tip">
+                                          <span className="rune-item-tip-name">{item.name}</span>
+                                          {itemData[item.id]?.plaintext && <span className="rune-item-tip-desc">{itemData[item.id].plaintext}</span>}
+                                        </div>
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
                         </div>
                       </div>
 

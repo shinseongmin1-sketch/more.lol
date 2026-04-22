@@ -1407,6 +1407,163 @@
   color: #818cf8;
 }
 
+/* ── 아이템 빌드 페이즈 (라이브 빌드) ── */
+.live-item-build-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.live-item-build-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.live-item-phases {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.live-phase-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.live-phase-badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 6px;
+  min-width: 36px;
+  text-align: center;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.live-phase-badge-boot {
+  background: rgba(234, 179, 8, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.live-phase-badge-core {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.live-phase-badge-full {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.live-phase-items {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.live-phase-item-wrap {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.live-phase-arrow {
+  font-size: 14px;
+  color: var(--text-muted);
+  padding: 0 2px;
+  line-height: 1;
+}
+
+.live-phase-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+}
+
+.live-phase-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(99, 102, 241, 0.3);
+  transition: transform 0.12s, border-color 0.12s;
+}
+
+.live-phase-img:hover {
+  transform: scale(1.12);
+  border-color: rgba(200, 155, 60, 0.6);
+}
+
+/* ── 아이템 페이즈 (정적 빌드 – 룬 카드 3열) ── */
+.rune-item-phases {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rune-phase-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rune-phase-sm {
+  font-size: 9px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 5px;
+  min-width: 30px;
+  text-align: center;
+  letter-spacing: 0.3px;
+  flex-shrink: 0;
+}
+
+.rune-phase-sm-start {
+  background: rgba(107, 114, 128, 0.2);
+  color: #9ca3af;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.rune-phase-sm-boot {
+  background: rgba(234, 179, 8, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(234, 179, 8, 0.3);
+}
+
+.rune-phase-sm-core {
+  background: rgba(99, 102, 241, 0.15);
+  color: #818cf8;
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.rune-phase-sm-full {
+  background: rgba(16, 185, 129, 0.12);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.rune-phase-items-sm {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.rune-phase-item-sm {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
 /* 룬 */
 .live-rune-row {
   gap: 12px;
