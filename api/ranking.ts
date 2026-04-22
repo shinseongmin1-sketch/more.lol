@@ -2,7 +2,7 @@ export const config = { runtime: 'edge' }
 
 import { getRankingCache, setRankingCache } from './_supabase.js'
 
-const CACHE_TTL_MS = 30 * 60 * 1000 // 30분
+const CACHE_TTL_MS = 10 * 60 * 1000 // 10분
 
 const CHAMP_POS_OVERRIDE: Record<string, string> = {
   Graves:'정글', Kindred:'정글', LeeSin:'정글', Kayn:'정글', Hecarim:'정글',
