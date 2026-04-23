@@ -473,22 +473,51 @@
   padding-top: 12px;
 }
 
-.rune-inline-title {
+.rune-inline-title-row {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  font-weight: 800;
-  color: rgba(200,155,60,0.9);
-  letter-spacing: 0.3px;
+  gap: 8px;
   margin-bottom: 10px;
 }
 
-.rune-inline-title::after {
+.rune-inline-title-row::after {
   content: '';
   flex: 1;
   height: 1px;
   background: linear-gradient(to right, rgba(200,155,60,0.3), transparent);
+}
+
+.rune-inline-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: rgba(200,155,60,0.9);
+  letter-spacing: 0.3px;
+}
+
+.rune-inline-title::after { display: none; }
+
+.live-source-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: #e8b84b;
+  background: rgba(232,184,75,0.12);
+  border: 1px solid rgba(232,184,75,0.3);
+  border-radius: 4px;
+  padding: 1px 6px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.live-source-badge.live-source-loading {
+  color: rgba(180,180,180,0.7);
+  background: rgba(180,180,180,0.07);
+  border-color: rgba(180,180,180,0.2);
+  animation: live-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 0.5; }
+  50%       { opacity: 1; }
 }
 
 /* ── 소환사 주문 ── */

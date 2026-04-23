@@ -28,58 +28,60 @@ const doranShield:    Item = { id:'1054', name:'도란의 방패' }
 const doranBlade:     Item = { id:'1055', name:'도란의 검' }
 const doranRing:      Item = { id:'1056', name:'도란의 반지' }
 const hpPot:          Item = { id:'2003', name:'체력 물약' }
-const longSword:      Item = { id:'1036', name:'긴 검' }
-const spellthiefs:    Item = { id:'3850', name:'요술사의 칼날' }
-const relicShield:    Item = { id:'3858', name:'성물 방패' }
+const longSword:      Item = { id:'1036', name:'롱소드' }
+const spellthiefs:    Item = { id:'3850', name:'주문도둑의 검' }
+const relicShield:    Item = { id:'3858', name:'고대유물 방패' }
 // 신발
-const steelcaps:      Item = { id:'3047', name:'강철 발목 보호대' }
-// const mercTreads:  Item = { id:'3111', name:'마법 저항력 신발' }
+const steelcaps:      Item = { id:'3047', name:'판금 장화' }
+// const mercTreads:  Item = { id:'3111', name:'헤르메스의 발걸음' }
 const sorcShoes:      Item = { id:'3020', name:'마법사의 신발' }
 const berserkers:     Item = { id:'3006', name:'광전사의 군화' }
 const swiftBoots:     Item = { id:'3009', name:'신속의 장화' }
-const ionianBoots:    Item = { id:'3158', name:'아이오니아 장화' }
+const ionianBoots:    Item = { id:'3158', name:'명석함의 아이오니아 장화' }
 // 전사/탱커
 const trinity:        Item = { id:'3078', name:'삼위일체' }
 const deadMan:        Item = { id:'3742', name:'망자의 갑옷' }
-const blackCleaver:   Item = { id:'3071', name:'검은 분쇄자' }
-const mortalReminder: Item = { id:'3033', name:'치명적 기억' }
-const warmog:         Item = { id:'3083', name:'웜 갑옷' }
+const blackCleaver:   Item = { id:'3071', name:'칠흑의 양날 도끼' }
+const mortalReminder: Item = { id:'3033', name:'필멸자의 운명' }
+const warmog:         Item = { id:'3083', name:'워모그의 갑옷' }
 const guardianAngel:  Item = { id:'3026', name:'수호 천사' }
-const sunfire:        Item = { id:'3068', name:'쐐기불꽃 방패' }
-const heartsteel:     Item = { id:'3441', name:'심장강철' }
+const sunfire:        Item = { id:'3068', name:'태양불꽃 방패' }
+const heartsteel:     Item = { id:'3084', name:'강철심장' }
 const frozenHeart:    Item = { id:'3110', name:'얼어붙은 심장' }
-const hullbreaker:    Item = { id:'3709', name:'파선자' }
+// const hullbreaker: Item = { id:'3181', name:'선체파괴자' }
 // const thornmail:   Item = { id:'3075', name:'가시 갑옷' }
-// const gargoyle:    Item = { id:'3193', name:'가고일 석판' }
-const steraks:        Item = { id:'3053', name:'스테락의 뒤틀린 갑주' }
+const gargoyle:       Item = { id:'3193', name:'가고일 돌갑옷' }
+const steraks:        Item = { id:'3053', name:'스테락의 도전' }
+const spiritVisage:   Item = { id:'3065', name:'정령의 형상' }
+// const knightsVow:  Item = { id:'3109', name:'기사의 맹세' }
 // 원딜/물리
 const ie:             Item = { id:'3031', name:'무한의 대검' }
 const bork:           Item = { id:'3153', name:'몰락한 왕의 검' }
 const kraken:         Item = { id:'6672', name:'크라켄 학살자' }
-const runaans:        Item = { id:'3085', name:'루난의 폭풍' }
-const immortalBow:    Item = { id:'6673', name:'불멸의 방패활' }
-const galeforce:      Item = { id:'6671', name:'질풍검' }
-const serpentsFang:   Item = { id:'3814', name:'서펜트 팡' }
-const youmuus:        Item = { id:'3142', name:'유령 검' }
+const runaans:        Item = { id:'3085', name:'루난의 허리케인' }
+const immortalBow:    Item = { id:'6673', name:'불멸의 철갑궁' }
+const galeforce:      Item = { id:'6671', name:'돌풍' }
+const edgeOfNight:    Item = { id:'3814', name:'밤의 끝자락' }
+const youmuus:        Item = { id:'3142', name:'요우무의 유령검' }
 // AP
-const rabadons:       Item = { id:'3089', name:"라바돈의 죽음 모자" }
-const zhonyas:        Item = { id:'3157', name:"조냐의 모래시계" }
-const voidStaff:      Item = { id:'3135', name:'공허 지팡이' }
-const shadowflame:    Item = { id:'4645', name:'그림자 불꽃' }
+const rabadons:       Item = { id:'3089', name:'라바돈의 죽음모자' }
+const zhonyas:        Item = { id:'3157', name:'존야의 모래시계' }
+const voidStaff:      Item = { id:'3135', name:'공허의 지팡이' }
+const shadowflame:    Item = { id:'4645', name:'그림자불꽃' }
 const liandrys:       Item = { id:'6653', name:'리안드리의 고통' }
-const ludens:         Item = { id:'6655', name:'루덴의 동반자' }
+const ludens:         Item = { id:'6655', name:'루덴의 메아리' }
 const nashorsTooth:   Item = { id:'3115', name:'내셔의 이빨' }
-const lichBane:       Item = { id:'3100', name:'리치 베인' }
-const riftmaker:      Item = { id:'4633', name:'리프트메이커' }
-const rocketBelt:     Item = { id:'3152', name:'헥스테크 로켓 벨트' }
-const cosmicDrive:    Item = { id:'4629', name:'코스믹 드라이브' }
+const lichBane:       Item = { id:'3100', name:'리치베인' }
+const riftmaker:      Item = { id:'4633', name:'균열 생성기' }
+const rocketBelt:     Item = { id:'3152', name:'마법공학 로켓 벨트' }
+const cosmicDrive:    Item = { id:'4629', name:'우주의 추진력' }
 // 서포터
-const moonstone:      Item = { id:'6617', name:'달빛 돌' }
-const ardentCenser:   Item = { id:'3504', name:'열의의 향로' }
+const moonstone:      Item = { id:'6617', name:'월석 재생기' }
+const ardentCenser:   Item = { id:'3504', name:'불타는 향로' }
 const staffFlowing:   Item = { id:'6616', name:'흐르는 물의 지팡이' }
 const redemption:     Item = { id:'3107', name:'구원' }
 const shurelyas:      Item = { id:'2065', name:'슈렐리아의 군가' }
-const locketSolari:   Item = { id:'3190', name:'철의 솔라리 상징' }
+const locketSolari:   Item = { id:'3190', name:'강철의 솔라리 펜던트' }
 // 기타
 const manamune:       Item = { id:'3004', name:'마나무네' }
 
@@ -93,7 +95,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
-    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, warmog],
+    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, gargoyle],
     skillMaxOrder: ['E','Q','W'],
   },
 
@@ -110,8 +112,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     summoners: [TP, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
-    coreItems: [sunfire, heartsteel, warmog],
-    fullBuild: [steelcaps, sunfire, heartsteel, warmog, deadMan, frozenHeart],
+    coreItems: [sunfire, heartsteel, frozenHeart],
+    fullBuild: [steelcaps, sunfire, heartsteel, frozenHeart, deadMan, gargoyle],
     skillMaxOrder: ['E','W','Q'],
   },
 
@@ -128,13 +130,13 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     summoners: [GH, FL],
     startItems: [longSword, hpPot],
     boots: berserkers,
-    coreItems: [hullbreaker, ie, bork],
-    fullBuild: [berserkers, hullbreaker, ie, bork, mortalReminder, guardianAngel],
+    coreItems: [kraken, ie, bork],
+    fullBuild: [berserkers, kraken, ie, bork, mortalReminder, guardianAngel],
     skillMaxOrder: ['E','Q','W'],
   },
 
   Riven: {
-    summoners: [IG, FL],
+    summoners: [TP, FL],
     startItems: [longSword, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
@@ -156,8 +158,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [longSword, hpPot],
     boots: steelcaps,
     coreItems: [trinity, deadMan, mortalReminder],
-    fullBuild: [trinity, steelcaps, deadMan, mortalReminder, guardianAngel, warmog],
-    skillMaxOrder: ['Q','E','W'], // Q(돌격·찌르기) 주딜, E(도발·강화AA) 쿨감, W 마지막
+    fullBuild: [trinity, steelcaps, deadMan, mortalReminder, steraks, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
   },
 
   Camille: {
@@ -165,8 +167,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
-    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, guardianAngel, warmog],
-    skillMaxOrder: ['Q','W','E'], // Q(강화평타) 주딜, W(부채꼴슬로우+힐) 2순위, E 마지막
+    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, steraks, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
   },
 
   Urgot: {
@@ -174,16 +176,16 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
-    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, warmog],
-    skillMaxOrder: ['W','E','Q'], // W(퍼지·연속사격) 주딜, E(훅+돌진) 2순위, Q 마지막
+    fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, steraks],
+    skillMaxOrder: ['W','E','Q'],
   },
 
   Nasus: {
     summoners: [TP, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
-    coreItems: [trinity, deadMan, frozenHeart],
-    fullBuild: [trinity, steelcaps, deadMan, frozenHeart, warmog, heartsteel],
+    coreItems: [trinity, heartsteel, deadMan],
+    fullBuild: [trinity, steelcaps, heartsteel, deadMan, frozenHeart, spiritVisage],
     skillMaxOrder: ['Q','W','E'],
   },
 
@@ -193,8 +195,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     summoners: [SM, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
-    coreItems: [sunfire, heartsteel, deadMan],
-    fullBuild: [steelcaps, sunfire, heartsteel, deadMan, frozenHeart, warmog],
+    coreItems: [sunfire, heartsteel, frozenHeart],
+    fullBuild: [steelcaps, sunfire, heartsteel, frozenHeart, deadMan, gargoyle],
     skillMaxOrder: ['E','W','Q'],
   },
 
@@ -203,8 +205,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [doranBlade, hpPot],
     boots: steelcaps,
     coreItems: [blackCleaver, deadMan, mortalReminder],
-    fullBuild: [steelcaps, blackCleaver, deadMan, mortalReminder, guardianAngel, warmog],
-    skillMaxOrder: ['Q','E','W'], // Q(음파) 주딜, E(점멸+슬로우) 쿨감, W 마지막
+    fullBuild: [steelcaps, blackCleaver, deadMan, mortalReminder, steraks, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
   },
 
   Vi: {
@@ -212,7 +214,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
-    fullBuild: [trinity, steelcaps, deadMan, blackCleaver, guardianAngel, warmog],
+    fullBuild: [trinity, steelcaps, deadMan, blackCleaver, steraks, guardianAngel],
     skillMaxOrder: ['Q','E','W'],
   },
 
@@ -222,7 +224,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     boots: steelcaps,
     coreItems: [trinity, deadMan, blackCleaver],
     fullBuild: [trinity, steelcaps, deadMan, blackCleaver, mortalReminder, guardianAngel],
-    skillMaxOrder: ['Q','E','W'], // Q(돌진) 주딜, E(깃발·벽콤보) 쿨감, W 마지막
+    skillMaxOrder: ['Q','E','W'],
   },
 
   Graves: {
@@ -338,10 +340,10 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   Zed: {
     summoners: [IG, FL],
     startItems: [longSword, hpPot],
-    boots: steelcaps,
-    coreItems: [youmuus, serpentsFang, deadMan],
-    fullBuild: [steelcaps, youmuus, serpentsFang, deadMan, blackCleaver, guardianAngel],
-    skillMaxOrder: ['Q','W','E'], // Q(표창) 주딜, W(그림자) 쿨감, E 마지막
+    boots: ionianBoots,
+    coreItems: [youmuus, edgeOfNight, blackCleaver],
+    fullBuild: [ionianBoots, youmuus, edgeOfNight, blackCleaver, deadMan, guardianAngel],
+    skillMaxOrder: ['Q','W','E'],
   },
 
   Akali: {
@@ -393,9 +395,9 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     summoners: [IG, FL],
     startItems: [doranRing, hpPot],
     boots: sorcShoes,
-    coreItems: [ludens, shadowflame, rabadons],
-    fullBuild: [sorcShoes, ludens, shadowflame, rabadons, voidStaff, zhonyas],
-    skillMaxOrder: ['Q','E','W'], // Q(돌진강타) 주딜, E(콩닥콩닥) 쿨감·회피, W 마지막
+    coreItems: [ludens, shadowflame, zhonyas],
+    fullBuild: [sorcShoes, ludens, shadowflame, zhonyas, rabadons, voidStaff],
+    skillMaxOrder: ['Q','E','W'],
   },
 
   Ekko: {
@@ -464,7 +466,7 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   },
 
   Vayne: {
-    summoners: [IG, FL],
+    summoners: [HL, FL],
     startItems: [doranBlade, hpPot],
     boots: berserkers,
     coreItems: [kraken, bork, ie],
@@ -541,17 +543,17 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     summoners: [EX, FL],
     startItems: [doranShield, hpPot],
     boots: ionianBoots,
-    coreItems: [locketSolari, redemption, frozenHeart],
-    fullBuild: [ionianBoots, locketSolari, redemption, frozenHeart, shurelyas, warmog],
-    skillMaxOrder: ['E','Q','W'], // E(회초리) 주CC·딜, Q(훅) 쿨감, W 마지막
+    coreItems: [locketSolari, frozenHeart, redemption],
+    fullBuild: [ionianBoots, locketSolari, frozenHeart, redemption, shurelyas, gargoyle],
+    skillMaxOrder: ['E','Q','W'],
   },
 
   Leona: {
-    summoners: [IG, FL],
+    summoners: [EX, FL],
     startItems: [doranShield, hpPot],
     boots: steelcaps,
-    coreItems: [locketSolari, heartsteel, frozenHeart],
-    fullBuild: [steelcaps, locketSolari, heartsteel, frozenHeart, redemption, warmog],
+    coreItems: [locketSolari, sunfire, frozenHeart],
+    fullBuild: [steelcaps, locketSolari, sunfire, frozenHeart, redemption, gargoyle],
     skillMaxOrder: ['E','W','Q'],
   },
 
@@ -559,8 +561,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     summoners: [EX, FL],
     startItems: [doranShield, hpPot],
     boots: ionianBoots,
-    coreItems: [locketSolari, shurelyas, redemption],
-    fullBuild: [ionianBoots, locketSolari, shurelyas, redemption, frozenHeart, warmog],
+    coreItems: [locketSolari, frozenHeart, shurelyas],
+    fullBuild: [ionianBoots, locketSolari, frozenHeart, shurelyas, redemption, gargoyle],
     skillMaxOrder: ['Q','E','W'],
   },
 
@@ -569,8 +571,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [doranShield, hpPot],
     boots: steelcaps,
     coreItems: [locketSolari, heartsteel, frozenHeart],
-    fullBuild: [steelcaps, locketSolari, heartsteel, frozenHeart, redemption, warmog],
-    skillMaxOrder: ['E','W','Q'], // E(잔물결·AOE슬로우) 쿨감, W(타이탄의 분노·쉴드) 2순위, Q 마지막
+    fullBuild: [steelcaps, locketSolari, heartsteel, frozenHeart, redemption, gargoyle],
+    skillMaxOrder: ['E','W','Q'],
   },
 
   Janna: {
@@ -584,11 +586,11 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
 
   Soraka: {
     summoners: [EX, FL],
-    startItems: [doranRing, hpPot],
+    startItems: [spellthiefs, hpPot],
     boots: ionianBoots,
-    coreItems: [moonstone, redemption, staffFlowing],
-    fullBuild: [ionianBoots, moonstone, redemption, staffFlowing, ardentCenser, zhonyas],
-    skillMaxOrder: ['W','Q','E'], // W(별의 은혜·힐) 주힐 먼저, Q(스타콜·자가힐) 2순위, E 마지막
+    coreItems: [moonstone, staffFlowing, redemption],
+    fullBuild: [ionianBoots, moonstone, staffFlowing, redemption, ardentCenser, zhonyas],
+    skillMaxOrder: ['W','Q','E'],
   },
 
   Nami: {
@@ -613,8 +615,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     summoners: [EX, FL],
     startItems: [doranBlade, hpPot],
     boots: ionianBoots,
-    coreItems: [youmuus, serpentsFang, deadMan],
-    fullBuild: [ionianBoots, youmuus, serpentsFang, deadMan, blackCleaver, guardianAngel],
+    coreItems: [youmuus, edgeOfNight, blackCleaver],
+    fullBuild: [ionianBoots, youmuus, edgeOfNight, blackCleaver, deadMan, guardianAngel],
     skillMaxOrder: ['Q','E','W'],
   },
 
@@ -650,8 +652,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [relicShield, hpPot],
     boots: ionianBoots,
     coreItems: [locketSolari, frozenHeart, heartsteel],
-    fullBuild: [ionianBoots, locketSolari, frozenHeart, heartsteel, redemption, warmog],
-    skillMaxOrder: ['E','W','Q'], // E(강의 심장·방어막+돌진) 쿨감, W(아버지의 가르침·돌진강화) 2순위, Q 마지막
+    fullBuild: [ionianBoots, locketSolari, frozenHeart, heartsteel, redemption, gargoyle],
+    skillMaxOrder: ['E','W','Q'],
   },
 
   Alistar: {
@@ -659,17 +661,17 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [relicShield, hpPot],
     boots: ionianBoots,
     coreItems: [locketSolari, heartsteel, frozenHeart],
-    fullBuild: [ionianBoots, locketSolari, heartsteel, frozenHeart, warmog, redemption],
-    skillMaxOrder: ['W','Q','E'], // W(격분·밀치기) 주CC콤보, Q(폭발 두통·돌진) 쿨감, E 마지막
+    fullBuild: [ionianBoots, locketSolari, heartsteel, frozenHeart, redemption, gargoyle],
+    skillMaxOrder: ['W','Q','E'],
   },
 
   Morgana: {
     summoners: [EX, FL],
     startItems: [spellthiefs, hpPot],
     boots: sorcShoes,
-    coreItems: [ludens, shadowflame, zhonyas],
-    fullBuild: [sorcShoes, ludens, shadowflame, zhonyas, rabadons, voidStaff],
-    skillMaxOrder: ['Q','E','W'], // Q(어두운 속박·스킬샷CC) 주CC, E(검은 방패·CC면역) 쿨감, W 마지막
+    coreItems: [shadowflame, ludens, zhonyas],
+    fullBuild: [sorcShoes, shadowflame, ludens, zhonyas, rabadons, voidStaff],
+    skillMaxOrder: ['Q','E','W'],
   },
 
   Zilean: {
@@ -695,8 +697,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [relicShield, hpPot],
     boots: steelcaps,
     coreItems: [locketSolari, frozenHeart, heartsteel],
-    fullBuild: [steelcaps, locketSolari, frozenHeart, heartsteel, redemption, warmog],
-    skillMaxOrder: ['W','Q','E'], // W(자기장·CC·돌진) 주CC, Q(자철석 충격) 쿨감, E 마지막
+    fullBuild: [steelcaps, locketSolari, frozenHeart, heartsteel, redemption, gargoyle],
+    skillMaxOrder: ['W','Q','E'],
   },
 
   Renata: {
@@ -720,8 +722,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
   // ══ 기타 인기 챔피언 ══════════════════════════════════
 
   Pantheon: {
-    summoners: [TP, FL],
-    startItems: [doranShield, hpPot],
+    summoners: [IG, FL],
+    startItems: [longSword, hpPot],
     boots: steelcaps,
     coreItems: [trinity, blackCleaver, deadMan],
     fullBuild: [trinity, steelcaps, blackCleaver, deadMan, mortalReminder, guardianAngel],

@@ -137,6 +137,33 @@ export default function ChampionDetailPage() {
   const skillMaxOrder  = champBuild?.skillMaxOrder ?? template.skillMaxOrder
   const champSkillOrder = makeSkillOrder(...skillMaxOrder)
 
+  // 라이브 데이터 → 메인 빌드 우선 적용 (없으면 하드코딩 폴백)
+  const usingLive = !liveLoading && !!liveBuild
+  const liveItem = (id: string) => ({ id, name: itemData[id]?.name ?? '' })
+
+  const displaySummoners: typeof summoners = usingLive && liveBuild.summonerSpells?.length >= 2
+    ? [
+        { id: liveBuild.summonerSpells[0].key, name: liveBuild.summonerSpells[0].key },
+        { id: liveBuild.summonerSpells[1].key, name: liveBuild.summonerSpells[1].key },
+      ]
+    : summoners
+
+  const displayBoots = usingLive && liveBuild.boots?.length > 0
+    ? liveItem(liveBuild.boots[0].id)
+    : buildBoots
+
+  const displayStartItems = usingLive && liveBuild.startItems?.length > 0
+    ? liveBuild.startItems.map((it: any) => liveItem(it.id))
+    : startItems
+
+  const displayCoreItems = usingLive && liveBuild.items?.length > 0
+    ? liveBuild.items.slice(0, 3).map((it: any) => liveItem(it.id))
+    : coreItems
+
+  const displayFullBuild = usingLive && liveBuild.items?.length > 0
+    ? liveBuild.items.slice(0, 6).map((it: any) => liveItem(it.id))
+    : fullBuild
+
   const splashUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${champId}_0.jpg`
   const spellIcon = (img: string) => `https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${img}`
   const passiveIcon = (img: string) => `https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/passive/${img}`
@@ -230,138 +257,6 @@ export default function ChampionDetailPage() {
           return (
             <div className="build-cards">
 
-              {/* ── 라이브 빌드 카드 (챌린저 실시간) ── */}
-              {(liveLoading || liveBuild) && (() => {
-                const RUNE_CDN = 'https://ddragon.leagueoflegends.com/cdn/img/'
-                if (liveLoading) return (
-                  <div className="live-build-card live-build-loading">
-                    <div className="live-build-badge">
-                      <span className="live-dot" />챌린저 실시간 데이터 수집 중...
-                    </div>
-                  </div>
-                )
-                if (!liveBuild) return null
-                const primTree = runeTreeData.find((t: any) => t.id === liveBuild.primaryTree?.id)
-                const secTree  = runeTreeData.find((t: any) => t.id === liveBuild.secondaryTree?.id)
-                const findRuneImg = (runeId: number): string => {
-                  for (const tree of runeTreeData)
-                    for (const slot of tree.slots)
-                      for (const r of slot.runes)
-                        if (r.id === runeId) return RUNE_CDN + r.icon
-                  return ''
-                }
-                return (
-                  <div className="live-build-card">
-                    <div className="live-build-head">
-                      <div className="live-build-badge">
-                        <span className="live-dot" />챌린저 실시간 빌드
-                      </div>
-                      <span className="live-build-sample">{liveBuild.sampleSize}게임 기준</span>
-                    </div>
-                    <div className="live-build-body">
-
-                      {/* 소환사 주문 */}
-                      {liveBuild.summonerSpells?.length > 0 && (
-                        <div className="live-section">
-                          <span className="live-section-label">소환사 주문</span>
-                          <div className="live-row">
-                            {liveBuild.summonerSpells.map((sp: any) => sp.key && (
-                              <div key={sp.id} className="live-spell-wrap">
-                                <img
-                                  src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${sp.key}.png`}
-                                  alt={sp.key}
-                                  className="live-spell-img"
-                                />
-                                <span className="live-freq">{Math.round(sp.freq * 100)}%</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 아이템 빌드 */}
-                      {(liveBuild.boots?.length > 0 || liveBuild.items?.length > 0) && (
-                        <div className="live-item-build-section">
-                          <span className="live-item-build-title">아이템 빌드</span>
-                          <div className="live-item-phases">
-                            {liveBuild.boots?.slice(0,1).map((it: any) => (
-                              <div key={it.id} className="live-phase-row">
-                                <span className="live-phase-badge live-phase-badge-boot">신발</span>
-                                <div className="live-phase-items">
-                                  <div className="live-phase-item">
-                                    <img src={itemIcon(it.id)} alt={it.id} className="live-phase-img" />
-                                    <span className="live-freq">{Math.round(it.freq * 100)}%</span>
-                                  </div>
-                                </div>
-                              </div>
-                            ))}
-                            {(liveBuild.items as any[])?.slice(0, 3).length > 0 && (
-                              <div className="live-phase-row">
-                                <span className="live-phase-badge live-phase-badge-core">코어</span>
-                                <div className="live-phase-items">
-                                  {(liveBuild.items as any[]).slice(0, 3).map((it, idx) => (
-                                    <div key={it.id} className="live-phase-item-wrap">
-                                      {idx > 0 && <span className="live-phase-arrow">›</span>}
-                                      <div className="live-phase-item">
-                                        <img src={itemIcon(it.id)} alt={it.id} className="live-phase-img" />
-                                        <span className="live-freq">{Math.round(it.freq * 100)}%</span>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                            {(liveBuild.items as any[])?.slice(3, 6).length > 0 && (
-                              <div className="live-phase-row">
-                                <span className="live-phase-badge live-phase-badge-full">완성</span>
-                                <div className="live-phase-items">
-                                  {(liveBuild.items as any[]).slice(3, 6).map((it, idx) => (
-                                    <div key={it.id} className="live-phase-item-wrap">
-                                      {idx > 0 && <span className="live-phase-arrow">›</span>}
-                                      <div className="live-phase-item">
-                                        <img src={itemIcon(it.id)} alt={it.id} className="live-phase-img" />
-                                        <span className="live-freq">{Math.round(it.freq * 100)}%</span>
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* 룬 */}
-                      {(primTree || secTree) && (
-                        <div className="live-section">
-                          <span className="live-section-label">메인 룬</span>
-                          <div className="live-row live-rune-row">
-                            {primTree && (
-                              <div className="live-rune-tree">
-                                <img src={RUNE_CDN + primTree.icon} className="live-tree-icon" alt={primTree.name} />
-                                <span className="live-tree-name">{primTree.name}</span>
-                              </div>
-                            )}
-                            {liveBuild.keystone && findRuneImg(liveBuild.keystone.id) && (
-                              <div className="live-rune-ks">
-                                <img src={findRuneImg(liveBuild.keystone.id)} className="live-ks-icon" alt="" />
-                                <span className="live-freq">{Math.round(liveBuild.keystone.freq * 100)}%</span>
-                              </div>
-                            )}
-                            {secTree && (
-                              <div className="live-rune-tree live-rune-sec">
-                                <img src={RUNE_CDN + secTree.icon} className="live-tree-icon live-tree-icon-sm" alt={secTree.name} />
-                                <span className="live-tree-name">{secTree.name}</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                    </div>
-                  </div>
-                )
-              })()}
 
               {/* ── 카드 1: 룬 ── */}
               <div className="build-card rune-card">
@@ -494,7 +389,7 @@ export default function ChampionDetailPage() {
                         <div className="rune-inline-section">
                           <span className="rune-inline-title">소환사 주문</span>
                           <div className="rune-inline-spell-row">
-                            {summoners.map(s => (
+                            {displaySummoners.map(s => (
                               <div key={s.id} className="rune-inline-spell">
                                 <img src={`https://ddragon.leagueoflegends.com/cdn/${ddVersion}/img/spell/${s.id}.png`} alt={s.name} />
                               </div>
@@ -502,13 +397,17 @@ export default function ChampionDetailPage() {
                           </div>
                         </div>
                         <div className="rune-inline-section">
-                          <span className="rune-inline-title">아이템 빌드</span>
+                          <div className="rune-inline-title-row">
+                            <span className="rune-inline-title">아이템 빌드</span>
+                            {liveLoading && <span className="live-source-badge live-source-loading">수집 중…</span>}
+                            {usingLive && <span className="live-source-badge">{liveBuild.sampleSize}게임</span>}
+                          </div>
                           <div className="rune-item-phases">
-                            {startItems.length > 0 && (
+                            {displayStartItems.length > 0 && (
                               <div className="rune-phase-row">
                                 <span className="rune-phase-sm rune-phase-sm-start">시작</span>
                                 <div className="rune-phase-items-sm">
-                                  {startItems.map((item, i) => (
+                                  {displayStartItems.map((item: {id:string,name:string}, i: number) => (
                                     <div key={item.id} className="rune-phase-item-sm">
                                       {i > 0 && <span className="rune-inline-item-arrow">›</span>}
                                       <div className="rune-inline-item-box">
@@ -527,19 +426,19 @@ export default function ChampionDetailPage() {
                               <span className="rune-phase-sm rune-phase-sm-boot">신발</span>
                               <div className="rune-phase-items-sm">
                                 <div className="rune-inline-item-box">
-                                  <img src={itemIcon(buildBoots.id)} alt={buildBoots.name} />
+                                  <img src={itemIcon(displayBoots.id)} alt={displayBoots.name} />
                                   <div className="rune-item-tip">
-                                    <span className="rune-item-tip-name">{buildBoots.name}</span>
-                                    {itemData[buildBoots.id]?.plaintext && <span className="rune-item-tip-desc">{itemData[buildBoots.id].plaintext}</span>}
+                                    <span className="rune-item-tip-name">{displayBoots.name}</span>
+                                    {itemData[displayBoots.id]?.plaintext && <span className="rune-item-tip-desc">{itemData[displayBoots.id].plaintext}</span>}
                                   </div>
                                 </div>
                               </div>
                             </div>
-                            {coreItems.length > 0 && (
+                            {displayCoreItems.length > 0 && (
                               <div className="rune-phase-row">
                                 <span className="rune-phase-sm rune-phase-sm-core">코어</span>
                                 <div className="rune-phase-items-sm">
-                                  {coreItems.map((item, i) => (
+                                  {displayCoreItems.map((item: {id:string,name:string}, i: number) => (
                                     <div key={item.id} className="rune-phase-item-sm">
                                       {i > 0 && <span className="rune-inline-item-arrow">›</span>}
                                       <div className="rune-inline-item-box">
@@ -554,11 +453,11 @@ export default function ChampionDetailPage() {
                                 </div>
                               </div>
                             )}
-                            {fullBuild.length > 0 && (
+                            {displayFullBuild.length > 0 && (
                               <div className="rune-phase-row">
                                 <span className="rune-phase-sm rune-phase-sm-full">완성</span>
                                 <div className="rune-phase-items-sm">
-                                  {fullBuild.map((item, i) => (
+                                  {displayFullBuild.map((item: {id:string,name:string}, i: number) => (
                                     <div key={item.id} className="rune-phase-item-sm">
                                       {i > 0 && <span className="rune-inline-item-arrow">›</span>}
                                       <div className="rune-inline-item-box">
