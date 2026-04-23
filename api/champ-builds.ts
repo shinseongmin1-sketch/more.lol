@@ -94,45 +94,55 @@ export default async function handler(req: Request): Promise<Response> {
     ).then(r => r.json())
     const champNumId = Number(champJson.data[champId]?.key ?? 0)
 
-    // ── 2. LP 상위 25명 PUUID ────────────────────────────
-    const top25: any[] = [...challData.entries, ...gmData.entries]
+    // ── 2. LP 상위 15명 PUUID (개인키 rate limit 대응) ──
+    const top15: any[] = [...challData.entries, ...gmData.entries]
       .sort((a: any, b: any) => b.leaguePoints - a.leaguePoints)
-      .slice(0, 25)
+      .slice(0, 15)
 
     // 신 API: entries에 puuid 직접 포함. 구 API: summonerId로 별도 조회
     let puuids: string[]
-    if (top25[0]?.puuid) {
-      puuids = top25.map((p: any) => p.puuid).filter(Boolean)
+    if (top15[0]?.puuid) {
+      puuids = top15.map((p: any) => p.puuid).filter(Boolean)
     } else {
       const summoners = await Promise.all(
-        top25.map((p: any) => riotFetch(
+        top15.map((p: any) => riotFetch(
           `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${p.summonerId}`, apiKey
         ))
       )
       puuids = summoners.map((s: any) => s.puuid)
     }
 
-    // ── 3. 챔피언 필터 매치 목록 조회 ───────────────────
-    // champion 파라미터로 필터링 → 해당 챔피언 게임만 가져옴
-    const matchIdBatches = await Promise.all(
-      puuids.map(puuid => {
-        let url = `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=420&count=5`
-        if (champNumId > 0) url += `&champion=${champNumId}`
-        return riotFetch(url, apiKey)
-      })
-    )
-    const uniqueIds: string[] = [...new Set<string>(matchIdBatches.flat())].slice(0, 40)
+    // ── 3. 챔피언 필터 매치 목록 조회 (5명씩 배치) ───────
+    const delay = (ms: number) => new Promise(r => setTimeout(r, ms))
+    const matchIdBatches: string[][] = []
+    for (let i = 0; i < puuids.length; i += 5) {
+      if (i > 0) await delay(300)
+      const batch = await Promise.all(
+        puuids.slice(i, i + 5).map(puuid => {
+          let url = `https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/${puuid}/ids?queue=420&count=5`
+          if (champNumId > 0) url += `&champion=${champNumId}`
+          return riotFetch(url, apiKey)
+        })
+      )
+      matchIdBatches.push(...batch)
+    }
+    const uniqueIds: string[] = [...new Set<string>(matchIdBatches.flat())].slice(0, 20)
 
     if (uniqueIds.length === 0) {
       return jsonRes({ sampleSize: 0, insufficient: true })
     }
 
-    // ── 4. 매치 상세 조회 ────────────────────────────────
-    const matches = await Promise.all(
-      uniqueIds.map(id =>
-        riotFetch(`https://asia.api.riotgames.com/lol/match/v5/matches/${id}`, apiKey)
+    // ── 4. 매치 상세 조회 (5개씩 배치) ──────────────────
+    const matches: any[] = []
+    for (let i = 0; i < uniqueIds.length; i += 5) {
+      if (i > 0) await delay(300)
+      const batch = await Promise.all(
+        uniqueIds.slice(i, i + 5).map(id =>
+          riotFetch(`https://asia.api.riotgames.com/lol/match/v5/matches/${id}`, apiKey)
+        )
       )
-    )
+      matches.push(...batch)
+    }
 
     // ── 5. 해당 챔피언 + 포지션 참여자만 필터 ────────────
     const participants: any[] = matches
