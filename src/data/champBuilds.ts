@@ -425,8 +425,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [doranBlade, hpPot],
     boots: ionianBoots,
     coreItems: [trinity, manamune, bork],
-    fullBuild: [ionianBoots, trinity, manamune, bork, shadowflame, guardianAngel],
-    skillMaxOrder: ['Q','E','W'], // Q(신비로운 발사체) 주딜, E(섬광 수류탄·대쉬) 쿨감, W 마지막
+    fullBuild: [ionianBoots, trinity, manamune, bork, mortalReminder, guardianAngel],
+    skillMaxOrder: ['Q','E','W'],
   },
 
   MissFortune: {
@@ -461,8 +461,8 @@ export const CHAMP_BUILDS: Record<string, ChampBuild> = {
     startItems: [doranBlade, hpPot],
     boots: swiftBoots,
     coreItems: [galeforce, ie, mortalReminder],
-    fullBuild: [swiftBoots, galeforce, ie, mortalReminder, shadowflame, guardianAngel],
-    skillMaxOrder: ['W','Q','E'], // W(원거리속박) 킬찬스, Q(도탄) 라인·딜, E 마지막
+    fullBuild: [swiftBoots, galeforce, ie, mortalReminder, runaans, guardianAngel],
+    skillMaxOrder: ['W','Q','E'],
   },
 
   Vayne: {

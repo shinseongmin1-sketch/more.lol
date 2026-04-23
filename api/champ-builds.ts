@@ -99,12 +99,18 @@ export default async function handler(req: Request): Promise<Response> {
       .sort((a: any, b: any) => b.leaguePoints - a.leaguePoints)
       .slice(0, 25)
 
-    const summoners = await Promise.all(
-      top25.map(p => riotFetch(
-        `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${p.summonerId}`, apiKey
-      ))
-    )
-    const puuids: string[] = summoners.map((s: any) => s.puuid)
+    // 신 API: entries에 puuid 직접 포함. 구 API: summonerId로 별도 조회
+    let puuids: string[]
+    if (top25[0]?.puuid) {
+      puuids = top25.map((p: any) => p.puuid).filter(Boolean)
+    } else {
+      const summoners = await Promise.all(
+        top25.map((p: any) => riotFetch(
+          `https://kr.api.riotgames.com/lol/summoner/v4/summoners/${p.summonerId}`, apiKey
+        ))
+      )
+      puuids = summoners.map((s: any) => s.puuid)
+    }
 
     // ── 3. 챔피언 필터 매치 목록 조회 ───────────────────
     // champion 파라미터로 필터링 → 해당 챔피언 게임만 가져옴
