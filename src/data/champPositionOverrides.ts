@@ -148,6 +148,13 @@ export const CHAMP_POSITION_OVERRIDE: Record<string, string> = {
 
   // Marksman+Support → Marksman 체크가 원딜로 오판
   Senna:        '서포터',
+
+  // Support 태그 있지만 다른 태그 우선 적용되어 오판
+  Bard:         '서포터',
+  Thresh:       '서포터',
+  Yuumi:        '서포터',
+  Milio:        '서포터',
+  Renata:       '서포터',
 }
 
 /**
