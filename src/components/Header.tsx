@@ -29,22 +29,29 @@ const rankSubItems = [
   { path: '/ranking/pro',  label: '프로랭킹' },
 ]
 
+const tendencySubItems = [
+  { path: '/tendency', label: '포지션 성향 테스트' },
+]
+
 export default function Header({ onSearch, user, onLoginClick, onLogout, theme, onToggleTheme }: HeaderProps) {
   const [inputValue, setInputValue] = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const [champMenuOpen, setChampMenuOpen] = useState(false)
   const [rankMenuOpen, setRankMenuOpen] = useState(false)
+  const [tendencyMenuOpen, setTendencyMenuOpen] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState<string | null>(() => user ? getAvatar(user.id) : null)
   const champCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const rankCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const tendencyCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const navigate = useNavigate()
   const location = useLocation()
   const isHome = location.pathname === '/'
   const dropdownRef = useRef<HTMLDivElement>(null)
   const champMenuRef = useRef<HTMLDivElement>(null)
   const rankMenuRef = useRef<HTMLDivElement>(null)
+  const tendencyMenuRef = useRef<HTMLDivElement>(null)
   const searchContainerRef = useRef<HTMLDivElement>(null)
 
   const suggestedCelebs = searchFocused && inputValue.trim()
@@ -68,6 +75,9 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
       }
       if (rankMenuRef.current && !rankMenuRef.current.contains(e.target as Node)) {
         setRankMenuOpen(false)
+      }
+      if (tendencyMenuRef.current && !tendencyMenuRef.current.contains(e.target as Node)) {
+        setTendencyMenuOpen(false)
       }
       if (searchContainerRef.current && !searchContainerRef.current.contains(e.target as Node)) {
         setSearchFocused(false)
@@ -214,6 +224,51 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
             >
               커뮤니티
             </Link>
+
+            {/* 성향 테스트 (하위메뉴) */}
+            <div
+              className="nav-item-wrap"
+              ref={tendencyMenuRef}
+              onMouseEnter={() => {
+                if (tendencyCloseTimer.current) clearTimeout(tendencyCloseTimer.current)
+                setTendencyMenuOpen(true)
+              }}
+              onMouseLeave={() => {
+                tendencyCloseTimer.current = setTimeout(() => setTendencyMenuOpen(false), 150)
+              }}
+            >
+              <Link
+                to="/tendency"
+                className={`nav-link nav-link-glow nav-link-tendency ${location.pathname.startsWith('/tendency') ? 'active' : ''} ${tendencyMenuOpen ? 'glow-open' : ''}`}
+              >
+                성향 테스트
+                <svg className={`nav-caret ${tendencyMenuOpen ? 'open' : ''}`} viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 4l4 4 4-4" />
+                </svg>
+              </Link>
+              {tendencyMenuOpen && (
+                <div
+                  className="nav-submenu"
+                  onMouseEnter={() => {
+                    if (tendencyCloseTimer.current) clearTimeout(tendencyCloseTimer.current)
+                  }}
+                  onMouseLeave={() => {
+                    tendencyCloseTimer.current = setTimeout(() => setTendencyMenuOpen(false), 150)
+                  }}
+                >
+                  {tendencySubItems.map(sub => (
+                    <Link
+                      key={sub.path}
+                      to={sub.path}
+                      className={`nav-submenu-item ${location.pathname === sub.path ? 'active' : ''}`}
+                      onClick={() => setTendencyMenuOpen(false)}
+                    >
+                      {sub.label}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </nav>
         </div>
 
@@ -412,6 +467,9 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
           <Link to="/ranking/pro" className={`mobile-nav-sub-link ${location.pathname === "/ranking/pro" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>프로랭킹</Link>
           <div className="mobile-nav-divider" />
           <Link to="/community" className={`mobile-nav-link ${location.pathname.startsWith("/community") ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>커뮤니티</Link>
+          <div className="mobile-nav-divider" />
+          <div className="mobile-nav-section-label">성향 테스트</div>
+          <Link to="/tendency" className={`mobile-nav-sub-link ${location.pathname === "/tendency" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>포지션 성향 테스트</Link>
         </nav>
         <div className="mobile-nav-auth">
           {user ? (

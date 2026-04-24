@@ -28,6 +28,7 @@ import MostChampsPage from './pages/MostChampsPage'
 import AdminInquiriesPage from './pages/AdminInquiriesPage'
 import AdminReportsPage from './pages/AdminReportsPage'
 import AdminUsersPage from './pages/AdminUsersPage'
+import TendencyTestPage from './pages/TendencyTestPage'
 import './App.css'
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
         <Route path="/admin/inquiries" element={<AdminInquiriesPage />} />
         <Route path="/admin/reports" element={<AdminReportsPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
+        <Route path="/tendency" element={<TendencyTestPage />} />
       </Routes>
     </Layout>
   )
