@@ -176,34 +176,23 @@ const LANE_RESULTS: Record<Lane, LaneData> = {
 
 const LANE_LABEL: Record<Lane, string> = { top: '탑', jungle: '정글', mid: '미드', adc: '원딜', support: '서포터' }
 
-function LaneIcon({ lane, size = 32 }: { lane: Lane; size?: number }) {
-  const color = LANE_RESULTS[lane].color
-  if (lane === 'top') return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-    </svg>
-  )
-  if (lane === 'jungle') return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/><line x1="12" y1="2" x2="12" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/>
-    </svg>
-  )
-  if (lane === 'mid') return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-    </svg>
-  )
-  if (lane === 'adc') return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/>
-      <line x1="22" y1="12" x2="19" y2="12"/><line x1="2" y1="12" x2="5" y2="12"/>
-      <line x1="12" y1="22" x2="12" y2="19"/><line x1="12" y1="2" x2="12" y2="5"/>
-    </svg>
-  )
+const LANE_ICONS: Record<Lane, string> = {
+  top:     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-top.png',
+  jungle:  'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-jungle.png',
+  mid:     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-middle.png',
+  adc:     'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-bottom.png',
+  support: 'https://raw.communitydragon.org/latest/plugins/rcp-fe-lol-clash/global/default/assets/images/position-selector/positions/icon-position-utility.png',
+}
+
+function LaneIcon({ lane, size = 32, white = false }: { lane: Lane; size?: number; white?: boolean }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-    </svg>
+    <img
+      src={LANE_ICONS[lane]}
+      width={size}
+      height={size}
+      alt={LANE_LABEL[lane]}
+      style={white ? { filter: 'brightness(0) invert(1)' } : undefined}
+    />
   )
 }
 
@@ -239,7 +228,7 @@ export default function TendencyTestPage() {
       <div className="tendency-page">
         <div className="tendency-result">
           <div className="tendency-result-header" style={{ background: result.bgGradient }}>
-            <div className="tendency-result-icon"><LaneIcon lane={topLane} size={56} /></div>
+            <div className="tendency-result-icon"><LaneIcon lane={topLane} size={56} white /></div>
             <div className="tendency-result-lane-label">{result.lane} 포지션</div>
             <div className="tendency-result-name">{result.name}</div>
           </div>
