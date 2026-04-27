@@ -29,6 +29,9 @@ import AdminInquiriesPage from './pages/AdminInquiriesPage'
 import AdminReportsPage from './pages/AdminReportsPage'
 import AdminUsersPage from './pages/AdminUsersPage'
 import TendencyTestPage from './pages/TendencyTestPage'
+import AboutPage from './pages/AboutPage'
+import GuidePage from './pages/GuidePage'
+import InfoPage from './pages/InfoPage'
 import './App.css'
 
 function App() {
@@ -67,6 +70,9 @@ function App() {
         <Route path="/admin/reports" element={<AdminReportsPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
         <Route path="/tendency" element={<TendencyTestPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/guide" element={<GuidePage />} />
+        <Route path="/info" element={<InfoPage />} />
       </Routes>
     </Layout>
   )
