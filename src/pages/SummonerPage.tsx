@@ -512,9 +512,10 @@ export default function SummonerPage() {
   }
 
   const fetchAiFeedback = async (match: MatchData) => {
-    if (aiFeedback[match.matchId] || aiFeedbackLoading[match.matchId]) return
-    setAiFeedbackLoading(prev => ({ ...prev, [match.matchId]: true }))
-    setAiFeedbackError(prev => ({ ...prev, [match.matchId]: '' }))
+    const aiKey = `${match.matchId}_${account?.puuid ?? ''}`
+    if (aiFeedback[aiKey] || aiFeedbackLoading[aiKey]) return
+    setAiFeedbackLoading(prev => ({ ...prev, [aiKey]: true }))
+    setAiFeedbackError(prev => ({ ...prev, [aiKey]: '' }))
     try {
       const res = await fetch('/api/ai-feedback', {
         method: 'POST',
@@ -531,19 +532,22 @@ export default function SummonerPage() {
           duration: match.duration,
           win: match.win,
           queueLabel: match.queueLabel,
+          teamKills: match.teammates.reduce((s, p) => s + p.kills, match.kills),
+          teamDeaths: match.teammates.reduce((s, p) => s + p.deaths, match.deaths),
+          teamAssists: match.teammates.reduce((s, p) => s + p.assists, match.assists),
         }),
       })
       if (res.ok) {
         const data = await res.json()
-        setAiFeedback(prev => ({ ...prev, [match.matchId]: data.feedback }))
+        setAiFeedback(prev => ({ ...prev, [aiKey]: data.feedback }))
       } else {
         const errData = await res.json().catch(() => ({}))
-        setAiFeedbackError(prev => ({ ...prev, [match.matchId]: errData.error ?? `AI 분석 실패 (${res.status})` }))
+        setAiFeedbackError(prev => ({ ...prev, [aiKey]: errData.error ?? `AI 분석 실패 (${res.status})` }))
       }
     } catch {
-      setAiFeedbackError(prev => ({ ...prev, [match.matchId]: '네트워크 오류로 AI 분석에 실패했습니다.' }))
+      setAiFeedbackError(prev => ({ ...prev, [aiKey]: '네트워크 오류로 AI 분석에 실패했습니다.' }))
     } finally {
-      setAiFeedbackLoading(prev => ({ ...prev, [match.matchId]: false }))
+      setAiFeedbackLoading(prev => ({ ...prev, [aiKey]: false }))
     }
   }
 
@@ -1060,20 +1064,25 @@ export default function SummonerPage() {
                           }
                         </div>
                         <div className="mc-champ-name-label">{match.championName}</div>
-                        <button
-                          className={`mc-ai-btn ${aiFeedbackLoading[match.matchId] ? 'loading' : ''} ${aiFeedback[match.matchId] ? 'done' : ''}`}
-                          onClick={e => {
-                            e.stopPropagation()
-                            if (aiFeedback[match.matchId]) {
-                              setAiFeedbackOpen(prev => ({ ...prev, [match.matchId]: !prev[match.matchId] }))
-                            } else {
-                              setAiFeedbackOpen(prev => ({ ...prev, [match.matchId]: true }))
-                              fetchAiFeedback(match)
-                            }
-                          }}
-                        >
-                          {aiFeedbackLoading[match.matchId] ? '분석 중...' : aiFeedback[match.matchId] ? (aiFeedbackOpen[match.matchId] ? '✓ AI 분석 완료' : '🤖 AI 분석 보기') : '🤖 AI 분석'}
-                        </button>
+                        {(() => {
+                          const aiKey = `${match.matchId}_${account?.puuid ?? ''}`
+                          return (
+                            <button
+                              className={`mc-ai-btn ${aiFeedbackLoading[aiKey] ? 'loading' : ''} ${aiFeedback[aiKey] ? 'done' : ''}`}
+                              onClick={e => {
+                                e.stopPropagation()
+                                if (aiFeedback[aiKey]) {
+                                  setAiFeedbackOpen(prev => ({ ...prev, [aiKey]: !prev[aiKey] }))
+                                } else {
+                                  setAiFeedbackOpen(prev => ({ ...prev, [aiKey]: true }))
+                                  fetchAiFeedback(match)
+                                }
+                              }}
+                            >
+                              {aiFeedbackLoading[aiKey] ? '분석 중...' : aiFeedback[aiKey] ? (aiFeedbackOpen[aiKey] ? '✓ AI 분석 완료' : '🤖 AI 분석 보기') : '🤖 AI 분석'}
+                            </button>
+                          )
+                        })()}
                       </div>
 
                       {/* 참가자 */}
@@ -1113,35 +1122,38 @@ export default function SummonerPage() {
                     </div>
 
                     {/* ── AI 피드백 패널 ── */}
-                    {(aiFeedbackLoading[match.matchId] || ((aiFeedback[match.matchId] || aiFeedbackError[match.matchId]) && aiFeedbackOpen[match.matchId])) && (
-                      <div className="mc-ai-panel">
-                        {aiFeedbackLoading[match.matchId] ? (
-                          <div className="mc-ai-loading">
-                            <div className="mc-ai-spinner" />
-                            <span>AI가 게임을 분석하고 있습니다...</span>
-                          </div>
-                        ) : aiFeedbackError[match.matchId] ? (
-                          <div className="mc-ai-content">
-                            <div className="mc-ai-header">
-                              <span className="mc-ai-icon">⚠️</span>
-                              <span className="mc-ai-title">AI 분석 실패</span>
-                              <button className="mc-ai-close" onClick={e => { e.stopPropagation(); setAiFeedbackOpen(prev => ({ ...prev, [match.matchId]: false })) }}>✕</button>
+                    {(() => {
+                      const aiKey = `${match.matchId}_${account?.puuid ?? ''}`
+                      return (aiFeedbackLoading[aiKey] || ((aiFeedback[aiKey] || aiFeedbackError[aiKey]) && aiFeedbackOpen[aiKey])) && (
+                        <div className="mc-ai-panel">
+                          {aiFeedbackLoading[aiKey] ? (
+                            <div className="mc-ai-loading">
+                              <div className="mc-ai-spinner" />
+                              <span>AI가 게임을 분석하고 있습니다...</span>
                             </div>
-                            <div className="mc-ai-text" style={{ color: 'var(--lose-color)' }}>{aiFeedbackError[match.matchId]}</div>
-                          </div>
-                        ) : (
-                          <div className="mc-ai-content">
-                            <div className="mc-ai-header">
-                              <span className="mc-ai-icon">🤖</span>
-                              <span className="mc-ai-title">AI 게임 분석</span>
-                              <span className="mc-ai-badge">AI 분석</span>
-                              <button className="mc-ai-close" onClick={e => { e.stopPropagation(); setAiFeedbackOpen(prev => ({ ...prev, [match.matchId]: false })) }}>✕</button>
+                          ) : aiFeedbackError[aiKey] ? (
+                            <div className="mc-ai-content">
+                              <div className="mc-ai-header">
+                                <span className="mc-ai-icon">⚠️</span>
+                                <span className="mc-ai-title">AI 분석 실패</span>
+                                <button className="mc-ai-close" onClick={e => { e.stopPropagation(); setAiFeedbackOpen(prev => ({ ...prev, [aiKey]: false })) }}>✕</button>
+                              </div>
+                              <div className="mc-ai-text" style={{ color: 'var(--lose-color)' }}>{aiFeedbackError[aiKey]}</div>
                             </div>
-                            <div className="mc-ai-text">{aiFeedback[match.matchId]}</div>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                          ) : (
+                            <div className="mc-ai-content">
+                              <div className="mc-ai-header">
+                                <span className="mc-ai-icon">🤖</span>
+                                <span className="mc-ai-title">AI 게임 분석</span>
+                                <span className="mc-ai-badge">AI 분석</span>
+                                <button className="mc-ai-close" onClick={e => { e.stopPropagation(); setAiFeedbackOpen(prev => ({ ...prev, [aiKey]: false })) }}>✕</button>
+                              </div>
+                              <div className="mc-ai-text">{aiFeedback[aiKey]}</div>
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })()}
 
                     {/* ── 확장 상세 뷰 ── */}
                     {isExpanded && match.allParticipants.length > 0 && (() => {

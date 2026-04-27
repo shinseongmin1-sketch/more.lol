@@ -6,8 +6,9 @@ export default async function handler(req: Request): Promise<Response> {
   let body: any
   try { body = await req.json() } catch { return new Response('Bad Request', { status: 400 }) }
 
-  const { matchId, puuid, championName, kills, deaths, assists, cs, visionScore, duration, win, queueLabel } = body
+  const { matchId, puuid, championName, kills, deaths, assists, cs, visionScore, duration, win, queueLabel, teamKills, teamDeaths, teamAssists } = body
   if (!matchId || !puuid) return new Response('Missing params', { status: 400 })
+  const cacheKey = `${matchId}_${puuid}`
 
   const RIOT_API_KEY    = process.env.RIOT_API_KEY
   const COHERE_API_KEY  = process.env.COHERE_API_KEY
@@ -18,7 +19,7 @@ export default async function handler(req: Request): Promise<Response> {
   // 1. 캐시 확인
   if (SB_URL && SB_KEY) {
     const cached = await fetch(
-      `${SB_URL}/rest/v1/ai_match_feedback?match_id=eq.${encodeURIComponent(matchId)}&limit=1`,
+      `${SB_URL}/rest/v1/ai_match_feedback?match_id=eq.${encodeURIComponent(cacheKey)}&limit=1`,
       { headers: { apikey: SB_KEY, Authorization: `Bearer ${SB_KEY}` } }
     ).catch(() => null)
     if (cached?.ok) {
@@ -98,13 +99,20 @@ export default async function handler(req: Request): Promise<Response> {
 [한타 발생 ${teamfights.length}회]
 ${tfLines || '  (없음)'}` : ''
 
+  const killParticipation = teamKills > 0 ? Math.round(((kills + assists) / teamKills) * 100) : 0
+  const teamKdaNote = (teamKills != null && teamDeaths != null && teamAssists != null)
+    ? `팀 전체 KDA: ${teamKills}/${teamDeaths}/${teamAssists} / 킬관여율: ${killParticipation}%`
+    : ''
+
   const prompt = `당신은 리그 오브 레전드 전문 코치입니다. 아래 데이터를 분석해 한국어로 피드백을 주세요.
 
 [게임 정보]
 챔피언: ${championName} / 모드: ${queueLabel} / 결과: ${win ? '승리' : '패배'} / 시간: ${durMin}분
 KDA: ${kills}/${deaths}/${assists} (${kda} 평점) / CS: ${cs} (${csPerMin}/분) / 시야: ${visionScore}
+${teamKdaNote}
 ${timelineSection}
 
+팀 KDA 대비 개인 기여도를 반드시 반영하세요. 킬관여율이 낮으면 팀원에게 의존한 경기임을 명시하고, 높으면 팀에 기여한 경기임을 명시하세요.
 위 데이터를 바탕으로 다음 형식으로 간결하게 분석해주세요. 총 300자 이내, 이모지 적극 사용:
 ⚔️ 초반 운영: (2문장)
 🏯 오브젝트: (2문장)
@@ -153,7 +161,7 @@ ${timelineSection}
         'Content-Type': 'application/json',
         Prefer: 'resolution=merge-duplicates',
       },
-      body: JSON.stringify({ match_id: matchId, feedback }),
+      body: JSON.stringify({ match_id: cacheKey, feedback }),
     }).catch(() => {})
   }
 

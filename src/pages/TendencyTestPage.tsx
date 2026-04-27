@@ -292,7 +292,7 @@ export default function TendencyTestPage() {
   return (
     <div className="tendency-page">
       <div className="tendency-hero">
-        <h1 className="tendency-title">롤 성향 테스트</h1>
+        <h1 className="tendency-title">포지션 성향 테스트</h1>
         <p className="tendency-subtitle">12개의 질문으로 나에게 맞는 포지션과 플레이 스타일을 찾아보세요</p>
       </div>
 
