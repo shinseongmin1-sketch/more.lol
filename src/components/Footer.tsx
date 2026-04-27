@@ -24,6 +24,9 @@ export default function Footer() {
             <Link to="/ranked">솔로랭크 티어</Link>
             <Link to="/aram">ARAM 통계</Link>
             <Link to="/normal">일반게임 통계</Link>
+            <Link to="/about">서비스 소개</Link>
+            <Link to="/guide">이용 가이드</Link>
+            <Link to="/info">이용 안내</Link>
           </div>
           <div className="footer-col">
             <div className="footer-col-title">정보</div>

@@ -23,9 +23,6 @@ const quickLinks = [
   { path: '/notice',    label: 'Morelol 공지사항', desc: '서비스 업데이트 및 점검 안내', color: '#14b8a6' },
   { path: '/contact',   label: '문의하기',         desc: '버그 신고 및 서비스 문의',   color: '#8b5cf6' },
   { path: 'https://www.leagueoflegends.com/ko-kr/news/game-updates/', label: 'Riot 패치노트', desc: '최신 밸런스 패치 내역 확인', color: '#f43f5e', external: true },
-  { path: '/about',  label: '서비스 소개', desc: 'more.lol 기능 전체 소개',          color: '#06b6d4' },
-  { path: '/guide',  label: '이용 가이드', desc: '단계별 기능 사용 방법 안내',       color: '#84cc16' },
-  { path: '/info',   label: '이용 안내',   desc: '데이터 기준 및 이용 조건 안내',    color: '#a78bfa' },
 ]
 
 interface HotChamp {
