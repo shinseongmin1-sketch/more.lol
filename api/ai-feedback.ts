@@ -122,6 +122,7 @@ ${timelineSection}
   // 3. Gemini API 호출
   const aiController = new AbortController()
   const aiTimeout = setTimeout(() => aiController.abort(), 25000)
+  let aiTimedOut = false
   const aiRes = await fetch('https://api.cohere.com/v2/chat', {
     method: 'POST',
     headers: {
@@ -134,12 +135,12 @@ ${timelineSection}
     }),
     signal: aiController.signal,
   }).catch((e) => {
-    const isTimeout = e?.name === 'AbortError'
-    console.error('Cohere fetch error:', isTimeout ? 'timeout' : e)
-    return isTimeout ? 'timeout' : null
+    if (e?.name === 'AbortError') aiTimedOut = true
+    else console.error('Cohere fetch error:', e)
+    return null
   }).finally(() => clearTimeout(aiTimeout))
 
-  if (aiRes === 'timeout') {
+  if (aiTimedOut) {
     return new Response(JSON.stringify({ error: 'AI 분석 시간 초과 — 다시 시도해주세요.' }), { status: 504, headers: { 'Content-Type': 'application/json' } })
   }
   if (!aiRes || !aiRes.ok) {
