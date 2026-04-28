@@ -30,7 +30,12 @@ const rankSubItems = [
 ]
 
 const tendencySubItems = [
-  { path: '/tendency', label: '포지션 성향 테스트' },
+  { path: '/tendency',           label: '포지션 성향 테스트' },
+  { path: '/tendency/champion',  label: '챔피언 유형 추천' },
+  { path: '/tendency/mental',    label: '롤 멘탈 유형 테스트' },
+  { path: '/tendency/mbti',      label: '롤 플레이어 MBTI' },
+  { path: '/tendency/daily',     label: '오늘의 챔피언 추천' },
+  { path: '/tendency/pro',       label: '프로게이머 유형 테스트' },
 ]
 
 export default function Header({ onSearch, user, onLoginClick, onLogout, theme, onToggleTheme }: HeaderProps) {
@@ -237,15 +242,16 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
                 tendencyCloseTimer.current = setTimeout(() => setTendencyMenuOpen(false), 150)
               }}
             >
-              <Link
-                to="/tendency"
+              <button
                 className={`nav-link nav-link-glow nav-link-tendency ${location.pathname.startsWith('/tendency') ? 'active' : ''} ${tendencyMenuOpen ? 'glow-open' : ''}`}
+                onClick={() => setTendencyMenuOpen(v => !v)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', fontWeight: 'inherit' }}
               >
                 성향 테스트
                 <svg className={`nav-caret ${tendencyMenuOpen ? 'open' : ''}`} viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 4l4 4 4-4" />
                 </svg>
-              </Link>
+              </button>
               {tendencyMenuOpen && (
                 <div
                   className="nav-submenu"
@@ -469,7 +475,12 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
           <Link to="/community" className={`mobile-nav-link ${location.pathname.startsWith("/community") ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>커뮤니티</Link>
           <div className="mobile-nav-divider" />
           <div className="mobile-nav-section-label">성향 테스트</div>
-          <Link to="/tendency" className={`mobile-nav-sub-link ${location.pathname === "/tendency" ? "active" : ""}`} onClick={() => setMobileMenuOpen(false)}>포지션 성향 테스트</Link>
+          <Link to="/tendency"           className={`mobile-nav-sub-link ${location.pathname === "/tendency" ? "active" : ""}`}           onClick={() => setMobileMenuOpen(false)}>포지션 성향 테스트</Link>
+          <Link to="/tendency/champion"  className={`mobile-nav-sub-link ${location.pathname === "/tendency/champion" ? "active" : ""}`}  onClick={() => setMobileMenuOpen(false)}>챔피언 유형 추천</Link>
+          <Link to="/tendency/mental"    className={`mobile-nav-sub-link ${location.pathname === "/tendency/mental" ? "active" : ""}`}    onClick={() => setMobileMenuOpen(false)}>롤 멘탈 유형 테스트</Link>
+          <Link to="/tendency/mbti"      className={`mobile-nav-sub-link ${location.pathname === "/tendency/mbti" ? "active" : ""}`}      onClick={() => setMobileMenuOpen(false)}>롤 플레이어 MBTI</Link>
+          <Link to="/tendency/daily"     className={`mobile-nav-sub-link ${location.pathname === "/tendency/daily" ? "active" : ""}`}     onClick={() => setMobileMenuOpen(false)}>오늘의 챔피언 추천</Link>
+          <Link to="/tendency/pro"       className={`mobile-nav-sub-link ${location.pathname === "/tendency/pro" ? "active" : ""}`}       onClick={() => setMobileMenuOpen(false)}>프로게이머 유형 테스트</Link>
         </nav>
         <div className="mobile-nav-auth">
           {user ? (

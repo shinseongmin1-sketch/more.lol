@@ -29,6 +29,11 @@ import AdminInquiriesPage from './pages/AdminInquiriesPage'
 import AdminReportsPage from './pages/AdminReportsPage'
 import AdminUsersPage from './pages/AdminUsersPage'
 import TendencyTestPage from './pages/TendencyTestPage'
+import ChampionTypePage from './pages/ChampionTypePage'
+import MentalTestPage from './pages/MentalTestPage'
+import LolMbtiPage from './pages/LolMbtiPage'
+import DailyChampPage from './pages/DailyChampPage'
+import ProStylePage from './pages/ProStylePage'
 import AboutPage from './pages/AboutPage'
 import GuidePage from './pages/GuidePage'
 import InfoPage from './pages/InfoPage'
@@ -70,6 +75,11 @@ function App() {
         <Route path="/admin/reports" element={<AdminReportsPage />} />
         <Route path="/admin/users" element={<AdminUsersPage />} />
         <Route path="/tendency" element={<TendencyTestPage />} />
+        <Route path="/tendency/champion" element={<ChampionTypePage />} />
+        <Route path="/tendency/mental" element={<MentalTestPage />} />
+        <Route path="/tendency/mbti" element={<LolMbtiPage />} />
+        <Route path="/tendency/daily" element={<DailyChampPage />} />
+        <Route path="/tendency/pro" element={<ProStylePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/guide" element={<GuidePage />} />
         <Route path="/info" element={<InfoPage />} />
