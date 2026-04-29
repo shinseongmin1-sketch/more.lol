@@ -242,16 +242,15 @@ export default function Header({ onSearch, user, onLoginClick, onLogout, theme, 
                 tendencyCloseTimer.current = setTimeout(() => setTendencyMenuOpen(false), 150)
               }}
             >
-              <button
+              <Link
+                to="/tendency"
                 className={`nav-link nav-link-glow nav-link-tendency ${location.pathname.startsWith('/tendency') ? 'active' : ''} ${tendencyMenuOpen ? 'glow-open' : ''}`}
-                onClick={() => setTendencyMenuOpen(v => !v)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit', fontWeight: 'inherit' }}
               >
                 성향 테스트
                 <svg className={`nav-caret ${tendencyMenuOpen ? 'open' : ''}`} viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M2 4l4 4 4-4" />
                 </svg>
-              </button>
+              </Link>
               {tendencyMenuOpen && (
                 <div
                   className="nav-submenu"
